@@ -1,0 +1,30 @@
+model_profiles:
+  research:
+    provider: TBD
+    model: TBD
+    temperature: 0.2
+    notes: Source-grounded synthesis and context gathering.
+
+  planning:
+    provider: TBD
+    model: TBD
+    temperature: 0.2
+    notes: Structured planning with low randomness.
+
+  building:
+    provider: TBD
+    model: TBD
+    temperature: 0.1
+    notes: Code and file changes with strict adherence to project conventions.
+
+  review:
+    provider: TBD
+    model: TBD
+    temperature: 0.1
+    notes: Critical review, defect detection, and risk analysis.
+
+  evaluation:
+    provider: TBD
+    model: TBD
+    temperature: 0.0
+    notes: Stable rubric application and repeatable scoring.

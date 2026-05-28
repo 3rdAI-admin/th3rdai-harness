@@ -1,0 +1,12 @@
+# Dependencies
+node_modules/
+
+# GitNexus code-intelligence index/cache (local)
+.gitnexus/
+
+# Python artifacts
+__pycache__/
+*.pyc
+
+# macOS
+.DS_Store

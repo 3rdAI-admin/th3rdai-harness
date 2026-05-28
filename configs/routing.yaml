@@ -1,0 +1,42 @@
+routes:
+  task_definition:
+    stage: stages/01-task-definition
+    agents:
+      - researcher
+      - planner
+
+  agent_design:
+    stage: stages/02-agent-design
+    agents:
+      - planner
+      - reviewer
+
+  prompt_design:
+    stage: stages/03-prompt-design
+    agents:
+      - planner
+      - reviewer
+
+  tool_integration:
+    stage: stages/04-tool-integration
+    agents:
+      - builder
+      - reviewer
+
+  evaluation:
+    stage: stages/05-evaluation
+    agents:
+      - evaluator
+      - reviewer
+
+  iteration:
+    stage: stages/06-iteration
+    agents:
+      - planner
+      - builder
+      - evaluator
+
+  release:
+    stage: stages/07-release
+    agents:
+      - reviewer

@@ -1,0 +1,32 @@
+tool_policies:
+  read_only:
+    allowed:
+      - read files
+      - search workspace
+      - inspect diffs
+    requires_approval: []
+
+  write_limited:
+    allowed:
+      - create approved files
+      - modify approved files
+    requires_approval:
+      - broad rewrites
+      - deleting files
+
+  command_safe:
+    allowed:
+      - run validation checks
+      - inspect repository status
+    requires_approval:
+      - installing dependencies
+      - starting long-running servers
+      - destructive commands
+      - git staging
+      - git commit
+
+safety_rules:
+  - Do not read secret files unless explicitly required and approved.
+  - Do not run destructive commands without explicit approval.
+  - Do not install dependencies without explicit approval.
+  - Do not stage or commit git changes without explicit approval.

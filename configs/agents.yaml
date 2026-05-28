@@ -1,0 +1,25 @@
+agents:
+  researcher:
+    contract: agents/researcher.agent.md
+    default_skill: null
+    model_profile: research
+
+  planner:
+    contract: agents/planner.agent.md
+    default_skill: skills/plan/plan.md
+    model_profile: planning
+
+  builder:
+    contract: agents/builder.agent.md
+    default_skill: skills/build/build.md
+    model_profile: building
+
+  reviewer:
+    contract: agents/reviewer.agent.md
+    default_skill: skills/plan/plan-reviewer.md
+    model_profile: review
+
+  evaluator:
+    contract: agents/evaluator.agent.md
+    default_skill: null
+    model_profile: evaluation
