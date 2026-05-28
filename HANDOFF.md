@@ -26,9 +26,12 @@ A consistency-and-coverage pass was completed. Validation still passes 47/47. Th
 
 **Tracking:** This project is now in Archon as **AI Agent Development Harness (_ICM-Template)** with a seeded task backlog.
 
+**Also resolved this session:**
+- `skills/ICM-README.md` and `skills/BUILD-README.md` were archived — both described a PRP slash-command flow and `.commands/`/`sync-commands.sh` infrastructure that does not exist in this repo. See `archive/legacy-docs/`.
+- The repo is now a **git repository** with a baseline commit. A `.gitignore` excludes `node_modules/`, `.gitnexus/`, `__pycache__/`, and `.DS_Store`.
+
 **Remaining follow-ups:**
-- `skills/ICM-README.md` and `skills/BUILD-README.md` still describe an older PRP-based slash-command flow (`/generate-prp`, `/build-prp`, multi-IDE distribution). Decide whether to keep, revise, or archive them.
-- The repo is still not a git repository — initialize and commit a baseline when ready (requires explicit approval).
+- None blocking. Future work is tracked as Archon tasks (see project "AI Agent Development Harness (_ICM-Template)").
 
 ## Current State
 
