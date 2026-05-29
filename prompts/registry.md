@@ -4,8 +4,11 @@ Use this registry to track reusable prompt templates, their versions, target age
 
 | Prompt | Current Version | Agent | Purpose | Eval Status |
 |--------|-----------------|-------|---------|-------------|
+| Researcher Prompt | `researcher/v1.md` | Researcher | Gather grounded context before planning | Not evaluated |
 | Planner Prompt | `planner/v1.md` | Planner | Create implementation-ready plans | Not evaluated |
+| Builder Prompt | `builder/v1.md` | Builder | Implement approved plans within scope | Not evaluated |
 | Reviewer Prompt | `reviewer/v1.md` | Reviewer | Review plans and implementations | Not evaluated |
+| Evaluator Prompt | `evaluator/v1.md` | Evaluator | Score artifacts against rubrics | Not evaluated |
 
 ## Versioning Rules
 

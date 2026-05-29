@@ -24,7 +24,7 @@ This skill implements the testing side of the harness (Stage 05: Evaluation) and
 Use this mode to evaluate a harness artifact rather than a running application.
 
 ### B1. Set up the evaluation
-1. Identify the **artifact under test** (e.g., `agents/planner.agent.md`, `prompts/planner/v2.md`, a skill, a `configs/*.yaml` change).
+1. Identify the **artifact under test** (e.g., `agents/planner.agent.md`, `prompts/planner/v1.md`, a skill, a `configs/*.yaml` change).
 2. Select the **eval case** from `evals/cases/` and the **rubric** from `evals/rubrics/` named by that case.
 3. Record the run context per `telemetry/run-log-schema.md`: agent, skill, prompt version, model profile (`configs/models.yaml`), and inputs.
 

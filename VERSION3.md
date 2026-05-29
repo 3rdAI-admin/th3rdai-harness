@@ -54,13 +54,16 @@ Skills remain reusable procedures an agent can follow.
 
 Current core skills:
 
+- `research`
 - `plan`
 - `plan-reviewer`
 - `build`
+- `eval`
+- `validate`
+- `debug`
+- `revise`
 - `run`
 - `tests`
-- `validate`
-- `revise`
 - `prompt`
 - `commit`
 
@@ -70,10 +73,13 @@ Current core skills:
 
 Prompts are versioned instruction templates with changelogs.
 
-Initial prompt tracks:
+Prompt tracks (one per agent):
 
+- `prompts/researcher/`
 - `prompts/planner/`
+- `prompts/builder/`
 - `prompts/reviewer/`
+- `prompts/evaluator/`
 - `prompts/registry.md`
 
 ### 5. Model Profiles

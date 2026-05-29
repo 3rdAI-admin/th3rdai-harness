@@ -1,30 +1,45 @@
+# Model profiles bind an agent (see configs/agents.yaml) to provider/model settings.
+# This harness is model-agnostic: fill provider/model per environment.
+# See models/providers.md and models/model-matrix.md for selection guidance.
+#
+# Reference shape (copy and fill in; do not leave provider/model as TBD in real use):
+#   profile_name:
+#     provider: claude        # claude | openai | gemini | ollama | ...
+#     model: <model-id>       # e.g. a specific provider model identifier
+#     temperature: 0.2
+#     max_tokens: <optional>
+#     notes: <when to use this profile>
+
+# Defaults below use the Claude 4.x family (capability/cost split). Swap the
+# provider/model per environment — see models/model-matrix.md for the rationale
+# and backup choices. These defaults are not yet eval-verified on this repo.
 model_profiles:
   research:
-    provider: TBD
-    model: TBD
+    provider: claude
+    model: claude-sonnet-4-6
     temperature: 0.2
-    notes: Source-grounded synthesis and context gathering.
+    notes: Source-grounded synthesis and context gathering. Sonnet balances cost and long-context reading.
 
   planning:
-    provider: TBD
-    model: TBD
+    provider: claude
+    model: claude-opus-4-7
     temperature: 0.2
-    notes: Structured planning with low randomness.
+    notes: Structured planning with low randomness. Opus for the deepest reasoning and scope control.
 
   building:
-    provider: TBD
-    model: TBD
+    provider: claude
+    model: claude-sonnet-4-6
     temperature: 0.1
-    notes: Code and file changes with strict adherence to project conventions.
+    notes: Code and file changes with strict adherence to project conventions. Sonnet is strong and cost-effective for execution.
 
   review:
-    provider: TBD
-    model: TBD
+    provider: claude
+    model: claude-opus-4-7
     temperature: 0.1
-    notes: Critical review, defect detection, and risk analysis.
+    notes: Critical review, defect detection, and risk analysis. Opus catches subtle issues best.
 
   evaluation:
-    provider: TBD
-    model: TBD
+    provider: claude
+    model: claude-sonnet-4-6
     temperature: 0.0
-    notes: Stable rubric application and repeatable scoring.
+    notes: Stable rubric application and repeatable scoring. Sonnet at temp 0 for consistency; escalate to Opus for the hardest judgments.

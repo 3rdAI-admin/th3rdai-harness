@@ -2,9 +2,13 @@
 
 ## Purpose
 
-This repository is a plain-text, model-agnostic harness for designing, running, evaluating, and improving AI agents and model workflows.
+This repository is a plain-text, model-agnostic harness for designing, evaluating, and improving AI agents and model workflows.
 
 The harness uses structured context, reusable skills, versioned prompts, explicit agent contracts, model profiles, and evaluation rubrics so AI-assisted work can be repeated, inspected, and improved over time.
+
+## Operating Model
+
+The harness is **agent-driven, not engine-driven**. There is no runtime that executes agents or enforces handoffs automatically; the "agents" are role contracts and the "skills" are procedures that a capable AI agent (or a human) reads and follows. Routing (`configs/routing.yaml`) and stage contracts describe the intended sequence — the driver follows it. This keeps the whole system inspectable and dependency-free. A native orchestrator that would automate this is specified under `plans/native-orchestrator/`.
 
 ## Core Concepts
 
@@ -69,6 +73,7 @@ Runs answer the question: **what happened, with which inputs, model, outputs, an
 | Agents | `agents/` | Define roles, permissions, outputs, and handoffs |
 | Skills | `skills/` | Store reusable workflows and command procedures |
 | Prompts | `prompts/` | Version and track prompt templates |
+| Plans | `plans/` | Store implementation-ready plans and multi-phase efforts |
 | Models | `models/` | Document provider/model choices and tradeoffs |
 | Configs | `configs/` | Store machine-readable agent/model/routing/tool profiles |
 | Evals | `evals/` | Store rubrics, test cases, and evaluation results |

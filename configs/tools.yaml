@@ -25,8 +25,38 @@ tool_policies:
       - git staging
       - git commit
 
+  network_access:
+    allowed:
+      - read approved external references needed for the task
+    requires_approval:
+      - fetching from unlisted or untrusted domains
+      - sending data to external systems
+      - authenticated requests
+
+  mcp_tools:
+    allowed:
+      - read MCP tool and resource descriptors before use
+      - call read-only MCP tools for the task
+    requires_approval:
+      - MCP tools that write, delete, or mutate external state
+      - MCP tools that access secrets or credentials
+      - authenticating an MCP server
+
+  browser_automation:
+    allowed:
+      - navigate and inspect pages for read-only verification
+      - capture screenshots and snapshots
+    requires_approval:
+      - submitting forms or triggering side effects
+      - logins, payments, or other irreversible actions
+      - interacting with production systems
+
 safety_rules:
   - Do not read secret files unless explicitly required and approved.
   - Do not run destructive commands without explicit approval.
   - Do not install dependencies without explicit approval.
   - Do not stage or commit git changes without explicit approval.
+  - Do not call MCP tools that mutate external state without explicit approval.
+  - Inspect an MCP tool's schema before calling it.
+  - Do not perform browser actions with side effects (logins, form submits, payments) without explicit approval.
+  - Prefer read-only network and MCP access; escalate before any write or authenticated action.

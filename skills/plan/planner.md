@@ -1,8 +1,11 @@
 ---
 description: Create an implementation-ready harness plan from a request
+name: plan
 ---
 
-# Plan - Create Implementation Plan from a Request
+# Planner - Create Implementation Plan from a Request
+
+Loaded by `/plan` via `skills/plan/SKILL.md` and `configs/agents.yaml` (`planner.default_skill`).
 
 Use the Planner Agent to create a comprehensive implementation-ready plan from an idea, feature, function, fix, refactor, agent change, prompt change, skill change, eval, model profile, config update, framework change, requirement file, PRD, or chat description.
 
@@ -37,7 +40,7 @@ Use the Planner Agent to create a comprehensive implementation-ready plan from a
 
 ### 3. Create Plan
 
-Write a comprehensive plan to `plans/<plan-name>.md` or `PRPs/<plan-name>.md` if the project already uses PRPs:
+Write a comprehensive plan to `plans/<plan-name>.md` (see `plans/README.md` for naming and layout). For complex, multi-phase work, use an effort folder `plans/<effort-name>/` with an `EFFORT.md` tracker instead, and add it to `plans/INDEX.md`.
 
 ```markdown
 # Plan: <Plan Name>

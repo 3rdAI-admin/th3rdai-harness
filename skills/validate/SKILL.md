@@ -2,6 +2,10 @@
 
 Invoked by: /validate command
 
+## Procedure
+
+Load and follow `skills/validate/validate.md` when executing this skill.
+
 ## Purpose
 Run comprehensive validation for the harness, project structure, implementation changes, and relevant eval/readiness checks.
 

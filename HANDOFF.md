@@ -2,7 +2,7 @@
 
 ## Last Updated
 
-May 25, 2026 — after aligning core skills summary files, detailed command files (`plan.md`, `build.md`, `revise.md`, `prompt.md`, `run.md`, `new-project.md`), bootstrap scripts (`01`–`07`), reviewing specialized files (`plan-reviewer.md`, `e2e-test.md`), and adding explicit scope boundaries to `agents/builder.agent.md`. Harness validation passes 47/47 checks.
+May 25, 2026 — after aligning core skills summary files, detailed command files (`planner.md`, `build.md`, `revise.md`, `prompt.md`, `run.md`, `new-project.md`), bootstrap scripts (`01`–`07`), reviewing specialized files (`plan-reviewer.md`, `e2e-test.md`), and adding explicit scope boundaries to `agents/builder.agent.md`. Harness validation passes 47/47 checks.
 
 ## Update — May 28, 2026
 
@@ -29,6 +29,7 @@ A consistency-and-coverage pass was completed. Validation still passes 47/47. Th
 **Also resolved this session:**
 - `skills/ICM-README.md` and `skills/BUILD-README.md` were archived — both described a PRP slash-command flow and `.commands/`/`sync-commands.sh` infrastructure that does not exist in this repo. See `archive/legacy-docs/`.
 - The repo is now a **git repository** with a baseline commit. A `.gitignore` excludes `node_modules/`, `.gitnexus/`, `__pycache__/`, and `.DS_Store`.
+- Renamed `skills/plan/plan.md` → `skills/plan/planner.md`. Updated `configs/agents.yaml` (`planner.default_skill`), `skills/plan/SKILL.md` (explicit Procedure links for `/plan` and `/plan-reviewer`), and frontmatter on `planner.md` / `plan-reviewer.md`.
 
 **Remaining follow-ups:**
 - None blocking. Future work is tracked as Archon tasks (see project "AI Agent Development Harness (_ICM-Template)").
@@ -139,7 +140,7 @@ Updated summary files include:
 
 Updated detailed command files include:
 
-- `skills/plan/plan.md` now creates harness-aware plans for agents, prompts, skills, evals, models, configs, scripts, docs, and framework changes. It includes Harness References, Harness Context, Safety and Tooling Notes, Open Questions, and Recommended Next Agent fields.
+- `skills/plan/planner.md` now creates harness-aware plans for agents, prompts, skills, evals, models, configs, scripts, docs, and framework changes. It includes Harness References, Harness Context, Safety and Tooling Notes, Open Questions, and Recommended Next Agent fields. Loaded by `/plan` via `skills/plan/SKILL.md` and `configs/agents.yaml`.
 - `skills/build/build.md` now uses Builder Agent framing, supports plans or PRPs, avoids automatic commits, and validates harness, code, scripts, prompts, agents, models, and evals.
 - `skills/revise/revise.md` now supports revising plans, prompts, skills, agents, model profiles, configs, evals, stages, scripts, code, and docs based on validation or eval findings.
 - `skills/prompt/prompt.md` now creates one-off prompts under `prompts/one-off/` or reusable prompt versions under `prompts/<name>/vN.md`.
@@ -212,58 +213,30 @@ Failed:   0
 
 ## Important Notes
 
-- This folder is not currently a git repository, so no git diff or commit was created.
-- Archon was referenced in global user rules, but no Archon files, commands, or project metadata were found in this workspace.
-- `ICM-Framework-Tutorial.docx`, `INITIAL.md`, `FINAL_SUMMARY.md`, and `VERSION2.md.backup` may still reflect the older ICM/content-template era.
-- `skills/validate/SKILL.md.backup` remains as a legacy backup and still contains older context-engineering template language.
-- `skills/plan/plan-reviewer.md` was reviewed in detail. It is a comprehensive Reviewer Agent specification with JSON tool schemas, state machines, and workflow phases, but it is still heavily PRP-centric (e.g., "Validate PRPs Before Implementation", exit strategy references `/build PRPs/<feature>.md`). It would benefit from being reframed as a harness artifact review tool that checks agent contracts, prompt versions, eval rubrics, model profiles, configs, and tool policies.
-- `skills/tests/e2e-test.md` was reviewed in detail. It is a comprehensive browser-based end-to-end testing skill using `agent-browser`, parallel sub-agents, and database validation. It is very application-centric (frontend, backend, database schemas) and would benefit from harness-specific additions: evaluating agent outputs against rubrics, testing prompt-version behavior, validating config changes, and recording results to `evals/results/` and `runs/` instead of only `e2e-screenshots/`.
-- `skills/commit/gitcommit.md` still references conventional git commit workflows without harness-specific release-stage context (e.g., no mention of `stages/07-release/`, run records, or eval preconditions).
-- Re-run `scripts/07-validate-harness.sh` after any changes to confirm structural validation still passes.
+- This repo is a **git repository** with a baseline commit (see May 28 update). Use normal git workflow for changes; commits still require explicit human approval per `CLAUDE.md`.
+- Archon tracks this project as **AI Agent Development Harness (_ICM-Template)** with a seeded task backlog.
+- Legacy ICM-era material lives under `archive/legacy-docs/` (including `INITIAL.md`, `FINAL_SUMMARY.md`, `VERSION2.md`).
+- `skills/validate/SKILL.md.backup` remains as a legacy backup with older context-engineering template language — safe to archive or delete when no longer needed.
+- Plan skill paths: use `skills/plan/planner.md` (not `plan.md`). Reviewer procedure: `skills/plan/plan-reviewer.md`. Both are wired in `skills/plan/SKILL.md` and `configs/agents.yaml`.
+- Re-run `scripts/07-validate-harness.sh` after structural changes to confirm validation still passes.
 
 ## Recommended Next Steps
 
-### 1. Deep-refine remaining specialized skill files
+### 1. Optional cleanup
 
-The main stale references have been removed from active skill files, and Harness References have been added to `skills/plan/SKILL.md`, `skills/tests/SKILL.md`, `skills/commit/SKILL.md`, and `skills/plan/plan.md`. Remaining files to review for deeper harness consistency:
+- Archive or remove `skills/validate/SKILL.md.backup` if no longer needed.
+- Spot-check specialized skills after future harness changes (`skills/plan/planner.md`, `skills/plan/plan-reviewer.md`, `skills/tests/e2e-test.md`, `skills/commit/gitcommit.md`).
 
-- `skills/plan/plan-reviewer.md`
-- `skills/tests/e2e-test.md`
-- `skills/commit/gitcommit.md`
-- `skills/validate/SKILL.md.backup` if backup cleanup is desired
+### 2. Expand eval and run coverage (ongoing)
 
-Goal: make each command fully consistent with agent contracts, stage contracts, evals, model profiles, run records, and tool safety policy.
+May 28 added baseline cases under `evals/cases/{prompt-design,code-review,tool-safety,agent-handoff,debugging}/` and examples under `runs/examples/`. Continue adding cases and run records using `telemetry/run-log-schema.md` as workflows mature.
 
-### 2. Add more eval cases
+### 3. Legacy archive
 
-Current eval coverage is minimal. Add cases for:
-
-- Prompt design
-- Code review
-- Tool safety
-- Agent handoff quality
-- Model comparison
-- Debugging/refactoring workflows
-
-### 3. Add run examples
-
-Create example run records under `runs/examples/` or `runs/` using `telemetry/run-log-schema.md`.
-
-### 4. Decide what to do with legacy files
-
-Review older files and either revise, archive, or remove them:
-
-- `FINAL_SUMMARY.md`
-- `INITIAL.md`
-- `VERSION2.md.backup`
-- `ICM-Framework-Tutorial.docx`
-
-### 5. Consider initializing git
-
-If version control is desired, initialize git and commit the harness baseline after reviewing the generated files.
+Older ICM-era files are under `archive/legacy-docs/`. No further action required unless new legacy files surface in the repo root.
 
 ## Suggested Next Agent Prompt
 
 ```text
-You are taking over the /Users/james/Projects/_ICM-Template project. Read HANDOFF.md, README.md, FRAMEWORK.md, CLAUDE.md, CONTEXT.md, and VERSION3.md first. The repo is a plain-text, model-agnostic AI agent/model development harness. Validation currently passes with scripts/07-validate-harness.sh. Core skills, detailed commands, and bootstrap scripts have been aligned. Harness References have been added to skills/plan/SKILL.md, skills/tests/SKILL.md, skills/commit/SKILL.md, and skills/plan/plan.md. Continue by deep-refining remaining specialized skill files (skills/plan/plan-reviewer.md, skills/tests/e2e-test.md, skills/commit/gitcommit.md), then add more eval cases and run examples.
+You are taking over the /Users/james/Projects/_ICM-Template project. Read HANDOFF.md, README.md, FRAMEWORK.md, CLAUDE.md, CONTEXT.md, and VERSION3.md first. The repo is a plain-text, model-agnostic AI agent/model development harness. Validation currently passes with scripts/07-validate-harness.sh. Core skills are aligned: /plan loads skills/plan/planner.md (via skills/plan/SKILL.md and configs/agents.yaml); /plan-reviewer loads skills/plan/plan-reviewer.md. Specialized skills (e2e-test, gitcommit) and eval/run examples were refined May 28. Continue with optional cleanup, expanded eval cases, and run examples as needed.
 ```

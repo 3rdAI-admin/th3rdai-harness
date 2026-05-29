@@ -2,6 +2,10 @@
 
 Invoked by: /plan command
 
+## Procedure
+
+Load and follow `skills/plan/planner.md` when executing this skill.
+
 ## Purpose
 Use the Planner Agent to create an implementation-ready plan for a feature, agent, prompt, skill, eval, model profile, config, or framework change.
 
@@ -14,6 +18,7 @@ Use the Planner Agent to create an implementation-ready plan for a feature, agen
 Creates a plan or PRP with goal, scope, context, implementation steps, validation criteria, risks, affected files, open questions, and recommended next agent.
 
 ## Harness References
+- Procedure: `skills/plan/planner.md`
 - Agent: `agents/planner.agent.md`
 - Prompt: `prompts/planner/v1.md`
 - Config: `configs/agents.yaml`
@@ -25,6 +30,10 @@ Run `/plan-reviewer` or use `agents/reviewer.agent.md` for review, then run `/bu
 ## Related Skill: plan-reviewer
 
 Invoked by: /plan-reviewer command
+
+### Procedure
+
+Load and follow `skills/plan/plan-reviewer.md` when executing this skill.
 
 ### Purpose
 Use the Reviewer Agent to review and improve an existing plan or PRP before implementation.
@@ -38,6 +47,11 @@ Use the Reviewer Agent to review and improve an existing plan or PRP before impl
 
 ### Output
 Updates the relevant plan or PRP with fixes, implementation guidance, testing coverage, safety notes, and evaluation gaps.
+
+### Harness References
+- Procedure: `skills/plan/plan-reviewer.md`
+- Agent: `agents/reviewer.agent.md`
+- Config: `configs/agents.yaml`
 
 ### Next Step
 Run `/build <plan-path>` after review findings are resolved.

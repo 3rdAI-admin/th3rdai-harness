@@ -1,8 +1,11 @@
 ---
 description: Review and improve a plan or harness artifact before execution
+name: plan-reviewer
 ---
 
 # Plan Reviewer - Validate Harness Artifacts Before Execution
+
+Loaded by `/plan-reviewer` via `skills/plan/SKILL.md` and `configs/agents.yaml` (`reviewer.default_skill`).
 
 This skill implements the **Reviewer Agent** (`agents/reviewer.agent.md`). It reviews a plan or any harness artifact — agent contract, prompt version, skill, eval rubric/case, model profile, config, or tool policy — and returns it validated and ready for the next stage. It is the review counterpart used in **Stage 06 (Iteration)** and as a gate before **Stage 07 (Release)**.
 
