@@ -15,6 +15,7 @@ This skill implements the **Reviewer Agent** (`agents/reviewer.agent.md`). It re
 - Rubrics: `evals/rubrics/plan-quality.md`, `evals/rubrics/agent-output-quality.md`, `evals/rubrics/tool-safety.md`
 - Tool policy: `configs/tools.yaml`
 - Run log: `telemetry/run-log-schema.md`
+- Deployment overlay (optional): `_config/project-notes.md`
 
 ## ROLE
 **Role Title:** Senior Harness Reviewer

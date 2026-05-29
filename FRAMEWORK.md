@@ -81,6 +81,15 @@ Runs answer the question: **what happened, with which inputs, model, outputs, an
 | Runs | `runs/` | Store execution records and experiment notes |
 | Telemetry | `telemetry/` | Define logging and observability conventions |
 | Scripts | `scripts/` | Bootstrap, validate, and maintain harness workspaces |
+| Deployment overlay | `_config/project-notes.md` | Optional per-project commands, verify steps, and tooling pointers (see below) |
+
+## Deployment overlay (optional)
+
+Skills under `skills/` stay **portable**: they describe harness workflows without hardcoding paths, test counts, or CLIs that belong to one application.
+
+When a bootstrapped project needs local detail (verify commands, optional subsystems, resume pointers, tracker IDs), maintain **`_config/project-notes.md`**. Copy from `_config/project-notes.TEMPLATE.md` during bootstrap (`skills/new-project.md`).
+
+Skill procedures may instruct agents to read `project-notes.md` when it exists. Keep deployment-specific content there — not duplicated inside portable skill files.
 
 ## Default Lifecycle
 

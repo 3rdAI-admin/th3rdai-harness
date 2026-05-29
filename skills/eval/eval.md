@@ -15,8 +15,10 @@ Use the Evaluator Agent to measure whether an agent, prompt, skill, or model pro
 - Rubrics: `evals/rubrics/`
 - Cases: `evals/cases/`
 - Results: `evals/results/`
+- Registry: `evals/README.md`
 - Telemetry: `telemetry/run-log-schema.md`
 - Stage: `stages/05-evaluation/`
+- Deployment overlay (optional): `_config/project-notes.md`
 
 ## Input: $ARGUMENTS
 
@@ -113,15 +115,9 @@ Next:
 - Needs revision -> /revise <artifact> "<finding>" then re-run /eval
 ```
 
-## CLI Eval Hook (optional)
+## Optional eval scaffolding
 
-To scaffold the result record + run record non-interactively, use the native orchestrator's eval hook:
-
-```text
-python3 scripts/orchestrate.py eval evals/cases/planning/basic-feature-plan.md [--rubric evals/rubrics/<name>.md]
-```
-
-It resolves the rubric (explicit `--rubric`, else the case's `## Rubric` reference), writes a **PENDING** `evals/results/<run-id>.md` stub pre-filled with the rubric's criteria, and a matching run record (`agent: evaluator`, `validation.status: skipped`). It prepares context only — the Evaluator still produces the output, scores each criterion, and sets the verdict per the steps above. It never scores or invokes a model.
+Some deployments include a CLI that pairs a case with its rubric and writes **PENDING** result/run stubs (Evaluator still scores manually). If `scripts/orchestrate.py` exists, see `_config/project-notes.md` for the eval subcommand; otherwise use `/eval` only.
 
 ## Safety and Tooling Notes
 

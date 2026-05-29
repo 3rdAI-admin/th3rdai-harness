@@ -23,6 +23,7 @@ A diagnosis tied to evidence (logs, stack traces, file lines), a stated root cau
 - Rubrics: `evals/rubrics/agent-output-quality.md`
 - Case: `evals/cases/debugging/failing-test-diagnosis.md`
 - Stage: `stages/06-iteration/`
+- Deployment overlay (optional): `_config/project-notes.md`
 
 ## Next Step
 - Root cause found: hand the minimal fix to the Builder Agent via `/build`, or `/revise` the source artifact if the defect is in a plan/prompt/config.

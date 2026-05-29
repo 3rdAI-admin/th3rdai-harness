@@ -12,6 +12,7 @@ Create a new project folder with the AI agent/model development harness preconfi
 - Validation: `scripts/07-validate-harness.sh`
 - Framework: `FRAMEWORK.md`
 - Routing: `CONTEXT.md`
+- Deployment overlay template: `_config/project-notes.TEMPLATE.md` → customize as `project-notes.md`
 
 ## Input: $ARGUMENTS
 
@@ -63,23 +64,18 @@ The generator runs validation automatically. If needed, re-run:
 PROJECT_ROOT=<project-path> <project-path>/scripts/07-validate-harness.sh
 ```
 
-Expected result:
-
-```text
-Passed:   47
-Warnings: 0
-Failed:   0
-```
+Capture the actual `Passed` / `Warnings` / `Failed` summary from script output.
 
 ### 4. Recommended Setup
 
 After creation:
 
 1. Review `CLAUDE.md` and `FRAMEWORK.md`.
-2. Configure model choices in `configs/models.yaml`.
-3. Update or add agent contracts in `agents/`.
-4. Add prompt versions in `prompts/`.
-5. Add eval cases in `evals/`.
+2. Copy or customize `_config/project-notes.md` from `_config/project-notes.TEMPLATE.md` (deployment-specific commands and optional tooling).
+3. Configure model choices in `configs/models.yaml`.
+4. Update or add agent contracts in `agents/`.
+5. Add prompt versions in `prompts/`.
+6. Add eval cases in `evals/`.
 
 ### 5. Output
 

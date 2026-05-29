@@ -12,8 +12,9 @@ Use the Builder Agent to implement an approved plan or PRP, validate the result,
 - Agent: `agents/builder.agent.md`
 - Stage: `stages/04-tool-integration/`, `stages/06-iteration/`, or `stages/07-release/`
 - Tool policy: `configs/tools.yaml`
-- Validation: `skills/validate/SKILL.md`
+- Validation: `skills/validate/validate.md`
 - Telemetry: `telemetry/run-log-schema.md`
+- Deployment overlay (optional): `_config/project-notes.md`
 
 ## Usage
 
@@ -91,6 +92,8 @@ Run validation based on the artifact type.
 ```bash
 scripts/07-validate-harness.sh
 ```
+
+If `_config/project-notes.md` exists, also run any extra **Verify green** commands listed there (project-specific tests or optional CLIs).
 
 ### Shell Scripts
 

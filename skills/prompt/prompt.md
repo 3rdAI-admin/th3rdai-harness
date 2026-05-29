@@ -13,6 +13,7 @@ Generate a focused, well-structured prompt for a single task or draft a versione
 - Planner prompt: `prompts/planner/v1.md`
 - Reviewer prompt: `prompts/reviewer/v1.md`
 - Eval: `evals/rubrics/agent-output-quality.md`
+- Deployment overlay (optional): `_config/project-notes.md`
 
 ## Input: $ARGUMENTS
 

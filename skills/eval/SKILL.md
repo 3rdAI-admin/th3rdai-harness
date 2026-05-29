@@ -26,6 +26,7 @@ Produces an evaluation result with rubric scores, rationale, failure analysis, a
 - Results: `evals/results/`
 - Config: `configs/agents.yaml`
 - Telemetry: `telemetry/run-log-schema.md`
+- Deployment overlay (optional): `_config/project-notes.md`
 
 ## Next Step
 - Acceptable: proceed to `stages/07-release/`

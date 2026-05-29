@@ -1,6 +1,10 @@
-# Skill: gitcommit
+# Skill: commit
 
 Invoked by: /gitcommit command
+
+## Procedure
+
+Load and follow `skills/commit/gitcommit.md` when executing this skill.
 
 ## Purpose
 Review local changes, prepare an accurate commit message and optional changelog summary, and commit only changes explicitly approved by the user.
@@ -16,9 +20,11 @@ Review local changes, prepare an accurate commit message and optional changelog 
 Creates an approved git commit with a clear message, concise change summary, validation notes, and any follow-up risks.
 
 ## Harness References
+- Procedure: `skills/commit/gitcommit.md`
 - Stage: `stages/07-release/`
 - Tool policy: `configs/tools.yaml`
 - Run log schema: `telemetry/run-log-schema.md`
+- Deployment overlay (optional): `_config/project-notes.md`
 
 ## Next Step
 Review `git status` and `git diff`, confirm the intended files and commit message, then run the approved commit.

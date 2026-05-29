@@ -14,6 +14,8 @@ Use the Researcher Agent to collect the context needed to plan or implement safe
 - Agent: `agents/researcher.agent.md`
 - Stage: `stages/01-task-definition/`
 - Framework: `FRAMEWORK.md`
+- Evals: `evals/README.md`, `evals/cases/`, `evals/rubrics/`
+- Deployment overlay (optional): `_config/project-notes.md`
 
 ## Input: $ARGUMENTS
 
@@ -31,6 +33,7 @@ Use the Researcher Agent to collect the context needed to plan or implement safe
 
 - Read relevant project files, configs, agent contracts, and stage contracts.
 - Search the workspace for the symbols, conventions, and patterns the task touches.
+- If `_config/project-notes.md` exists, read it for deployment-specific resume paths and tooling — do not assume every project has the same optional components.
 - Read approved external references only when needed and permitted by `configs/tools.yaml`.
 - Tie every finding to a file path or source — if you cannot cite it, mark it as an assumption.
 
@@ -78,6 +81,7 @@ Recommended next step:
 /research "how does the harness validation script decide pass/fail?"
 /research "what conventions do existing skills follow before I add a new one?"
 /research configs/tools.yaml "what tool tiers exist and what needs approval?"
+/research "what application code owns authentication in this repo?"
 ```
 
 ## Success Criteria

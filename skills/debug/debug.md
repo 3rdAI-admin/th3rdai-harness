@@ -16,6 +16,7 @@ Investigate a failure using evidence, not guesses. The goal is a root cause supp
 - Case: `evals/cases/debugging/failing-test-diagnosis.md`
 - Stage: `stages/06-iteration/`
 - Telemetry: `telemetry/run-log-schema.md`
+- Deployment overlay (optional): `_config/project-notes.md`
 
 ## Input: $ARGUMENTS
 
@@ -29,6 +30,15 @@ Investigate a failure using evidence, not guesses. The goal is a root cause supp
 - Identify the exact failing command, test, or behavior.
 - Capture the real output (error text, stack trace, diff between expected and actual).
 - Do not theorize before you have observed the failure.
+- If `_config/project-notes.md` exists, check its **Debug shortcuts** table for project-specific repro commands.
+
+**Common harness repro commands (when present in the project):**
+
+| Area | Command |
+|------|---------|
+| Harness structure | `scripts/07-validate-harness.sh` |
+| Shell scripts | `bash -n scripts/*.sh` |
+| Project tests | per `_config/project-notes.md` or the project's README |
 
 ### 2. Localize
 
@@ -90,6 +100,7 @@ Next:
 /debug "test_parse_date expects 2026-05-28 but gets 2026-28-05"
 /debug "scripts/07-validate-harness.sh exits 1 after the rename"
 /debug "planner skill loads the wrong file"
+/debug "<application test> fails with unexpected status code"
 ```
 
 ## Success Criteria

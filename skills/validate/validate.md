@@ -13,9 +13,11 @@ Run comprehensive validation for the harness: framework structure, cross-referen
 
 - Script: `scripts/07-validate-harness.sh`
 - Rubrics: `evals/rubrics/`
+- Cases: `evals/cases/`
 - Runs: `runs/`
 - Telemetry: `telemetry/run-log-schema.md`
 - Stages: `stages/05-evaluation/`, `stages/07-release/`
+- Deployment overlay (optional): `_config/project-notes.md`
 
 ## Input: $ARGUMENTS
 
@@ -31,7 +33,9 @@ Run the harness validation script and capture the result:
 scripts/07-validate-harness.sh
 ```
 
-This checks required files/folders, lifecycle stages, and cross-references (agent contract and `default_skill` paths in `configs/agents.yaml`, routing agents, model profiles, and prompt-registry version paths). A failure here usually means config drift — a renamed or missing file.
+This checks required files/folders, lifecycle stages, and cross-references (agent contract and `default_skill` paths in `configs/agents.yaml`, routing agents, model profiles, prompt-registry version paths, skill path resolution, and eval case ↔ rubric coherence when that section exists in the validator). A failure here usually means config drift — a renamed or missing file.
+
+Capture the actual summary line (`Passed` / `Warnings` / `Failed`) from the script output — do not assume a fixed check count.
 
 ### 2. Change Validation
 
@@ -40,6 +44,7 @@ For implementation changes, run the relevant checks and record each:
 - Shell scripts: `bash -n scripts/*.sh`
 - Linters/tests for any application code touched
 - Re-read changed configs to confirm YAML is well-formed
+- If `_config/project-notes.md` exists, run any additional **Verify green** commands listed there (project-specific tests, optional CLIs, etc.)
 
 ### 3. Behavior Validation (when applicable)
 
@@ -47,6 +52,7 @@ When a prompt, agent, skill, or model profile changed, validate behavior — do 
 
 - Use `evals/rubrics/` and `evals/cases/` via `/eval`
 - Record reusable evidence to `evals/results/` and `runs/`
+- Use project-specific rubrics/cases named in `_config/project-notes.md` when validating optional subsystems
 
 ### 4. Report
 
@@ -81,6 +87,7 @@ Next:
 /validate "structure only"
 /validate configs/agents.yaml
 /validate prompts/planner/v1.md
+/validate src/api/
 ```
 
 ## Success Criteria

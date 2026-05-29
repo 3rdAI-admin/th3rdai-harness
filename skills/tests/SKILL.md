@@ -15,7 +15,9 @@ Run comprehensive testing for implemented applications or harness workflows, inc
 Tests user journeys or representative harness cases, captures evidence, validates expected behavior, documents issues, fixes discovered issues when appropriate, and reports results.
 
 ## Harness References
+- Procedure: `skills/tests/e2e-test.md`
 - Agent: `agents/evaluator.agent.md`
 - Evals: `evals/`
 - Runs: `runs/`
 - Telemetry: `telemetry/run-log-schema.md`
+- Deployment overlay (optional): `_config/project-notes.md`

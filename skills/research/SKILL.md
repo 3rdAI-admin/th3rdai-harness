@@ -22,6 +22,7 @@ Produces a research summary with a source list (file paths or references), assum
 - Agent: `agents/researcher.agent.md`
 - Stage: `stages/01-task-definition/`
 - Config: `configs/agents.yaml`
+- Deployment overlay (optional): `_config/project-notes.md`
 
 ## Next Step
 Hand findings to the Planner Agent via `/plan`, or to the Evaluator Agent when the research supports an evaluation.

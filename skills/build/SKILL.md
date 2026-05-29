@@ -14,9 +14,12 @@ Use the Builder Agent to implement an approved plan or PRP, validate the result,
 Implements approved changes, runs relevant validation, records skipped checks honestly, and summarizes files changed, validation results, risks, and next steps.
 
 ## Harness References
+- Procedure: `skills/build/build.md`
 - Agent: `agents/builder.agent.md`
 - Config: `configs/tools.yaml`
+- Validation: `skills/validate/validate.md`
 - Release stage: `stages/07-release/`
+- Deployment overlay (optional): `_config/project-notes.md`
 
 ## Next Step
 - Success: run `/validate` or move to `stages/05-evaluation/` or `stages/07-release/`

@@ -8,7 +8,9 @@ Create a git commit only after reviewing the current changes, drafting an accura
 
 ## Harness Context
 
-This skill implements the commit step of **Stage 07: Release** (`stages/07-release/`). Before committing a harness artifact (agent, prompt, skill, model profile, eval, config, or framework change):
+This skill implements the commit step of **Stage 07: Release** (`stages/07-release/`). Deployment-specific release checks may be listed in `_config/project-notes.md`.
+
+Before committing a harness artifact (agent, prompt, skill, model profile, eval, config, or framework change):
 
 - Confirm any required evaluation has run and is not failing — do not release on unresolved blocking eval failures (`evals/results/`).
 - Confirm changelogs and registries are updated (e.g., `prompts/<name>/changelog.md`, `prompts/registry.md`).

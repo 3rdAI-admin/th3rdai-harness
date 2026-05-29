@@ -13,6 +13,7 @@ Use `/revise` when `/build`, `/validate`, review, or evaluation reveals that the
 - Evals: `evals/`
 - Runs: `runs/`
 - Telemetry: `telemetry/run-log-schema.md`
+- Deployment overlay (optional): `_config/project-notes.md`
 
 ## Input: $ARGUMENTS
 

@@ -10,7 +10,7 @@
 
 Read in order: this file → `README.md` (orchestrator CLI section) → `VERSION3.md` → `plans/native-orchestrator/EFFORT.md`.
 
-**Verify green:**
+**Verify green:** see `_config/project-notes.md` (this repo) or:
 
 ```bash
 scripts/07-validate-harness.sh

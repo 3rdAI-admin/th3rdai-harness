@@ -15,6 +15,8 @@ Start an application, demo, harness workflow, or approved runtime target in deve
 Starts the approved runtime target, reports the command, URL or process details, and next validation steps.
 
 ## Harness References
+- Procedure: `skills/run/run.md`
 - Agent: `agents/builder.agent.md`
 - Tool policy: `configs/tools.yaml`
 - Runs: `runs/`
+- Deployment overlay (optional): `_config/project-notes.md`

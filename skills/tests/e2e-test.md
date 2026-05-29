@@ -13,6 +13,7 @@ This skill implements the testing side of the harness (Stage 05: Evaluation) and
 - Model-comparison template: `evals/results/_TEMPLATE-model-comparison.md`
 - Run log schema: `telemetry/run-log-schema.md`
 - Tool policy: `configs/tools.yaml`
+- Deployment overlay (optional): `_config/project-notes.md` (extra cases, app URLs, tooling)
 
 ## Mode Selection
 

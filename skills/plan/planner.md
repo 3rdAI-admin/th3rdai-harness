@@ -16,6 +16,7 @@ Use the Planner Agent to create a comprehensive implementation-ready plan from a
 - Stage: `stages/01-task-definition/`
 - Eval: `evals/rubrics/plan-quality.md`
 - Config: `configs/agents.yaml`
+- Deployment overlay (optional): `_config/project-notes.md`
 
 ## Input: $ARGUMENTS
 
@@ -33,6 +34,7 @@ Use the Planner Agent to create a comprehensive implementation-ready plan from a
 ### 2. Research and Context
 
 - Read `FRAMEWORK.md`, `CONTEXT.md`, and relevant stage contracts
+- If `_config/project-notes.md` exists, read it for deployment-specific constraints before planning optional subsystems
 - Read relevant agent contracts from `agents/`
 - Check related prompts, skills, configs, model profiles, evals, and run records
 - Explore existing codebase or harness files for patterns
@@ -104,7 +106,7 @@ Write a comprehensive plan to `plans/<plan-name>.md` (see `plans/README.md` for 
 ## Example Usage
 
 ```text
-/plan INITIAL.md
+/plan specs/feature.md
 /plan "Add a reviewer agent for security-sensitive changes"
 /plan "Create an eval case for prompt design quality"
 /plan "Refactor the bootstrap scripts to support model profiles"

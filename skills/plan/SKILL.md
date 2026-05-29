@@ -23,6 +23,7 @@ Creates a plan or PRP with goal, scope, context, implementation steps, validatio
 - Prompt: `prompts/planner/v1.md`
 - Config: `configs/agents.yaml`
 - Eval: `evals/rubrics/plan-quality.md`
+- Deployment overlay (optional): `_config/project-notes.md`
 
 ## Next Step
 Run `/plan-reviewer` or use `agents/reviewer.agent.md` for review, then run `/build <plan-path>` when approved.
@@ -52,6 +53,7 @@ Updates the relevant plan or PRP with fixes, implementation guidance, testing co
 - Procedure: `skills/plan/plan-reviewer.md`
 - Agent: `agents/reviewer.agent.md`
 - Config: `configs/agents.yaml`
+- Deployment overlay (optional): `_config/project-notes.md`
 
 ### Next Step
 Run `/build <plan-path>` after review findings are resolved.
