@@ -48,10 +48,10 @@ The Goal and Scope above describe the **core (phases 01–03)**: dependency-free
 
 | # | Phase | Plan File | Depends On | Status |
 |---|-------|-----------|------------|--------|
-| 01 | Config loader + run-log writer | `01-config-and-runlog.md` | — | review |
-| 02 | Stage/agent sequencer (dry-run) | `02-sequencer.md` | 01 | review |
-| 03 | CLI + eval hook | `03-cli-and-eval-hook.md` | 02 | review |
-| 04 | Execution adapter (opt-in) | `04-execution-adapter.md` | 03 | todo |
+| 01 | Config loader + run-log writer | `01-config-and-runlog.md` | — | done |
+| 02 | Stage/agent sequencer (dry-run) | `02-sequencer.md` | 01 | done |
+| 03 | CLI + eval hook | `03-cli-and-eval-hook.md` | 02 | done |
+| 04 | Execution adapter (opt-in) | `04-execution-adapter.md` | 03 | review |
 
 Status values: `todo`, `doing`, `review`, `done`.
 
