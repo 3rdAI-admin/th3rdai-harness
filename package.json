@@ -1,4 +1,8 @@
 {
+  "name": "th3rdai-harness",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Plain-text, model-agnostic AI agent development harness",
   "dependencies": {
     "gitnexus": "^1.6.5"
   }

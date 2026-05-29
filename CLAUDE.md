@@ -47,7 +47,7 @@ This workspace uses an agent-oriented version of the Interpretable Context Metho
 <!-- gitnexus:start -->
 # GitNexus — Code Intelligence
 
-This project is indexed by GitNexus as **_ICM-Template** (700 symbols, 700 relationships, 0 execution flows). Use the GitNexus MCP tools to understand code, assess impact, and navigate safely.
+This project is indexed by GitNexus as **th3rdai-harness** (904 symbols, 901 relationships, 0 execution flows). Use the GitNexus MCP tools to understand code, assess impact, and navigate safely.
 
 > If any GitNexus tool warns the index is stale, run `npx gitnexus analyze` in terminal first.
 
@@ -70,10 +70,10 @@ This project is indexed by GitNexus as **_ICM-Template** (700 symbols, 700 relat
 
 | Resource | Use for |
 |----------|---------|
-| `gitnexus://repo/_ICM-Template/context` | Codebase overview, check index freshness |
-| `gitnexus://repo/_ICM-Template/clusters` | All functional areas |
-| `gitnexus://repo/_ICM-Template/processes` | All execution flows |
-| `gitnexus://repo/_ICM-Template/process/{name}` | Step-by-step execution trace |
+| `gitnexus://repo/th3rdai-harness/context` | Codebase overview, check index freshness |
+| `gitnexus://repo/th3rdai-harness/clusters` | All functional areas |
+| `gitnexus://repo/th3rdai-harness/processes` | All execution flows |
+| `gitnexus://repo/th3rdai-harness/process/{name}` | Step-by-step execution trace |
 
 ## CLI
 

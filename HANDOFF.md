@@ -24,7 +24,7 @@ A consistency-and-coverage pass was completed. Validation still passes 47/47. Th
 - `skills/tests/e2e-test.md` now has Mode A (app/browser E2E) and Mode B (harness artifact testing against rubrics, results to `evals/results/` + `runs/`).
 - `skills/commit/gitcommit.md` gained Stage 07 Release context (eval preconditions, run records, `configs/tools.yaml` approvals).
 
-**Tracking:** This project is now in Archon as **AI Agent Development Harness (_ICM-Template)** with a seeded task backlog.
+**Tracking:** This project is now in Archon as **AI Agent Development Harness (th3rdai-harness)** with a seeded task backlog.
 
 **Also resolved this session:**
 - `skills/ICM-README.md` and `skills/BUILD-README.md` were archived — both described a PRP slash-command flow and `.commands/`/`sync-commands.sh` infrastructure that does not exist in this repo. See `archive/legacy-docs/`.
@@ -32,7 +32,7 @@ A consistency-and-coverage pass was completed. Validation still passes 47/47. Th
 - Renamed `skills/plan/plan.md` → `skills/plan/planner.md`. Updated `configs/agents.yaml` (`planner.default_skill`), `skills/plan/SKILL.md` (explicit Procedure links for `/plan` and `/plan-reviewer`), and frontmatter on `planner.md` / `plan-reviewer.md`.
 
 **Remaining follow-ups:**
-- None blocking. Future work is tracked as Archon tasks (see project "AI Agent Development Harness (_ICM-Template)").
+- None blocking. Future work is tracked as Archon tasks (see project "AI Agent Development Harness (th3rdai-harness)").
 
 ## Current State
 
@@ -214,7 +214,7 @@ Failed:   0
 ## Important Notes
 
 - This repo is a **git repository** with a baseline commit (see May 28 update). Use normal git workflow for changes; commits still require explicit human approval per `CLAUDE.md`.
-- Archon tracks this project as **AI Agent Development Harness (_ICM-Template)** with a seeded task backlog.
+- Archon tracks this project as **AI Agent Development Harness (th3rdai-harness)** with a seeded task backlog.
 - Legacy ICM-era material lives under `archive/legacy-docs/` (including `INITIAL.md`, `FINAL_SUMMARY.md`, `VERSION2.md`).
 - `skills/validate/SKILL.md.backup` remains as a legacy backup with older context-engineering template language — safe to archive or delete when no longer needed.
 - Plan skill paths: use `skills/plan/planner.md` (not `plan.md`). Reviewer procedure: `skills/plan/plan-reviewer.md`. Both are wired in `skills/plan/SKILL.md` and `configs/agents.yaml`.
@@ -238,5 +238,5 @@ Older ICM-era files are under `archive/legacy-docs/`. No further action required
 ## Suggested Next Agent Prompt
 
 ```text
-You are taking over the /Users/james/Projects/_ICM-Template project. Read HANDOFF.md, README.md, FRAMEWORK.md, CLAUDE.md, CONTEXT.md, and VERSION3.md first. The repo is a plain-text, model-agnostic AI agent/model development harness. Validation currently passes with scripts/07-validate-harness.sh. Core skills are aligned: /plan loads skills/plan/planner.md (via skills/plan/SKILL.md and configs/agents.yaml); /plan-reviewer loads skills/plan/plan-reviewer.md. Specialized skills (e2e-test, gitcommit) and eval/run examples were refined May 28. Continue with optional cleanup, expanded eval cases, and run examples as needed.
+You are taking over this AI Agent Development Harness project (repo root `th3rdai-harness`). Read HANDOFF.md, README.md, FRAMEWORK.md, CLAUDE.md, CONTEXT.md, and VERSION3.md first. The repo is a plain-text, model-agnostic AI agent/model development harness. Validation currently passes with scripts/07-validate-harness.sh. Core skills are aligned: /plan loads skills/plan/planner.md (via skills/plan/SKILL.md and configs/agents.yaml); /plan-reviewer loads skills/plan/plan-reviewer.md. Specialized skills (e2e-test, gitcommit) and eval/run examples were refined May 28. Continue with optional cleanup, expanded eval cases, and run examples as needed.
 ```

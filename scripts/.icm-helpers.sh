@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# Shared helpers for ICM tutorial scripts
+# Shared helpers for th3rdai-harness setup scripts
 
 GREEN='\033[0;32m'; BLUE='\033[0;34m'; YELLOW='\033[1;33m'
 CYAN='\033[0;36m'; BOLD='\033[1m'; DIM='\033[2m'; NC='\033[0m'
@@ -28,7 +28,7 @@ load_project_path() {
   fi
 
   # Fallback: ask the user
-  read -rp "$(echo -e "${CYAN}?${NC} Path to your ICM project folder: ")" PROJECT_PATH
+  read -rp "$(echo -e "${CYAN}?${NC} Path to your harness project folder: ")" PROJECT_PATH
   PROJECT_PATH="${PROJECT_PATH/#\~/$HOME}"
 
   if [ ! -d "$PROJECT_PATH" ]; then
