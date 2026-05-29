@@ -1,0 +1,16 @@
+# Execution config for the optional `orchestrate route --execute` mode (Phase 04).
+#
+# Disabled by default: no CLI command is configured, so `--adapter cli` refuses to
+# run until you set one. This file is the ONLY place a real model/CLI command is
+# wired — the orchestrator core stays dependency-free and dry-run by default.
+#
+# To enable a real run, set cli.command to an installed agent CLI, e.g.:
+#   command:
+#     - claude
+#     - -p
+# The assembled context bundle is passed to that command on stdin.
+execution:
+  default_adapter: noop      # noop (dry-run; default) | cli
+  cli:
+    command: []              # empty = not configured (cli adapter refuses to run)
+    timeout_seconds: 120

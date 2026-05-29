@@ -29,13 +29,14 @@ Task Definition → Agent Design → Prompt Design → Tool Integration → Eval
 
 ## Optional Orchestrator CLI
 
-A dependency-free, dry-run coordinator (stdlib Python; no install). Implemented in Phases 01-03 of `plans/native-orchestrator/`.
+A dependency-free coordinator (stdlib Python; no install), dry-run by default with opt-in execution. Implemented in Phases 01-04 of `plans/native-orchestrator/`.
 
 ### What It Does
 
 - **Phase 01**: Reads `configs/*.yaml` with a stdlib-only YAML subset parser; writes run records conforming to `telemetry/run-log-schema.md`
 - **Phase 02**: Resolves lifecycle routes from `configs/routing.yaml` into ordered agent steps with context bundles
 - **Phase 03**: Provides CLI + eval scaffolding hooks
+- **Phase 04**: Adds opt-in, approval-gated execution (`route --execute`) via pluggable adapters (`noop`/`cli`)
 
 ### Usage
 
@@ -47,6 +48,9 @@ python3 scripts/orchestrate.py route <route-name>
 
 # Pair an eval case with its rubric and scaffold a PENDING result + run record
 python3 scripts/orchestrate.py eval evals/cases/<category>/<case>.md
+
+# Opt-in: run a route step-by-step through an adapter (approval-gated)
+python3 scripts/orchestrate.py route <route-name> --execute --adapter cli --max-steps 1
 ```
 
 ### Available Routes
@@ -71,14 +75,14 @@ Defined in `configs/routing.yaml`:
 
 ### Safety Model
 
-The orchestrator is **coordinator-only** by design:
+The orchestrator is **coordinator-first** by design:
 
-- Dry-run by default (no `--execute` flag implemented yet)
-- Never invokes a model or makes network calls
-- Assembles context bundles and records intent, does not execute
-- Dependency-free: Python 3.9+ stdlib only, no `pip install`
+- Dry-run by default; execution is **opt-in and approval-gated** via `--execute`
+- The default path never invokes a model or makes network calls
+- Assembles context bundles and records intent; only `--execute` runs a step (through an adapter)
+- Dependency-free: Python 3.9+ stdlib only, no `pip install` (the `cli` adapter shells out to an *already-installed* CLI)
 
-**Phase 04** (execution adapter) is fully specified in `plans/native-orchestrator/04-execution-adapter.md` but not yet implemented. It would add opt-in, approval-gated execution via `--execute` flag.
+**Phase 04** (execution adapter) is implemented: `route --execute` runs each step through an adapter — `noop` (default; assembles but executes nothing) or `cli` (shells out to the agent CLI configured in `configs/execution.yaml`). It stays opt-in and approval-gated: `configs/tools.yaml` gates and the self-modification guard (writes to `agents/`, `configs/`, `scripts/orchestrator/`) are **never** waived by `--yes`, `--max-steps` bounds the loop, and the adapter never commits or installs autonomously. See `plans/native-orchestrator/04-execution-adapter.md`.
 
 ## Key Folders
 

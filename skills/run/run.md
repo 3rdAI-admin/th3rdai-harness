@@ -85,6 +85,24 @@ Safety notes:
 
 When useful, record a run under `runs/<run-id>.md` using `telemetry/run-log-schema.md`.
 
+## Orchestrator Execution Mode (opt-in)
+
+The native orchestrator can run a lifecycle route step-by-step instead of only assembling context. This is **opt-in and approval-gated** — dry-run is the default.
+
+```bash
+# Dry-run (default): assemble bundles + write skipped records, invoke nothing
+python3 scripts/orchestrate.py route <route>
+
+# Execute: run each step through an adapter (still gated)
+python3 scripts/orchestrate.py route <route> --execute [--adapter cli|noop] [--max-steps N] [--yes]
+```
+
+- **Adapters:** `noop` (default; assembles but executes nothing) or `cli` (shells out to the agent CLI configured in `configs/execution.yaml` → `cli.command`; refuses to run if none is configured). The rendered context bundle is passed to the CLI on stdin; stdout/stderr are captured under `runs/`.
+- **Gates (never waived by `--yes`):** a step halts for explicit approval if its adapter command matches a `requires_approval` phrase in `configs/tools.yaml`, or its declared outputs write to a protected path (`agents/`, `configs/`, `scripts/orchestrator/` — the self-modification guard).
+- **Per-step checkpoint (waived by `--yes`):** otherwise the driver pauses before each step. Unattended runs with no TTY decline by default, so they stop safely.
+- **Runaway guard:** `--max-steps N` caps how many steps run.
+- **No autonomous git/installs:** the adapter never commits, installs, or runs destructive commands; those stay human-gated per `configs/tools.yaml` and `CLAUDE.md`. The subprocess runs with a scrubbed env (PATH/HOME/LANG only).
+
 ## Stop Command
 
 If running in foreground, the user can stop with Ctrl+C.
