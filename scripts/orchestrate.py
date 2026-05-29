@@ -50,7 +50,12 @@ def _build_adapter(args):
                 "--adapter cli needs a command in configs/execution.yaml "
                 "(cli.command); configure one or use --adapter noop"
             )
-        return adapter_mod.CliAdapter(command, timeout=float(cli.get("timeout_seconds", 120)))
+        allowlist = cli.get("env_allowlist", []) or []
+        return adapter_mod.CliAdapter(
+            command,
+            timeout=float(cli.get("timeout_seconds", 120)),
+            env_allowlist=allowlist,
+        )
     raise adapter_mod.AdapterError(f"unknown adapter '{choice}'")
 
 

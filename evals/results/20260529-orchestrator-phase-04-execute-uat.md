@@ -2,7 +2,9 @@
 
 **Date:** 2026-05-29  
 **Verdict:** PASS (plumbing)  
-**Config:** `configs/execution.yaml` → `python3 scripts/orchestrator/uat_cli_stub.py`
+**Config:** `configs/execution.yaml` → `claude -p` (scrubbed env + optional `env_allowlist`)
+
+**Stub UAT (2026-05-29 earlier):** `python3 scripts/orchestrator/uat_cli_stub.py` — plumbing only.
 
 ## Command
 
@@ -19,12 +21,20 @@ python3 scripts/orchestrate.py route task_definition --execute --adapter cli --m
 | stdout captured under `runs/` | PASS — `runs/task_definition-01-researcher-stdout.txt` |
 | Stub deterministic output | PASS — `orchestrator-uat-stub: ok`, `bundle_chars` present |
 
-## Notes
+## Real CLI verification (2026-05-29)
 
-- UAT uses a **stdlib stub** so smoke tests do not require API keys; `CliAdapter` passes only `PATH`/`HOME`/`LANG`, which blocks typical agent CLI auth unless credentials live under `HOME` or env passthrough is added later.
-- For a **real** model CLI, replace `cli.command` in `execution.yaml` (e.g. `claude -p`) after login; expect to extend env allowlisting if the CLI needs extra environment variables.
+```bash
+python3 scripts/orchestrate.py route task_definition --execute --adapter cli --max-steps 1 --yes
+```
+
+| Check | Outcome |
+|-------|---------|
+| `claude -p` under scrubbed env | PASS — added `USER` to base env; login under `HOME` works |
+| Run record | PASS — `runs/20260529-044735-task-definition-01-researcher.md` |
+| Model output captured | PASS — stdout under `runs/task_definition-01-researcher-stdout.txt` |
+
+`CliAdapter` base env: `PATH`, `HOME`, `LANG`, `USER`. Optional `cli.env_allowlist` in `execution.yaml` for `ANTHROPIC_API_KEY`, `CURSOR_API_KEY`, etc.
 
 ## Follow-up
 
-- Optional: add `evals/cases/orchestrator/cli-execute-stub.md` for repeatable rubric scoring.
-- Optional: `cli.env_allowlist` in adapter for production agent CLIs.
+- Optional: add `evals/cases/orchestrator/cli-execute-stub.md` for repeatable rubric scoring without network.

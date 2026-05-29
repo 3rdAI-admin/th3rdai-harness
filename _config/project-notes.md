@@ -55,7 +55,7 @@ python3 scripts/orchestrate.py route <route-name> --execute --adapter cli --max-
 
 Routes: `task_definition`, `agent_design`, `prompt_design`, `tool_integration`, `evaluation`, `iteration`, `release` (`configs/routing.yaml`).
 
-**Phase status (EFFORT.md):** 01–04 done. `configs/execution.yaml` uses UAT stub (`scripts/orchestrator/uat_cli_stub.py`); swap `cli.command` for e.g. `claude -p` for real model runs.
+**Phase status (EFFORT.md):** 01–04 done. `configs/execution.yaml` uses `claude -p` for `--adapter cli`; UAT stub at `scripts/orchestrator/uat_cli_stub.py` for offline plumbing checks.
 
 **Import convention:** `from scripts.orchestrator import ...`; run tests from repo root.
 
@@ -95,4 +95,4 @@ Writes PENDING `evals/results/` stub + run record; Evaluator still scores manual
 
 ## Open decisions (this repo)
 
-- **Real agent CLI:** replace UAT stub in `configs/execution.yaml` with your CLI; may need env allowlisting if auth vars are stripped by `CliAdapter` (see `evals/results/20260529-orchestrator-phase-04-execute-uat.md`).
+- **Agent CLI:** default `claude -p`; add keys under `cli.env_allowlist` in `execution.yaml` if your CLI needs extra env vars (base: PATH, HOME, LANG, USER).

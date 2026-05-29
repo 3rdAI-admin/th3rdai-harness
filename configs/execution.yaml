@@ -1,18 +1,17 @@
 # Execution config for the optional `orchestrate route --execute` mode (Phase 04).
 #
-# Default: UAT stub (stdlib, no API keys). Proves CliAdapter + driver plumbing.
-# Replace cli.command with your agent CLI when you want real model execution.
+# Default adapter remains noop (dry-run). When using --adapter cli, the command
+# below runs with a scrubbed env (PATH, HOME, LANG, USER) plus env_allowlist.
 #
-# Real agent example (requires login / credentials visible to the subprocess;
-# CliAdapter only passes PATH, HOME, LANG — see adapter.py):
-#   command:
-#     - claude
-#     - -p
-# The assembled context bundle is passed to that command on stdin.
+# UAT stub (no network): python3 scripts/orchestrator/uat_cli_stub.py
+# The assembled context bundle is passed to cli.command on stdin.
 execution:
   default_adapter: noop      # noop (dry-run; default) | cli
   cli:
     command:
-      - python3
-      - scripts/orchestrator/uat_cli_stub.py
-    timeout_seconds: 120
+      - claude
+      - -p
+    env_allowlist:
+      - ANTHROPIC_API_KEY
+      - CURSOR_API_KEY
+    timeout_seconds: 300

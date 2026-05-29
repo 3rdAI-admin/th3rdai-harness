@@ -18,9 +18,10 @@ Two adapters ship here:
 Safety model (per the plan's Safety/Tooling Notes):
 
 - **Scrubbed env.** The subprocess never inherits the full ``os.environ`` (which
-  may hold API keys or other secrets). It receives only a minimal allowlist
-  (``PATH``/``HOME``/``LANG``) so the CLI can locate itself and behave normally
-  without leaking credentials through the environment.
+  may hold API keys or other secrets). It receives a minimal base allowlist
+  (``PATH``/``HOME``/``LANG``/``USER``) plus optional names from
+  ``configs/execution.yaml`` ``cli.env_allowlist`` when a CLI needs specific
+  credential variables.
 - **Capture under runs/.** stdout/stderr are written beneath the run directory;
   persisted paths are repo-relative when inside the repo so no absolute,
   machine-specific paths leak into run records.
@@ -123,24 +124,29 @@ class CliAdapter:
 
     name = "cli"
 
+    _BASE_ENV_KEYS = ("PATH", "HOME", "LANG", "USER")
+
     def __init__(self, command, timeout: float = 120.0,
-                 cwd: Optional[str] = None):
+                 cwd: Optional[str] = None,
+                 env_allowlist: Optional[List[str]] = None):
         self.command = list(command) if command else []
         self.timeout = timeout
         self.cwd = cwd
+        self.env_allowlist = list(env_allowlist) if env_allowlist else []
 
-    @staticmethod
-    def _scrubbed_env() -> dict:
-        """A minimal env allowlist for the subprocess.
+    @classmethod
+    def _scrubbed_env(cls, extra_keys: Optional[List[str]] = None) -> dict:
+        """Minimal env for the subprocess plus optional configured passthrough keys.
 
-        Deliberately NOT the full ``os.environ`` — that may carry API keys and
-        other secrets. We pass only what a CLI typically needs to run.
+        Deliberately NOT the full ``os.environ``. Base keys let the CLI resolve
+        itself and read credentials under ``HOME`` (e.g. Claude Code login).
+        ``extra_keys`` copies only named variables that exist in the parent env.
         """
-        return {
-            "PATH": os.environ.get("PATH", ""),
-            "HOME": os.environ.get("HOME", ""),
-            "LANG": os.environ.get("LANG", ""),
-        }
+        env = {k: os.environ.get(k, "") for k in cls._BASE_ENV_KEYS}
+        for key in extra_keys or []:
+            if key in os.environ:
+                env[key] = os.environ[key]
+        return env
 
     def run(self, bundle, runs_dir: str = "runs",
             label: Optional[str] = None) -> StepResult:
@@ -165,7 +171,7 @@ class CliAdapter:
                 text=True,
                 timeout=self.timeout,
                 cwd=self.cwd,
-                env=self._scrubbed_env(),
+                env=self._scrubbed_env(self.env_allowlist),
             )
         except subprocess.TimeoutExpired:
             return StepResult(

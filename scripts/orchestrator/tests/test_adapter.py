@@ -91,9 +91,18 @@ class TestCliAdapterTimeout(unittest.TestCase):
 
 
 class TestScrubbedEnv(unittest.TestCase):
-    def test_env_is_minimal_allowlist(self):
+    def test_env_includes_base_allowlist(self):
         env = CliAdapter._scrubbed_env()
-        self.assertEqual(set(env), {"PATH", "HOME", "LANG"})
+        self.assertEqual(set(env.keys()), set(CliAdapter._BASE_ENV_KEYS))
+
+    def test_env_allowlist_merges_when_set(self):
+        os.environ["ORCHESTRATOR_TEST_ALLOW"] = "present"
+        try:
+            env = CliAdapter._scrubbed_env(["ORCHESTRATOR_TEST_ALLOW", "ORCHESTRATOR_TEST_MISSING"])
+            self.assertEqual(env["ORCHESTRATOR_TEST_ALLOW"], "present")
+            self.assertNotIn("ORCHESTRATOR_TEST_MISSING", env)
+        finally:
+            os.environ.pop("ORCHESTRATOR_TEST_ALLOW", None)
 
 
 if __name__ == "__main__":
