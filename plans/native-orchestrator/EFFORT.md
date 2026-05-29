@@ -27,12 +27,22 @@ The harness is currently agent-driven: a human or AI assistant follows `configs/
 Chosen over Bash because the orchestrator needs state, structured data, and run-log emission that Bash handles poorly. Constraints:
 
 - Python 3.9+ standard library only. **No PyYAML or other packages.**
-- YAML config stays the human-facing source of truth. The orchestrator includes a small (~60-line) stdlib-only reader for the **flat YAML subset** these configs use (mappings, lists, scalars, comments). If configs ever outgrow that subset, the fallback is to emit a generated `configs/*.generated.json` via a build step — still dependency-free.
+- YAML config stays the human-facing source of truth. The orchestrator includes a compact, stdlib-only reader for the **indentation-based YAML subset** these configs and run records use (nested mappings, lists of scalars and of mappings, scalars, `#` comments, `null`) — defined in `01-config-and-runlog.md`. If configs ever outgrow that subset, the fallback is to emit a generated `configs/*.generated.json` via a build step — still dependency-free.
 - Run records are written as Markdown-wrapped YAML (matching existing `runs/` examples) using string templates, not a YAML library.
+
+### Paths are always relative to a detected repo root
+
+The orchestrator must never hardcode or persist absolute, machine-specific paths. It detects the repo root the same way the existing scripts do — from the script's own location (`BASH_SOURCE`/`__file__`) or a `PROJECT_ROOT` override — and resolves every config, contract, prompt, run, and eval path relative to that root. Generated state and run records store repo-relative paths only. (This mirrors `scripts/07-validate-harness.sh`'s `ROOT` handling and avoids the committed-absolute-path problem fixed in `scripts/.icm-project-path`.)
 
 ### Coordinator, not executor
 
 The driver prepares a **context bundle** per step (contract + procedure + prompt + inputs + model profile) and records intent/outcome. It does not itself reason or call an LLM. This preserves the "agent-driven" model while automating the bookkeeping that is error-prone by hand.
+
+### Autonomy boundary: 01–03 coordinate, 04 (opt-in) executes
+
+The Goal and Scope above describe the **core (phases 01–03)**: dependency-free, dry-run, no model/network calls. That core automates *clerical* work — which agent/stage is next, loading the right contract/prompt/profile, writing run records — but never the *reasoning or execution* of a step. A clean build of 01–03 therefore yields automated bookkeeping, **not** autonomous app-building.
+
+**Phase 04 (Execution Adapter)** is the single, opt-in exception that crosses the coordinator→executor line. It is the only component permitted an external runtime dependency and model/network access, it wraps an existing agent runtime rather than building a bespoke model client (so the harness stays backend-agnostic), and it is never the default — gated behind an explicit `--execute` flag. The core's purity guarantees stay intact for 01–03; all dependency/network behavior is quarantined in 04. Even with 04, the autonomy ceiling is the checkpoint policy in `configs/tools.yaml` + `CLAUDE.md` (commits, installs, destructive ops still need human approval) — "minimal intervention" by design, not zero.
 
 ## Phases
 
@@ -41,13 +51,16 @@ The driver prepares a **context bundle** per step (contract + procedure + prompt
 | 01 | Config loader + run-log writer | `01-config-and-runlog.md` | — | todo |
 | 02 | Stage/agent sequencer (dry-run) | `02-sequencer.md` | 01 | todo |
 | 03 | CLI + eval hook | `03-cli-and-eval-hook.md` | 02 | todo |
+| 04 | Execution adapter (opt-in) | `04-execution-adapter.md` | 03 | todo |
 
 Status values: `todo`, `doing`, `review`, `done`.
+
+Phases 01–03 are the dependency-free, dry-run core. Phase 04 is the opt-in executor described in *Autonomy boundary* above — it intentionally steps outside the core's no-deps/dry-run guarantees and has its own validation in its plan.
 
 ## Dependency Order
 
 ```text
-01 → 02 → 03
+01 → 02 → 03 → 04 (opt-in)
 ```
 
 ## Validation
@@ -65,5 +78,5 @@ Status values: `todo`, `doing`, `review`, `done`.
 
 ## Open Questions
 
-- Should the orchestrator live in `scripts/` (alongside validation) or a new `orchestrator/` top-level folder? Leaning `scripts/orchestrate.py` to avoid adding a layer.
+- ~~Should the orchestrator live in `scripts/` or a new top-level `orchestrator/` folder?~~ **Resolved:** package at `scripts/orchestrator/` with entry `scripts/orchestrate.py`. Import strategy is locked in `01-config-and-runlog.md` → *Package & Import Convention*.
 - Is the flat-YAML-subset reader acceptable long-term, or should configs gain generated JSON mirrors for robustness?

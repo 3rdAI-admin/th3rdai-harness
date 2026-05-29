@@ -23,8 +23,19 @@ feature (harness tooling)
 
 ## Assumptions
 
-- Configs remain a flat YAML subset: 2-space indented mappings, `- ` lists, scalar values, `#` comments, `null`.
+- The YAML the reader handles is a small **indentation-based subset — not flat**: nested mappings 2–3 levels deep (e.g. `routing.yaml`, `agents.yaml`), lists of scalars (`- researcher`), **lists of mappings** (run-record `issues:`), scalar values, `#` comments, and `null`. The reader supports exactly this subset and fails loudly on anything outside it (no folded `>`/`|` block scalars).
 - Python 3.9+ is available; no packages may be installed.
+- All paths are resolved relative to a detected repo root (from `__file__` or a `PROJECT_ROOT` env override); no absolute, machine-specific paths are hardcoded or persisted.
+
+## Package & Import Convention (locked)
+
+This convention governs all three phases of the effort; do not reopen mid-build.
+
+- **Package:** `scripts/orchestrator/` is a regular package (`__init__.py`). Tests live in `scripts/orchestrator/tests/`, also a package (`__init__.py`).
+- **No `scripts/__init__.py`.** `scripts/` stays a plain directory used only as an import anchor on `sys.path` — never a package — so the existing shell scripts' directory semantics are untouched.
+- **Entry point:** `scripts/orchestrate.py`. Run as `python3 scripts/orchestrate.py`, Python places `scripts/` on `sys.path[0]`; the entry script also defensively inserts its own directory. It imports the package by name (`from orchestrator import sequencer, runlog`).
+- **Import style:** absolute and package-anchored everywhere — `from orchestrator import config`, `from orchestrator.runlog import RunRecord`. No `from .` relative imports, so every module stays runnable and testable without a fixed package context.
+- **Tests:** run with `scripts/` as the top-level anchor — from repo root `python3 -m unittest discover -s scripts/orchestrator -t scripts` (or `cd scripts && python3 -m unittest discover -s orchestrator`). Test modules import via `from orchestrator import ...`.
 
 ## Proposed Approach
 
@@ -38,13 +49,13 @@ Two small modules under `scripts/orchestrator/` (pure stdlib):
 1. Create `scripts/orchestrator/__init__.py` and `config.py` with the YAML-subset reader. (validation: unit-parse all four `configs/*.yaml` and assert expected keys)
 2. Add typed loader helpers and cross-checks (e.g. every agent `model_profile` exists in models). (validation: matches results of `07-validate-harness.sh` cross-ref checks)
 3. Create `runlog.py` with `RunRecord` + `write()`. (validation: generated file parses back via `config.load_yaml` of its embedded block)
-4. Add `scripts/orchestrator/tests/` with stdlib `unittest` cases; no test framework dependency. (validation: `python3 -m unittest discover` passes)
+4. Add `scripts/orchestrator/tests/` (with `__init__.py`) holding stdlib `unittest` cases; no test framework dependency. (validation: `python3 -m unittest discover -s scripts/orchestrator -t scripts` passes)
 
 ## Validation Criteria
 
-- [ ] `python3 -c "from scripts.orchestrator import config; config.load_agents()"` returns expected structure
+- [ ] `PYTHONPATH=scripts python3 -c "from orchestrator import config; config.load_agents()"` returns expected structure
 - [ ] Round-trip: writing then re-reading a run record preserves fields
-- [ ] `python3 -m unittest discover scripts/orchestrator/tests` passes
+- [ ] `python3 -m unittest discover -s scripts/orchestrator -t scripts` passes
 - [ ] `scripts/07-validate-harness.sh` still passes (no structural regressions)
 
 ## Safety and Tooling Notes
@@ -55,6 +66,7 @@ Two small modules under `scripts/orchestrator/` (pure stdlib):
 ## Risks and Edge Cases
 
 - YAML-subset reader could misparse unexpected syntax → fail loudly with line context, never guess.
+- The run-record round-trip (step 3) requires the reader to handle nested mappings **and lists of mappings** (`issues:`), not just flat keys → keep `runlog.write` within the supported subset (single-line/quoted scalars for `notes`, no folded `>`/`|`) so written records re-parse cleanly.
 - Future config nesting beyond the subset → documented fallback is generated JSON mirrors.
 
 ## Files to Create or Modify
@@ -62,12 +74,13 @@ Two small modules under `scripts/orchestrator/` (pure stdlib):
 - `scripts/orchestrator/__init__.py` - package marker
 - `scripts/orchestrator/config.py` - YAML-subset reader + loaders
 - `scripts/orchestrator/runlog.py` - run-record writer
+- `scripts/orchestrator/tests/__init__.py` - test package marker
 - `scripts/orchestrator/tests/test_config.py` - parser tests
 - `scripts/orchestrator/tests/test_runlog.py` - writer tests
 
 ## Open Questions
 
-- Confirm folder location `scripts/orchestrator/` vs a top-level `orchestrator/`.
+- None. Folder location and import strategy are locked in *Package & Import Convention* above: package at `scripts/orchestrator/`, entry `scripts/orchestrate.py` (not a top-level `orchestrator/`).
 
 ## Recommended Next Agent
 

@@ -18,25 +18,35 @@ feature (harness tooling)
 - Agent(s): Builder, Reviewer
 - Depends on: `plans/native-orchestrator/01-config-and-runlog.md`
 - Config(s): `configs/routing.yaml`, `configs/agents.yaml`, `configs/models.yaml`
+- Prompts: `prompts/registry.md`
 - Telemetry: `telemetry/run-log-schema.md`
+
+## Assumptions
+
+- Builds on `01-config-and-runlog.md` and its *Package & Import Convention* (`from orchestrator import ...`, no `from .`).
+- Each route in `routing.yaml` maps to one `stage:` and an ordered `agents:` list; every listed agent resolves in `agents.yaml`.
+- **Prompt version** is resolved from `prompts/registry.md` (the *Current Version* column keyed by *Agent*; all five agents currently map to `<agent>/v1.md`); fallback is the latest `prompts/<agent>/vN.md`. `agents.yaml` carries no prompt field, so the registry/convention is the single source. An agent with no prompt records `prompt_version: null`.
+- A step's **declared inputs/outputs** come from its stage contract `stages/NN/CONTEXT.md`, not from `agents.yaml`.
+- Dry-run is the only mode in this phase; the opt-in `--execute` mode arrives in Phase 04. Records use `validation.status: skipped`.
 
 ## Proposed Approach
 
 `scripts/orchestrator/sequencer.py`:
 
 - `plan_route(route_name) -> [Step]` reads `routing.yaml` for the stage + ordered agents; resolves each agent via `agents.yaml` to contract, `default_skill`, and `model_profile`.
-- `build_context(step) -> ContextBundle` reads the referenced files and assembles a plain-text bundle (paths + contents pointers, not LLM output).
+- `build_context(step) -> ContextBundle` assembles a plain-text bundle (paths + content pointers, not LLM output) from defined sources: the **contract** and **default_skill** from `agents.yaml`; the **prompt version** from `prompts/registry.md` (fallback latest `prompts/<agent>/vN.md`, else `null`); the **model profile** from `agents.yaml` → `configs/models.yaml`; and the step's **declared inputs/outputs** from its stage contract `stages/NN/CONTEXT.md`.
 - Dry-run mode prints the bundle and writes a run record marking `validation.status: skipped` (dry run).
 
 ## Implementation Steps
 
 1. Implement `plan_route` over `routing.yaml`; assert every referenced agent resolves. (validation: routes for all 7 stages produce non-empty, contract-backed steps)
-2. Implement `build_context`; gracefully report any missing referenced file. (validation: bundle lists contract + procedure + prompt + profile for each step)
+2. Implement `build_context`; resolve each field from its defined source and gracefully report any missing referenced file. (validation: bundle lists contract + procedure + prompt version + model profile + stage-contract inputs for each step, recording `null` where a source is genuinely absent)
 3. Emit a dry-run run record per step via `runlog.write`. (validation: records validate against the schema)
 
 ## Validation Criteria
 
 - [ ] `plan_route` resolves all stages in `routing.yaml` with contract-backed agents
+- [ ] `build_context` resolves prompt version (registry/convention) and declared inputs (stage contract) per step, recording `null` when genuinely absent
 - [ ] Missing referenced files are reported, not silently skipped
 - [ ] Dry-run produces schema-valid run records under `runs/`
 - [ ] `scripts/07-validate-harness.sh` still passes
