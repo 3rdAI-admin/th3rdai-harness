@@ -12,10 +12,10 @@ regression guard for the config audit performed during planning.
 Parse all four config files and assert structure:
 
 ```
-python3 -c "from orchestrator import config; print(config.load_tools())"
-python3 -c "from orchestrator import config; print(config.load_models())"
-python3 -c "from orchestrator import config; print(config.load_agents())"
-python3 -c "from orchestrator import config; print(config.load_routing())"
+python3 -c "from scripts.orchestrator import config; print(config.load_tools())"
+python3 -c "from scripts.orchestrator import config; print(config.load_models())"
+python3 -c "from scripts.orchestrator import config; print(config.load_agents())"
+python3 -c "from scripts.orchestrator import config; print(config.load_routing())"
 ```
 
 ## Expected Qualities
