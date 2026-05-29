@@ -96,12 +96,24 @@ Configuration lives in `configs/models.yaml`.
 
 Evals are first-class artifacts used to measure agent, prompt, skill, and model quality.
 
-Initial eval assets:
+Rubrics:
 
 - `evals/rubrics/plan-quality.md`
 - `evals/rubrics/tool-safety.md`
 - `evals/rubrics/agent-output-quality.md`
+- `evals/rubrics/orchestrator-output-quality.md` — scores Native Orchestrator artifacts (config parses, context bundles, run records)
+
+Cases (one or more per rubric):
+
 - `evals/cases/planning/basic-feature-plan.md`
+- `evals/cases/prompt-design/prompt-revision.md`
+- `evals/cases/code-review/security-bug-review.md`
+- `evals/cases/agent-handoff/planner-to-builder.md`
+- `evals/cases/debugging/failing-test-diagnosis.md`
+- `evals/cases/tool-safety/destructive-command-request.md`
+- `evals/cases/orchestrator/{config-subset-parsing,run-record-fidelity,route-context-bundle}.md`
+
+`evals/README.md` holds a registry of rubrics and cases. `scripts/07-validate-harness.sh` enforces that every case references a rubric that resolves. Model-comparison results use `evals/results/_TEMPLATE-model-comparison.md`.
 
 ### 7. Runs and Telemetry
 
@@ -109,7 +121,7 @@ Initial eval assets:
 
 Runs record execution history. Telemetry defines run-log conventions and observability guidance.
 
-Use `telemetry/run-log-schema.md` when recording agent, prompt, model, or eval runs.
+Use `telemetry/run-log-schema.md` when recording agent, prompt, model, or eval runs. Worked examples live in `runs/examples/`.
 
 ## Lifecycle Stage Reference
 
@@ -155,6 +167,31 @@ Improves artifacts based on review or evaluation findings.
 
 Prepares stable artifacts for use, documentation, or approved commit.
 
+## Native Orchestrator (Optional Run Driver)
+
+**Folder:** `scripts/orchestrator/` · **Effort spec:** `plans/native-orchestrator/`
+
+The harness is agent-driven by default: a human or AI assistant follows
+`configs/routing.yaml` and the stage contracts by hand. The Native Orchestrator
+is an **optional**, dependency-free (Python stdlib only) driver that automates
+the bookkeeping around that workflow. It is a **coordinator, not an executor** —
+it assembles per-step context bundles and records runs; it does not itself call
+a model or make decisions. All paths are resolved relative to a detected repo
+root; no absolute paths are persisted.
+
+| Phase | Plan | Delivers | Status |
+|-------|------|----------|--------|
+| 01 | `plans/native-orchestrator/01-config-and-runlog.md` | Stdlib YAML-subset config reader + run-record writer | implemented; in review |
+| 02 | `plans/native-orchestrator/02-sequencer.md` | Resolve a route into ordered, contract-backed steps + context bundles (dry-run) | planned |
+| 03 | `plans/native-orchestrator/03-cli-and-eval-hook.md` | `scripts/orchestrate.py` CLI + eval-case hook | planned |
+| 04 | `plans/native-orchestrator/04-execution-adapter.md` | Opt-in, approval-gated execution adapter (coordinator → executor) | specced; decision-gated, expands effort scope |
+
+Phases 01–03 keep the harness a dry-run coordinator. Phase 04 is the bridge to
+*assisted execution* (e.g. "build with minimal input"); it is opt-in,
+dry-run-by-default, honors `configs/tools.yaml` approval gates, performs no
+autonomous commits, and forbids self-modification without approval. Adopting
+Phase 04 requires an explicit scope update to `plans/native-orchestrator/EFFORT.md`.
+
 ## Recommended Workflow Paths
 
 ### Create a New Agent
@@ -193,6 +230,12 @@ Run:
 scripts/07-validate-harness.sh
 ```
 
+This checks structure, cross-references (agent ↔ skill ↔ prompt ↔ config ↔
+model profile), stage-contract coherence, skill path resolution, and eval
+case ↔ rubric coherence. The Native Orchestrator additionally has stdlib unit
+tests under `scripts/orchestrator/tests/` (run from `scripts/`:
+`python3 -m unittest discover -s orchestrator/tests`).
+
 ## Safety Principles
 
 - Keep destructive actions behind explicit approval.
@@ -202,10 +245,20 @@ scripts/07-validate-harness.sh
 - Record skipped validation honestly.
 - Treat eval failures as evidence for iteration.
 
+## Completed (earlier milestones)
+
+The following were completed and are no longer pending:
+
+- Bootstrap scripts (`scripts/01`–`07`) generate the full agent harness structure by default.
+- Eval cases added for prompt design, code review, tool safety, agent handoff, and debugging.
+- Model-comparison result template added (`evals/results/_TEMPLATE-model-comparison.md`).
+- Run-record examples added under `runs/examples/`.
+- Core skill files refined to reference the relevant agent and eval layer.
+
 ## Next Steps
 
-1. Update older bootstrap scripts to generate the full agent harness structure by default.
-2. Add more eval cases for debugging, refactoring, prompt design, and code review.
-3. Add model comparison result templates.
-4. Add run-record examples under `runs/`.
-5. Continue refining skill files so each one references the relevant agent and eval layer.
+1. Resolve the Phase 01 import-root inconsistency (relative imports + one canonical root), then move Phase 01 to done.
+2. Implement Phase 02 (sequencer) and Phase 03 (CLI + eval hook); run the `evals/cases/orchestrator/` cases and record results under `evals/results/`.
+3. Decide Phase 04 (execution adapter): implement now and update `EFFORT.md` scope, or defer and keep the harness a dry-run coordinator.
+4. Document orchestrator usage in `README.md` once the CLI lands.
+5. Continue expanding eval cases and run records as workflows mature.

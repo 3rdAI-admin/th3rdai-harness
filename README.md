@@ -29,17 +29,56 @@ Task Definition → Agent Design → Prompt Design → Tool Integration → Eval
 
 ## Optional Orchestrator CLI
 
-A dependency-free, dry-run coordinator (stdlib Python; no install). Run from the repo root:
+A dependency-free, dry-run coordinator (stdlib Python; no install). Implemented in Phases 01-03 of `plans/native-orchestrator/`.
 
-```text
+### What It Does
+
+- **Phase 01**: Reads `configs/*.yaml` with a stdlib-only YAML subset parser; writes run records conforming to `telemetry/run-log-schema.md`
+- **Phase 02**: Resolves lifecycle routes from `configs/routing.yaml` into ordered agent steps with context bundles
+- **Phase 03**: Provides CLI + eval scaffolding hooks
+
+### Usage
+
+Run from the repo root:
+
+```bash
 # Sequence a lifecycle route into per-step context bundles (dry-run)
-python3 scripts/orchestrate.py route iteration
+python3 scripts/orchestrate.py route <route-name>
 
 # Pair an eval case with its rubric and scaffold a PENDING result + run record
-python3 scripts/orchestrate.py eval evals/cases/planning/basic-feature-plan.md
+python3 scripts/orchestrate.py eval evals/cases/<category>/<case>.md
 ```
 
-It never invokes a model or network — it assembles context and records runs. The opt-in `--execute` mode is specified for Phase 04.
+### Available Routes
+
+Defined in `configs/routing.yaml`:
+
+| Route | Stage | Agents |
+|-------|-------|--------|
+| `task_definition` | 01-task-definition | researcher → planner |
+| `agent_design` | 02-agent-design | planner → reviewer |
+| `prompt_design` | 03-prompt-design | planner → reviewer |
+| `tool_integration` | 04-tool-integration | builder → reviewer |
+| `evaluation` | 05-evaluation | evaluator → reviewer |
+| `iteration` | 06-iteration | planner → builder → evaluator |
+| `release` | 07-release | reviewer |
+
+### Output
+
+- **Run records**: Written to `runs/YYYYMMDD-HHMMSS-<route>-<step>-<agent>.md`
+- **Format**: Markdown-wrapped YAML conforming to `telemetry/run-log-schema.md`
+- **Validation**: All Phase 01-03 output scored 5/5 across 8 criteria in `evals/results/20260529-orchestrator-phase-01-03-validation.md`
+
+### Safety Model
+
+The orchestrator is **coordinator-only** by design:
+
+- Dry-run by default (no `--execute` flag implemented yet)
+- Never invokes a model or makes network calls
+- Assembles context bundles and records intent, does not execute
+- Dependency-free: Python 3.9+ stdlib only, no `pip install`
+
+**Phase 04** (execution adapter) is fully specified in `plans/native-orchestrator/04-execution-adapter.md` but not yet implemented. It would add opt-in, approval-gated execution via `--execute` flag.
 
 ## Key Folders
 
