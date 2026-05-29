@@ -1,6 +1,6 @@
 # Effort: Native Orchestrator
 
-Specification for a dependency-free run driver owned entirely by the harness. **Spec only — not yet built.** This effort defines what to build; execution happens after review.
+A dependency-free run driver owned entirely by the harness. **Implemented — Phases 01–04 built** in `scripts/orchestrator/` + `scripts/orchestrate.py`: a dry-run coordinator by default, with opt-in `--execute` added in Phase 04. Phases 01–03 passed the orchestrator-output-quality eval at 5.0/5.0 (see *Run + Eval Links*).
 
 ## Goal
 
@@ -18,7 +18,7 @@ The harness is currently agent-driven: a human or AI assistant follows `configs/
 ## Scope
 
 - In scope: a local CLI that resolves config, sequences steps, assembles per-step context bundles, and writes run records. Dry-run by default.
-- Out of scope: calling model providers/APIs directly, autonomous decision-making, networked execution, any package dependency. Model invocation remains the driver's *output* (a prepared context bundle) that a human/agent or a future adapter executes.
+- Out of scope **for the dry-run core (01–03)**: calling model providers/APIs directly, autonomous decision-making, networked execution, any package dependency. Model invocation is the core's *output* (a prepared context bundle). **Phase 04 (now built)** is the opt-in, approval-gated adapter that executes that bundle — see *Autonomy boundary*. It never runs by default and adds no pip dependency (it shells out to an already-installed CLI).
 
 ## Design Decisions
 
@@ -65,16 +65,17 @@ Phases 01–03 are the dependency-free, dry-run core. Phase 04 is the opt-in exe
 
 ## Validation
 
-- [ ] Each phase plan passes `/plan-reviewer`
-- [ ] `scripts/07-validate-harness.sh` passes after each phase
-- [ ] Orchestrator runs with `python3` and no `pip install` step
-- [ ] A dry-run produces a valid run record under `runs/`
-- [ ] Eval cases in `evals/cases/` can be invoked through the CLI
+- [x] Each phase plan reviewed (plan-quality pass over 01–04)
+- [x] `scripts/07-validate-harness.sh` passes (93/93)
+- [x] Orchestrator runs with `python3` and no `pip install` step
+- [x] A dry-run produces a valid run record under `runs/`
+- [x] Eval cases in `evals/cases/` can be invoked through the CLI
+- [x] 69 unit tests pass (`python3 -m unittest discover -t . -s scripts/orchestrator`)
 
 ## Run + Eval Links
 
-- Runs: <runs/... once executed>
-- Evals: <evals/results/... once evaluated>
+- Runs: dry-run records under `runs/` (e.g. `runs/20260529-*-<route>-<step>-<agent>.md`); execute-mode adds real per-step records plus captured stdout/stderr.
+- Evals: `evals/results/20260529-orchestrator-phase-01-03-validation.md` — Phases 01–03 PASS, 5.0/5.0 across all 8 criteria of `evals/rubrics/orchestrator-output-quality.md`. A Phase 04 eval is future work, once a `cli.command` is configured.
 
 ## Open Questions
 

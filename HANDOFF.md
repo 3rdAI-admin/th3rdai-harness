@@ -2,241 +2,192 @@
 
 ## Last Updated
 
-May 25, 2026 — after aligning core skills summary files, detailed command files (`planner.md`, `build.md`, `revise.md`, `prompt.md`, `run.md`, `new-project.md`), bootstrap scripts (`01`–`07`), reviewing specialized files (`plan-reviewer.md`, `e2e-test.md`), and adding explicit scope boundaries to `agents/builder.agent.md`. Harness validation passes 47/47 checks.
+**May 29, 2026** — end-of-session pause. Native Orchestrator Phases 01–04 are implemented in code; formal eval for 01–03 **PASS** (5.0/5.0). Harness validator **93/93**; orchestrator unit tests **69/69**. Archon project **Th3rdai-Harness** is synced.
 
-## Update — May 28, 2026
+---
 
-A consistency-and-coverage pass was completed. Validation still passes 47/47. This update supersedes the "Important Notes" and "Recommended Next Steps" sections below where they overlap.
+## Resume Here (next session)
 
-**Fixed (the big one):** Stage contracts `01`–`03` were stale — they still described the old `Research / Draft / Review` content workflow even though the directories had been renamed. They are now rewritten as **Task Definition**, **Agent Design**, and **Prompt Design**, matching the `CONTEXT.md` routing table and the style of stages `04`–`07`. (`scripts/04-write-stage-contracts.sh` only copies these files, so the fix propagates to newly bootstrapped projects.)
+Read in order: this file → `README.md` (orchestrator CLI section) → `VERSION3.md` → `plans/native-orchestrator/EFFORT.md`.
 
-**Cleanup / reconciliation:**
-- Stale stage outputs and the old calculator demo moved to `archive/legacy-stage-outputs/`; stage `01`–`03` `output/` folders now match the empty `.gitkeep` pattern of `04`–`07`.
-- Legacy docs archived to `archive/legacy-docs/`: `FINAL_SUMMARY.md`, `INITIAL.md`, `VERSION2.md`, `ICM-Framework-Tutorial.docx`. See `archive/README.md`.
-- Deleted junk: `VERSION2.md.backup`, `skills/validate/SKILL.md.backup`, a checked-in `.pyc`, and `.DS_Store` files.
+**Verify green:**
 
-**Eval coverage / telemetry:**
-- Added eval cases: `evals/cases/{prompt-design,code-review,tool-safety,agent-handoff,debugging}/`.
-- Added `evals/results/_TEMPLATE-model-comparison.md` and example run records under `runs/examples/`.
+```bash
+scripts/07-validate-harness.sh
+python3 -m unittest discover scripts/orchestrator/tests
+```
 
-**Skill refinement (harness-native):**
-- `skills/plan/plan-reviewer.md` reframed from PRP-only to reviewing any harness artifact (Reviewer Agent), keeping the tool-schema/state-machine structure.
-- `skills/tests/e2e-test.md` now has Mode A (app/browser E2E) and Mode B (harness artifact testing against rubrics, results to `evals/results/` + `runs/`).
-- `skills/commit/gitcommit.md` gained Stage 07 Release context (eval preconditions, run records, `configs/tools.yaml` approvals).
+**Try the orchestrator:**
 
-**Tracking:** This project is now in Archon as **AI Agent Development Harness (th3rdai-harness)** with a seeded task backlog.
+```bash
+python3 scripts/orchestrate.py --help
+python3 scripts/orchestrate.py route task_definition --dry-run
+python3 scripts/orchestrate.py eval evals/cases/orchestrator/config-subset-parsing.md
+```
 
-**Also resolved this session:**
-- `skills/ICM-README.md` and `skills/BUILD-README.md` were archived — both described a PRP slash-command flow and `.commands/`/`sync-commands.sh` infrastructure that does not exist in this repo. See `archive/legacy-docs/`.
-- The repo is now a **git repository** with a baseline commit. A `.gitignore` excludes `node_modules/`, `.gitnexus/`, `__pycache__/`, and `.DS_Store`.
-- Renamed `skills/plan/plan.md` → `skills/plan/planner.md`. Updated `configs/agents.yaml` (`planner.default_skill`), `skills/plan/SKILL.md` (explicit Procedure links for `/plan` and `/plan-reviewer`), and frontmatter on `planner.md` / `plan-reviewer.md`.
+**Pick up in priority order:**
 
-**Remaining follow-ups:**
-- None blocking. Future work is tracked as Archon tasks (see project "AI Agent Development Harness (th3rdai-harness)").
+1. **User decision (Archon: review)** — Phase 04 execution adapter is *implemented* (`--execute`, `noop`/`cli`, `configs/execution.yaml`). Confirm: accept as shipped, defer until `cli.command` is configured + UAT, or harden further. Default is safe: `default_adapter: noop`, `cli.command: []` (refuses to run until configured).
+2. **Doc drift** — ✅ Resolved. `plans/native-orchestrator/EFFORT.md` (header, scope, Run+Eval links, validation checklist) and `evals/results/20260529-orchestrator-phase-01-03-validation.md` (follow-up + notes) now reflect Phase 04 implemented. EFFORT phase table reads 01–03 `done`, 04 `review`.
+3. **Promote phases** — If Phase 04 is accepted: set EFFORT.md 01–04 to `done`, update `VERSION3.md` phase table to match.
+4. **Optional** — Add orchestrator error-handling eval cases; configure `configs/execution.yaml` for a real agent CLI and smoke-test `--execute` with `--max-steps 1`.
+
+**Do not assume** the harness autonomously builds apps without an external agent/CLI — even with Phase 04, it coordinates and optionally shells out; commits and destructive actions still require human approval per `configs/tools.yaml` and `CLAUDE.md`.
+
+---
+
+## Session Summary — May 28–29, 2026
+
+### Harness alignment (May 28)
+
+- Stage contracts `01`–`03` rewritten (Task Definition / Agent Design / Prompt Design); legacy material under `archive/`.
+- Eval cases, run examples, skill refinements (plan-reviewer, e2e-test, gitcommit), model-comparison template.
+- Git repo + `.gitignore`; plan skill renamed to `skills/plan/planner.md`.
+
+### Native Orchestrator (May 28–29)
+
+| Phase | Deliverable | Status |
+|-------|-------------|--------|
+| 01 | `scripts/orchestrator/config.py`, `runlog.py` — stdlib YAML reader + run-record writer | **done** |
+| 02 | `scripts/orchestrator/sequencer.py` — route → context bundles + dry-run records | **done** |
+| 03 | `scripts/orchestrate.py`, `evalhook.py` — CLI `route` + `eval` subcommands | **done** |
+| 04 | `adapter.py`, `gates.py`, `configs/execution.yaml` — opt-in `--execute` | **review** (code in; user adoption pending) |
+
+- Import convention locked: `from scripts.orchestrator import ...` (tests pass from repo root).
+- Phase 04 spec: `plans/native-orchestrator/04-execution-adapter.md`.
+- Effort tracker: `plans/native-orchestrator/EFFORT.md`.
+
+### Eval layer
+
+- Rubric: `evals/rubrics/orchestrator-output-quality.md`.
+- Cases: `evals/cases/orchestrator/{config-subset-parsing,run-record-fidelity,route-context-bundle}.md`.
+- Validator enforces case ↔ rubric coherence (93 checks total).
+- Formal result: `evals/results/20260529-orchestrator-phase-01-03-validation.md` — **PASS**, 8/8 criteria at 5.0.
+- Registry tables in `evals/README.md`.
+
+### Docs
+
+- `VERSION3.md` updated — orchestrator section, full eval inventory, completed vs live next steps.
+- `README.md` updated — orchestrator CLI usage, Phase 04 framing.
+
+### Tracking
+
+- **Archon:** project **Th3rdai-Harness** (`eb8b4363-b1f0-4448-8e71-c557e0daa5b2`). Most backlog items **done**; open: Phase 04 decision (user), EFFORT/eval doc sync (agent).
+
+---
 
 ## Current State
 
-This repository has been revised from a three-stage ICM content/workflow template into a plain-text, model-agnostic AI agent/model development harness.
+Plain-text, model-agnostic **AI Agent Development Harness** — not a deployable app. It provides agents, skills, prompts, model profiles, configs, evals, runs, telemetry, and seven lifecycle stages for designing and improving agent workflows.
 
-The harness now supports designing, implementing, evaluating, iterating, and releasing agent/model workflows using explicit framework layers:
+**New since May 28:** an optional **Native Orchestrator** (`scripts/orchestrate.py`) that automates route sequencing, context-bundle assembly, and run logging. Dry-run by default; opt-in execution via Phase 04.
 
-- Agents
-- Skills
-- Prompts
-- Models
-- Configs
-- Evals
-- Runs
-- Telemetry
-- Lifecycle stages
+Framework layers: Agents · Skills · Prompts · Models · Configs · Evals · Runs · Telemetry · Lifecycle stages.
+
+Lifecycle:
+
+```text
+01-task-definition → 02-agent-design → 03-prompt-design → 04-tool-integration
+  → 05-evaluation → 06-iteration → 07-release
+```
+
+---
 
 ## Key Files to Read First
 
-1. `README.md` — High-level project overview and workflow.
-2. `FRAMEWORK.md` — Conceptual model for agents, skills, prompts, model profiles, evals, and runs.
-3. `CLAUDE.md` — Assistant operating instructions.
-4. `CONTEXT.md` — Routing table for lifecycle stages.
-5. `VERSION3.md` — Primary alignment plan for the AI Agent Development Harness.
-6. `archive/legacy-docs/VERSION2.md` — Legacy ICM alignment notes (archived, for historical reference).
-7. `scripts/07-validate-harness.sh` — Structural validation script.
+| Priority | File | Why |
+|----------|------|-----|
+| 1 | `README.md` | Overview + orchestrator CLI |
+| 2 | `VERSION3.md` | Alignment plan + orchestrator phase table |
+| 3 | `HANDOFF.md` | This file |
+| 4 | `FRAMEWORK.md` | Conceptual model |
+| 5 | `CLAUDE.md` | Assistant rules (commits need approval) |
+| 6 | `CONTEXT.md` | Stage routing |
+| 7 | `plans/native-orchestrator/EFFORT.md` | Orchestrator effort status |
+| 8 | `configs/routing.yaml` | Route names for `orchestrate route` |
+| 9 | `evals/results/20260529-orchestrator-phase-01-03-validation.md` | Latest formal eval |
+| 10 | `scripts/07-validate-harness.sh` | Structural gate |
 
-## Major Structural Additions
+---
 
-### Agent Layer
+## Native Orchestrator Quick Reference
 
-- `agents/README.md`
-- `agents/researcher.agent.md`
-- `agents/planner.agent.md`
-- `agents/builder.agent.md`
-- `agents/reviewer.agent.md`
-- `agents/evaluator.agent.md`
+**Package:** `scripts/orchestrator/` · **CLI:** `scripts/orchestrate.py` · **Plans:** `plans/native-orchestrator/`
 
-### Prompt Layer
+```bash
+# Dry-run a lifecycle route (writes run records under runs/)
+python3 scripts/orchestrate.py route <route-name> --dry-run
 
-- `prompts/registry.md`
-- `prompts/planner/v1.md`
-- `prompts/planner/changelog.md`
-- `prompts/reviewer/v1.md`
-- `prompts/reviewer/changelog.md`
+# Routes: task_definition, agent_design, prompt_design, tool_integration,
+#         evaluation, iteration, release  (from configs/routing.yaml)
 
-### Model and Config Layer
+# Scaffold an eval result from a case + rubric
+python3 scripts/orchestrate.py eval evals/cases/orchestrator/<case>.md
 
-- `models/providers.md`
-- `models/model-matrix.md`
-- `models/local-models.md`
-- `configs/agents.yaml`
-- `configs/models.yaml`
-- `configs/routing.yaml`
-- `configs/tools.yaml`
-
-### Evaluation Layer
-
-- `evals/README.md`
-- `evals/rubrics/plan-quality.md`
-- `evals/rubrics/tool-safety.md`
-- `evals/rubrics/agent-output-quality.md`
-- `evals/cases/planning/basic-feature-plan.md`
-- `evals/results/.gitkeep`
-
-### Runs and Telemetry
-
-- `runs/.gitkeep`
-- `telemetry/README.md`
-- `telemetry/run-log-schema.md`
-
-### Lifecycle Stages
-
-The old stages:
-
-```text
-01-research → 02-draft → 03-review
+# Opt-in execution (Phase 04) — requires configs/execution.yaml cli.command
+python3 scripts/orchestrate.py route <route-name> --execute --adapter cli --max-steps 1
 ```
 
-were replaced with:
+**Design constraints:** stdlib only (no `pip install`); repo-root-relative paths; coordinator-first; approval gates from `configs/tools.yaml` are never waived by `--yes`.
 
-```text
-01-task-definition → 02-agent-design → 03-prompt-design → 04-tool-integration → 05-evaluation → 06-iteration → 07-release
-```
+---
 
-Each stage has a `CONTEXT.md` contract.
-
-## Skills Alignment Completed
-
-The core `skills/*/SKILL.md` summary files and key detailed command files were updated to reference the new harness concepts.
-
-### Builder Agent Scope Updated
-
-- `agents/builder.agent.md` now includes an explicit **IN SCOPE** / **OUT OF SCOPE** section, making it clear the builder may act autonomously on implementation and plan updates while still requiring approval for commits, dependency installs, destructive commands, and unrelated changes.
-
-Updated summary files include:
-
-- `skills/plan/SKILL.md` now references Planner Agent, planner prompt, agent config, plan-quality eval, and stage 01.
-- `skills/build/SKILL.md` now references Builder Agent, tool policy, and release stage.
-- `skills/validate/SKILL.md` now references harness validation, evals, runs, and telemetry.
-- `skills/tests/SKILL.md` now references Evaluator Agent, evals, runs, telemetry, and stage 05.
-- `skills/run/SKILL.md` now supports approved runtime targets and harness workflows.
-- `skills/commit/SKILL.md` now maps to Stage 07 Release, tool policy, and run-log schema.
-- `skills/prompt/SKILL.md` now saves to `prompts/` and references prompt-design stage and evals.
-
-Updated detailed command files include:
-
-- `skills/plan/planner.md` now creates harness-aware plans for agents, prompts, skills, evals, models, configs, scripts, docs, and framework changes. It includes Harness References, Harness Context, Safety and Tooling Notes, Open Questions, and Recommended Next Agent fields. Loaded by `/plan` via `skills/plan/SKILL.md` and `configs/agents.yaml`.
-- `skills/build/build.md` now uses Builder Agent framing, supports plans or PRPs, avoids automatic commits, and validates harness, code, scripts, prompts, agents, models, and evals.
-- `skills/revise/revise.md` now supports revising plans, prompts, skills, agents, model profiles, configs, evals, stages, scripts, code, and docs based on validation or eval findings.
-- `skills/prompt/prompt.md` now creates one-off prompts under `prompts/one-off/` or reusable prompt versions under `prompts/<name>/vN.md`.
-- `skills/run/run.md` now starts approved runtime targets, demos, harness workflows, or eval targets while following `configs/tools.yaml`.
-- `skills/new-project.md` now describes creating an agent harness project via `scripts/01-create-project.sh`.
-
-## Bootstrap Scripts Alignment Completed
-
-The scripts were updated so newly generated projects now use the agent harness structure.
-
-Updated scripts:
-
-- `scripts/01-create-project.sh`
-  - Creates a full agent harness project by copying canonical files/folders from this template.
-  - Customizes the generated `CLAUDE.md` title.
-  - Runs validation after creation.
-
-- `scripts/02-customize-claude.sh`
-  - Writes a harness-oriented `CLAUDE.md`.
-
-- `scripts/03-setup-routing.sh`
-  - Writes the seven-stage agent harness routing table.
-
-- `scripts/04-write-stage-contracts.sh`
-  - Refreshes the seven lifecycle stage contracts from the template.
-
-- `scripts/05-configure-brand-voice.sh`
-  - Repurposed into a project profile configurator.
-  - Writes `_config/project-profile.md`.
-  - Keeps `_config/brand-voice.md` as a compatibility fallback if missing.
-
-- `scripts/06-validate-workspace.sh`
-  - Delegates to `scripts/07-validate-harness.sh`.
-
-- `scripts/07-validate-harness.sh`
-  - Validates either the template repo or a generated project via `PROJECT_ROOT`.
-
-## Validation Performed
-
-The following validation passed:
+## Validation (current)
 
 ```bash
 bash -n scripts/*.sh
 scripts/07-validate-harness.sh
+python3 -m unittest discover scripts/orchestrator/tests
 ```
 
-A stale-reference scan also passed for active skill files, excluding legacy backup files. The scan checked for old stage names (`01-research`, `02-draft`, `03-review`), old PRP prompt paths (`PRPs/prompts`), CRE8 workflow references, and journal-only workflow remnants across all `skills/*/*.md` files.
-
-Harness validation result:
+Latest results:
 
 ```text
-Passed:   47
-Warnings: 0
-Failed:   0
+Harness validator:  Passed 93 | Warnings 0 | Failed 0
+Orchestrator tests: 69 passed (from repo root)
 ```
 
-An end-to-end smoke test was also run:
+---
 
-1. Generated a temporary project under `/tmp` using `scripts/01-create-project.sh`.
-2. Ran the generated project’s `scripts/07-validate-harness.sh`.
-3. Removed the temporary project.
+## Evaluation Assets (current)
 
-Smoke test result:
+**Rubrics:** `plan-quality`, `tool-safety`, `agent-output-quality`, `orchestrator-output-quality`
 
-```text
-Passed:   47
-Warnings: 0
-Failed:   0
-```
+**Cases:** `planning/`, `prompt-design/`, `code-review/`, `agent-handoff/`, `debugging/`, `tool-safety/`, `orchestrator/` (3 cases)
+
+**Results:** `evals/results/_TEMPLATE-model-comparison.md`, `evals/results/20260529-orchestrator-phase-01-03-validation.md`
+
+**Examples:** `runs/examples/`, plus live dry-run records under `runs/20260529-*.md`
+
+---
 
 ## Important Notes
 
-- This repo is a **git repository** with a baseline commit (see May 28 update). Use normal git workflow for changes; commits still require explicit human approval per `CLAUDE.md`.
-- Archon tracks this project as **AI Agent Development Harness (th3rdai-harness)** with a seeded task backlog.
-- Legacy ICM-era material lives under `archive/legacy-docs/` (including `INITIAL.md`, `FINAL_SUMMARY.md`, `VERSION2.md`).
-- `skills/validate/SKILL.md.backup` remains as a legacy backup with older context-engineering template language — safe to archive or delete when no longer needed.
-- Plan skill paths: use `skills/plan/planner.md` (not `plan.md`). Reviewer procedure: `skills/plan/plan-reviewer.md`. Both are wired in `skills/plan/SKILL.md` and `configs/agents.yaml`.
-- Re-run `scripts/07-validate-harness.sh` after structural changes to confirm validation still passes.
+- **Git repo** with baseline commit; **no commits without explicit human approval** (`CLAUDE.md`).
+- **Archon** tracks work — check **Th3rdai-Harness** before coding; update task status when resuming.
+- **GitNexus** indexed — run `npx gitnexus analyze` after structural changes; use impact analysis before editing symbols.
+- Plan skill: `skills/plan/planner.md` (not `plan.md`). Reviewer: `skills/plan/plan-reviewer.md`.
+- Legacy ICM material: `archive/legacy-docs/`, `archive/legacy-stage-outputs/`.
+- **Uncommitted work likely** — check `git status` before assuming a clean tree.
 
-## Recommended Next Steps
+---
 
-### 1. Optional cleanup
+## Historical Context (May 25–28)
 
-- Archive or remove `skills/validate/SKILL.md.backup` if no longer needed.
-- Spot-check specialized skills after future harness changes (`skills/plan/planner.md`, `skills/plan/plan-reviewer.md`, `skills/tests/e2e-test.md`, `skills/commit/gitcommit.md`).
+Earlier sessions aligned bootstrap scripts (`01`–`07`), agent contracts, skills, prompts, configs, stage contracts, eval baseline, and archived PRP-era docs. That work is **complete** unless validation regresses. Details remain in git history and Archon completed tasks; do not re-do unless files were reverted.
 
-### 2. Expand eval and run coverage (ongoing)
+May 28 validator was **47/47**; grew to **93/93** after eval coherence checks and orchestrator rubric registration.
 
-May 28 added baseline cases under `evals/cases/{prompt-design,code-review,tool-safety,agent-handoff,debugging}/` and examples under `runs/examples/`. Continue adding cases and run records using `telemetry/run-log-schema.md` as workflows mature.
-
-### 3. Legacy archive
-
-Older ICM-era files are under `archive/legacy-docs/`. No further action required unless new legacy files surface in the repo root.
+---
 
 ## Suggested Next Agent Prompt
 
 ```text
-You are taking over this AI Agent Development Harness project (repo root `th3rdai-harness`). Read HANDOFF.md, README.md, FRAMEWORK.md, CLAUDE.md, CONTEXT.md, and VERSION3.md first. The repo is a plain-text, model-agnostic AI agent/model development harness. Validation currently passes with scripts/07-validate-harness.sh. Core skills are aligned: /plan loads skills/plan/planner.md (via skills/plan/SKILL.md and configs/agents.yaml); /plan-reviewer loads skills/plan/plan-reviewer.md. Specialized skills (e2e-test, gitcommit) and eval/run examples were refined May 28. Continue with optional cleanup, expanded eval cases, and run examples as needed.
+You are resuming the AI Agent Development Harness (th3rdai-harness). Read HANDOFF.md first, then README.md, VERSION3.md, and plans/native-orchestrator/EFFORT.md.
+
+State: Native Orchestrator Phases 01–03 are done and formally evaluated (PASS 5.0/5.0 in evals/results/20260529-orchestrator-phase-01-03-validation.md). Phase 04 execution adapter is implemented in code but awaiting user acceptance; configs/execution.yaml has empty cli.command (safe default). Harness validator: 93/93. Orchestrator tests: 69/69 from repo root.
+
+Immediate tasks: (1) user decision on Phase 04 adoption; (2) fix doc drift in EFFORT.md header and eval result follow-up section; (3) optionally promote EFFORT phase statuses to done.
+
+Run scripts/07-validate-harness.sh before and after changes. Do not commit without explicit approval. Update Archon (Th3rdai-Harness) when tasks complete.
 ```

@@ -92,13 +92,13 @@ Generated during testing:
 
 ## Follow-up Actions
 
-1. ✅ Update EFFORT.md phase status (01-03: review)
-2. ⏭️ Decide on Phase 04 execution adapter implementation
-3. ⏭️ Document orchestrator CLI usage in README.md
-4. ⏭️ Consider adding eval cases for error handling (malformed configs, missing files)
+1. ✅ Update EFFORT.md phase status (01–03 now `done`, 04 `review`)
+2. ✅ Decide + implement Phase 04 execution adapter (shipped in commit f0c2a78)
+3. ✅ Document orchestrator CLI usage in README.md (and `skills/run/run.md`)
+4. ⏭️ Consider adding eval cases for error handling (malformed configs, missing files) and a Phase 04 cli-execute case once `configs/execution.yaml` `cli.command` is configured
 
 ## Notes
 
 - No defects found during validation
 - Implementation is ready for review and potential promotion to 'done' status
-- Phase 04 (execution adapter) remains spec-only, not yet implemented
+- Scope: this result validates **Phases 01–03 only**. Phase 04 (execution adapter) was implemented *after* this validation (commit f0c2a78; opt-in `--execute` with noop/cli adapters); a dedicated Phase 04 eval is future work — see Follow-up #4.
