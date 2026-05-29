@@ -181,16 +181,15 @@ root; no absolute paths are persisted.
 
 | Phase | Plan | Delivers | Status |
 |-------|------|----------|--------|
-| 01 | `plans/native-orchestrator/01-config-and-runlog.md` | Stdlib YAML-subset config reader + run-record writer | implemented; in review |
-| 02 | `plans/native-orchestrator/02-sequencer.md` | Resolve a route into ordered, contract-backed steps + context bundles (dry-run) | planned |
-| 03 | `plans/native-orchestrator/03-cli-and-eval-hook.md` | `scripts/orchestrate.py` CLI + eval-case hook | planned |
-| 04 | `plans/native-orchestrator/04-execution-adapter.md` | Opt-in, approval-gated execution adapter (coordinator → executor) | specced; decision-gated, expands effort scope |
+| 01 | `plans/native-orchestrator/01-config-and-runlog.md` | Stdlib YAML-subset config reader + run-record writer | done |
+| 02 | `plans/native-orchestrator/02-sequencer.md` | Resolve a route into ordered, contract-backed steps + context bundles (dry-run) | done |
+| 03 | `plans/native-orchestrator/03-cli-and-eval-hook.md` | `scripts/orchestrate.py` CLI + eval-case hook | done |
+| 04 | `plans/native-orchestrator/04-execution-adapter.md` | Opt-in, approval-gated execution adapter (`--execute`) | done |
 
-Phases 01–03 keep the harness a dry-run coordinator. Phase 04 is the bridge to
-*assisted execution* (e.g. "build with minimal input"); it is opt-in,
-dry-run-by-default, honors `configs/tools.yaml` approval gates, performs no
-autonomous commits, and forbids self-modification without approval. Adopting
-Phase 04 requires an explicit scope update to `plans/native-orchestrator/EFFORT.md`.
+Dry-run is the default. Phase 04 adds opt-in execution via `configs/execution.yaml`
+(UAT stub by default; swap in a real agent CLI when ready). `--execute` honors
+`configs/tools.yaml` approval gates, performs no autonomous commits, and forbids
+self-modification without approval. UAT: `evals/results/20260529-orchestrator-phase-04-execute-uat.md`.
 
 ## Recommended Workflow Paths
 
@@ -257,8 +256,6 @@ The following were completed and are no longer pending:
 
 ## Next Steps
 
-1. Resolve the Phase 01 import-root inconsistency (relative imports + one canonical root), then move Phase 01 to done.
-2. Implement Phase 02 (sequencer) and Phase 03 (CLI + eval hook); run the `evals/cases/orchestrator/` cases and record results under `evals/results/`.
-3. Decide Phase 04 (execution adapter): implement now and update `EFFORT.md` scope, or defer and keep the harness a dry-run coordinator.
-4. Document orchestrator usage in `README.md` once the CLI lands.
-5. Continue expanding eval cases and run records as workflows mature.
+1. Optional: replace `configs/execution.yaml` UAT stub with a real agent CLI (e.g. `claude -p`).
+2. Continue expanding eval cases and run records as workflows mature.
+3. Use the orchestrator in real development flows and record outcomes under `runs/` and `evals/results/`.
