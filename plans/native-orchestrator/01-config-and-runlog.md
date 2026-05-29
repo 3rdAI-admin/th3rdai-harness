@@ -31,11 +31,12 @@ feature (harness tooling)
 
 This convention governs all three phases of the effort; do not reopen mid-build.
 
-- **Package:** `scripts/orchestrator/` is a regular package (`__init__.py`). Tests live in `scripts/orchestrator/tests/`, also a package (`__init__.py`).
-- **No `scripts/__init__.py`.** `scripts/` stays a plain directory used only as an import anchor on `sys.path` — never a package — so the existing shell scripts' directory semantics are untouched.
-- **Entry point:** `scripts/orchestrate.py`. Run as `python3 scripts/orchestrate.py`, Python places `scripts/` on `sys.path[0]`; the entry script also defensively inserts its own directory. It imports the package by name (`from orchestrator import sequencer, runlog`).
-- **Import style:** absolute and package-anchored everywhere — `from orchestrator import config`, `from orchestrator.runlog import RunRecord`. No `from .` relative imports, so every module stays runnable and testable without a fixed package context.
-- **Tests:** run with `scripts/` as the top-level anchor — from repo root `python3 -m unittest discover -s scripts/orchestrator -t scripts` (or `cd scripts && python3 -m unittest discover -s orchestrator`). Test modules import via `from orchestrator import ...`.
+- **Packages:** `scripts/`, `scripts/orchestrator/`, and `scripts/orchestrator/tests/` are all regular packages (each has `__init__.py`). The fully-qualified package name is `scripts.orchestrator`, matching the repo layout.
+- **Import root is the repo root** — the default when running from the repo root, and what pytest/IDEs assume. No `PYTHONPATH` gymnastics.
+- **Import style:** absolute and repo-anchored everywhere — `from scripts.orchestrator import config`, `from scripts.orchestrator.runlog import RunRecord`. No `from .` relative imports.
+- **Entry point:** `scripts/orchestrate.py` (Phase 03) inserts the repo root (`Path(__file__).resolve().parents[1]`) on `sys.path`, then imports `from scripts.orchestrator import ...`.
+- **Tests:** from the repo root, `python3 -m unittest discover -t . -s scripts/orchestrator` (the `-t .` sets the repo root as the top-level dir so `scripts.orchestrator` resolves). Test modules import via `from scripts.orchestrator import ...`.
+- An `__init__.py` in `scripts/` is invisible to the shell scripts there; it only affects Python's importer.
 
 ## Proposed Approach
 
@@ -49,13 +50,13 @@ Two small modules under `scripts/orchestrator/` (pure stdlib):
 1. Create `scripts/orchestrator/__init__.py` and `config.py` with the YAML-subset reader. (validation: unit-parse all four `configs/*.yaml` and assert expected keys)
 2. Add typed loader helpers and cross-checks (e.g. every agent `model_profile` exists in models). (validation: matches results of `07-validate-harness.sh` cross-ref checks)
 3. Create `runlog.py` with `RunRecord` + `write()`. (validation: generated file parses back via `config.load_yaml` of its embedded block)
-4. Add `scripts/orchestrator/tests/` (with `__init__.py`) holding stdlib `unittest` cases; no test framework dependency. (validation: `python3 -m unittest discover -s scripts/orchestrator -t scripts` passes)
+4. Add `scripts/orchestrator/tests/` (with `__init__.py`) holding stdlib `unittest` cases; no test framework dependency. (validation: `python3 -m unittest discover -t . -s scripts/orchestrator` passes)
 
 ## Validation Criteria
 
-- [ ] `PYTHONPATH=scripts python3 -c "from orchestrator import config; config.load_agents()"` returns expected structure
+- [ ] `python3 -c "from scripts.orchestrator import config; config.load_agents()"` (from repo root) returns expected structure
 - [ ] Round-trip: writing then re-reading a run record preserves fields
-- [ ] `python3 -m unittest discover -s scripts/orchestrator -t scripts` passes
+- [ ] `python3 -m unittest discover -t . -s scripts/orchestrator` passes
 - [ ] `scripts/07-validate-harness.sh` still passes (no structural regressions)
 
 ## Safety and Tooling Notes
@@ -71,6 +72,7 @@ Two small modules under `scripts/orchestrator/` (pure stdlib):
 
 ## Files to Create or Modify
 
+- `scripts/__init__.py` - package marker (makes `scripts.orchestrator` importable from repo root)
 - `scripts/orchestrator/__init__.py` - package marker
 - `scripts/orchestrator/config.py` - YAML-subset reader + loaders
 - `scripts/orchestrator/runlog.py` - run-record writer

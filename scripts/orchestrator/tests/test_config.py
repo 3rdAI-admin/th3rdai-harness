@@ -1,6 +1,6 @@
 import unittest
 
-from orchestrator import config
+from scripts.orchestrator import config
 
 
 class TestRealConfigs(unittest.TestCase):

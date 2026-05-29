@@ -3,8 +3,8 @@ import unittest
 from datetime import datetime, timezone
 from pathlib import Path
 
-from orchestrator import config, runlog
-from orchestrator.runlog import RunRecord
+from scripts.orchestrator import config, runlog
+from scripts.orchestrator.runlog import RunRecord
 
 
 def _sample() -> RunRecord:

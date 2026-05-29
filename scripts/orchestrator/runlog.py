@@ -1,6 +1,6 @@
 """Run-record writer: emits Markdown-wrapped YAML per telemetry/run-log-schema.md.
 
-The writer renders only the YAML subset that ``orchestrator.config`` can read back,
+The writer renders only the YAML subset that ``scripts.orchestrator.config`` can read back,
 so every record round-trips (write -> extract block -> ``config.load_yaml_string``).
 Scalars stay single-line; no folded/literal block scalars are emitted.
 """
@@ -12,7 +12,7 @@ from datetime import datetime, timezone
 from pathlib import Path
 from typing import Optional
 
-from orchestrator import config
+from scripts.orchestrator import config
 
 _YAML_BLOCK = re.compile(r"```yaml\n(.*?)\n```", re.DOTALL)
 _SLUG = re.compile(r"[^a-z0-9]+")
