@@ -64,6 +64,7 @@ check_file "evals/README.md"
 check_file "evals/rubrics/plan-quality.md"
 check_file "evals/rubrics/tool-safety.md"
 check_file "evals/rubrics/agent-output-quality.md"
+check_file "evals/rubrics/orchestrator-output-quality.md"
 check_file "telemetry/run-log-schema.md"
 
 if grep -q "stages/01-task-definition" "$ROOT/CONTEXT.md"; then
@@ -185,6 +186,35 @@ if [ -n "$skill_refs" ]; then
   done <<< "$skill_refs"
   [ "$skill_ref_missing" -eq 0 ] && ok "all concrete file paths referenced in skills/ resolve"
 fi
+
+echo ""
+echo "Eval case / rubric coherence"
+
+# Every eval case must reference at least one rubric, and each referenced rubric
+# file must exist. This wires the eval layer (cases + rubrics) into the gate so a
+# case can't point at a missing or renamed rubric (e.g. orchestrator-output-quality).
+shopt -s nullglob
+eval_case_found=0
+for case_path in "$ROOT"/evals/cases/*/*.md; do
+  eval_case_found=1
+  rel=${case_path#"$ROOT/"}
+  refs=$(grep -oE 'evals/rubrics/[A-Za-z0-9._-]+\.md' "$case_path" 2>/dev/null | sort -u || true)
+  if [ -z "$refs" ]; then
+    fail "eval case '$rel' references no rubric"
+    continue
+  fi
+  case_ok=1
+  while IFS= read -r ref; do
+    [ -z "$ref" ] && continue
+    if [ ! -f "$ROOT/$ref" ]; then
+      fail "eval case '$rel' references missing rubric '$ref'"
+      case_ok=0
+    fi
+  done <<< "$refs"
+  [ "$case_ok" -eq 1 ] && ok "eval case '$rel' -> rubric(s) resolve"
+done
+shopt -u nullglob
+[ "$eval_case_found" -eq 0 ] && warn "no eval cases found under evals/cases/"
 
 echo ""
 echo "Passed:   $PASS"
