@@ -24,7 +24,7 @@ feature (harness tooling)
 
 `scripts/orchestrate.py` with subcommands:
 
-- `route <name>` — run the sequencer for a lifecycle route. Always dry-run in this phase; the opt-in `--execute` mode is introduced in Phase 04.
+- `route <name> [--dry-run]` — run the sequencer for a lifecycle route. `--dry-run` is accepted and is the only mode in this phase (it makes the default explicit and pairs with the opt-in `--execute` added in Phase 04); the orchestrator eval case `evals/cases/orchestrator/route-context-bundle.md` invokes this form.
 - `eval <case-path> [--rubric <path>]` — resolve the rubric (explicit `--rubric`, else the case's own `## Rubric` section — e.g. `evals/cases/planning/basic-feature-plan.md` names `plan-quality.md`), assemble the case + rubric bundle, then write an `evals/results/<run-id>.md` stub plus a run record for the Evaluator to complete.
 - `--help` documents all subcommands.
 
@@ -38,7 +38,7 @@ feature (harness tooling)
 
 - [ ] `python3 scripts/orchestrate.py --help` works with no dependencies
 - [ ] `eval` produces an `evals/results/` record paired to the correct rubric (resolved from `--rubric` or the case's `## Rubric` section)
-- [ ] `route <name>` produces dry-run run records for a full lifecycle route
+- [ ] `route <name>` (and `route <name> --dry-run`) produces dry-run run records for a full lifecycle route
 - [ ] `scripts/07-validate-harness.sh` still passes
 
 ## Safety and Tooling Notes
@@ -53,7 +53,9 @@ feature (harness tooling)
 
 ## Files to Create or Modify
 
-- `scripts/orchestrate.py` - CLI entry point
+- `scripts/orchestrate.py` - thin argparse CLI entry point (repo-root sys.path bootstrap; delegates to the package)
+- `scripts/orchestrator/evalhook.py` - eval-hook logic: rubric resolution + result-stub/run-record scaffolding (kept in the package for testability; the CLI delegates to it)
+- `scripts/orchestrator/tests/test_evalhook.py` - eval-hook + CLI smoke tests
 - `skills/eval/eval.md` - document the CLI eval hook
 - `README.md` - note the optional orchestrator usage
 

@@ -113,6 +113,16 @@ Next:
 - Needs revision -> /revise <artifact> "<finding>" then re-run /eval
 ```
 
+## CLI Eval Hook (optional)
+
+To scaffold the result record + run record non-interactively, use the native orchestrator's eval hook:
+
+```text
+python3 scripts/orchestrate.py eval evals/cases/planning/basic-feature-plan.md [--rubric evals/rubrics/<name>.md]
+```
+
+It resolves the rubric (explicit `--rubric`, else the case's `## Rubric` reference), writes a **PENDING** `evals/results/<run-id>.md` stub pre-filled with the rubric's criteria, and a matching run record (`agent: evaluator`, `validation.status: skipped`). It prepares context only — the Evaluator still produces the output, scores each criterion, and sets the verdict per the steps above. It never scores or invokes a model.
+
 ## Safety and Tooling Notes
 
 - Read-only by default; run only approved commands per `configs/tools.yaml`.

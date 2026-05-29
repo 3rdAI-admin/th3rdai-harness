@@ -9,10 +9,10 @@ This repository evolved from an ICM workspace template into an agent/model devel
 This is a **context and methodology harness**, not a runtime engine.
 
 - It provides explicit, inspectable contracts (agents, skills, prompts, configs, evals, stages) that a **capable AI agent or a human drives**.
-- It does **not** ship an orchestrator, scheduler, or autonomous multi-agent runtime. Handoffs, routing, and sequencing are followed by whoever drives the work, guided by `configs/routing.yaml` and the stage contracts.
+- It does **not** ship an autonomous multi-agent runtime. There is now an optional, dependency-free orchestrator CLI (`scripts/orchestrate.py`) that *coordinates* — it computes the route/stage sequence and assembles per-step context bundles in dry-run — but it does not reason or call a model. Handoffs and sequencing are still driven by whoever runs the work, guided by `configs/routing.yaml` and the stage contracts.
 - It is fully **self-contained and dependency-free**: every artifact is plain text, and `scripts/07-validate-harness.sh` validates structure and cross-references with no external tooling.
 
-A native, dependency-free orchestrator is specified (not yet built) under `plans/native-orchestrator/`.
+The native orchestrator's dry-run core is implemented under `plans/native-orchestrator/`: config reader + run-log writer (Phase 01), stage/agent sequencer (Phase 02), and the CLI + eval hook (Phase 03), all in `scripts/orchestrator/` and `scripts/orchestrate.py`. It remains a coordinator, never an executor; the opt-in execution adapter is Phase 04.
 
 ## Start Here
 
@@ -26,6 +26,20 @@ A native, dependency-free orchestrator is specified (not yet built) under `plans
 ```text
 Task Definition → Agent Design → Prompt Design → Tool Integration → Evaluation → Iteration → Release
 ```
+
+## Optional Orchestrator CLI
+
+A dependency-free, dry-run coordinator (stdlib Python; no install). Run from the repo root:
+
+```text
+# Sequence a lifecycle route into per-step context bundles (dry-run)
+python3 scripts/orchestrate.py route iteration
+
+# Pair an eval case with its rubric and scaffold a PENDING result + run record
+python3 scripts/orchestrate.py eval evals/cases/planning/basic-feature-plan.md
+```
+
+It never invokes a model or network — it assembles context and records runs. The opt-in `--execute` mode is specified for Phase 04.
 
 ## Key Folders
 
