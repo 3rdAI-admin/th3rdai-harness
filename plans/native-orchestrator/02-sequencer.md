@@ -23,7 +23,7 @@ feature (harness tooling)
 
 ## Assumptions
 
-- Builds on `01-config-and-runlog.md` and its *Package & Import Convention* (`from orchestrator import ...`, no `from .`).
+- Builds on `01-config-and-runlog.md` and its *Package & Import Convention* (`from scripts.orchestrator import ...`, no `from .`).
 - Each route in `routing.yaml` maps to one `stage:` and an ordered `agents:` list; every listed agent resolves in `agents.yaml`.
 - **Prompt version** is resolved from `prompts/registry.md` (the *Current Version* column keyed by *Agent*; all five agents currently map to `<agent>/v1.md`); fallback is the latest `prompts/<agent>/vN.md`. `agents.yaml` carries no prompt field, so the registry/convention is the single source. An agent with no prompt records `prompt_version: null`.
 - A step's **declared inputs/outputs** come from its stage contract `stages/NN/CONTEXT.md`, not from `agents.yaml`.
