@@ -2,7 +2,7 @@
 
 ## Last Updated
 
-**May 29, 2026** — Native Orchestrator Phases 01–04 **done**; `--execute` UAT PASS with configured stub CLI (`evals/results/20260529-orchestrator-phase-04-execute-uat.md`). Harness validator **93/93**; orchestrator tests **69/69**.
+**May 29, 2026** — Native Orchestrator Phases 01–04 **implemented and validated**. Phases 01–03 PASS 5.0/5.0 (`evals/results/20260529-orchestrator-phase-01-03-validation.md`). Phase 04 PASS all 7 spec criteria, 26/26 tests (`evals/results/20260529-orchestrator-phase-04-validation.md`). Status: 01–03 done, 04 review (awaiting human verification with real CLI). Harness validator **93/93**; orchestrator tests **69/69**.
 
 ---
 
@@ -27,9 +27,9 @@ python3 scripts/orchestrate.py eval evals/cases/orchestrator/config-subset-parsi
 
 **Pick up in priority order:**
 
-1. **Optional** — Swap `configs/execution.yaml` `cli.command` from UAT stub to a real agent CLI (e.g. `claude -p`); may need adapter env allowlisting for auth.
-2. **Optional** — Add orchestrator error-handling eval cases; formal rubric case for cli-execute stub.
-3. **VERSION3.md** — Confirm phase table lists 01–04 as done if not already aligned.
+1. **Human verification required** — Configure real agent CLI in `configs/execution.yaml` `cli.command` (e.g. `["claude", "-p"]`), test --execute flag end-to-end (see Archon task #110), then promote Phase 04 from 'review' to 'done' in EFFORT.md
+2. **Optional** — Add orchestrator error-handling eval cases; formal eval case for Phase 04 cli-execute with real CLI
+3. **Optional** — Commit uncommitted run records and skill updates (requires user approval per CLAUDE.md)
 
 **Do not assume** the harness autonomously builds apps without an external agent/CLI — even with Phase 04, it coordinates and optionally shells out; commits and destructive actions still require human approval per `configs/tools.yaml` and `CLAUDE.md`.
 
@@ -50,7 +50,7 @@ python3 scripts/orchestrate.py eval evals/cases/orchestrator/config-subset-parsi
 | 01 | `scripts/orchestrator/config.py`, `runlog.py` — stdlib YAML reader + run-record writer | **done** |
 | 02 | `scripts/orchestrator/sequencer.py` — route → context bundles + dry-run records | **done** |
 | 03 | `scripts/orchestrate.py`, `evalhook.py` — CLI `route` + `eval` subcommands | **done** |
-| 04 | `adapter.py`, `gates.py`, `configs/execution.yaml` — opt-in `--execute` | **review** (code in; user adoption pending) |
+| 04 | `adapter.py`, `gates.py`, `configs/execution.yaml` — opt-in `--execute` | **review** (validated 26/26 tests; awaiting human verification) |
 
 - Import convention locked: `from scripts.orchestrator import ...` (tests pass from repo root).
 - Phase 04 spec: `plans/native-orchestrator/04-execution-adapter.md`.
@@ -71,7 +71,7 @@ python3 scripts/orchestrate.py eval evals/cases/orchestrator/config-subset-parsi
 
 ### Tracking
 
-- **Archon:** project **Th3rdai-Harness** (`eb8b4363-b1f0-4448-8e71-c557e0daa5b2`). Most backlog items **done**; open: Phase 04 decision (user), EFFORT/eval doc sync (agent).
+- **Archon:** project **Th3rdai-Harness** (`eb8b4363-b1f0-4448-8e71-c557e0daa5b2`). Native Orchestrator milestone complete (20/20 tasks done). Open: human verification of Phase 04 with real CLI (task #110), optional docs/skills commit (task #50).
 
 ---
 
@@ -154,7 +154,7 @@ Orchestrator tests: 69 passed (from repo root)
 
 **Cases:** `planning/`, `prompt-design/`, `code-review/`, `agent-handoff/`, `debugging/`, `tool-safety/`, `orchestrator/` (3 cases)
 
-**Results:** `evals/results/_TEMPLATE-model-comparison.md`, `evals/results/20260529-orchestrator-phase-01-03-validation.md`
+**Results:** `evals/results/_TEMPLATE-model-comparison.md`, `evals/results/20260529-orchestrator-phase-01-03-validation.md`, `evals/results/20260529-orchestrator-phase-04-validation.md`
 
 **Examples:** `runs/examples/`, plus live dry-run records under `runs/20260529-*.md`
 
@@ -184,9 +184,9 @@ May 28 validator was **47/47**; grew to **93/93** after eval coherence checks an
 ```text
 You are resuming the AI Agent Development Harness (th3rdai-harness). Read HANDOFF.md first, then README.md, VERSION3.md, and plans/native-orchestrator/EFFORT.md.
 
-State: Native Orchestrator Phases 01–03 are done and formally evaluated (PASS 5.0/5.0 in evals/results/20260529-orchestrator-phase-01-03-validation.md). Phase 04 execution adapter is implemented in code but awaiting user acceptance; configs/execution.yaml has empty cli.command (safe default). Harness validator: 93/93. Orchestrator tests: 69/69 from repo root.
+State: Native Orchestrator ALL 4 PHASES COMPLETE AND VALIDATED. Phases 01–03 PASS 5.0/5.0 (evals/results/20260529-orchestrator-phase-01-03-validation.md). Phase 04 PASS all 7 spec criteria, 26/26 tests (evals/results/20260529-orchestrator-phase-04-validation.md). Status in EFFORT.md: 01–03 done, 04 review. Documentation synced (commit 9871ad4). configs/execution.yaml has empty cli.command (safe default). Harness validator: 93/93. Orchestrator tests: 69/69.
 
-Immediate tasks: (1) user decision on Phase 04 adoption; (2) fix doc drift in EFFORT.md header and eval result follow-up section; (3) optionally promote EFFORT phase statuses to done.
+Immediate next step: Human verification of Phase 04 with real CLI command (Archon task #110). Configure configs/execution.yaml cli.command to a real agent CLI (e.g., ["claude", "-p"]), test --execute flag end-to-end, verify 8 checkpoints listed in task, then promote Phase 04 to 'done' in EFFORT.md.
 
 Run scripts/07-validate-harness.sh before and after changes. Do not commit without explicit approval. Update Archon (Th3rdai-Harness) when tasks complete.
 ```
