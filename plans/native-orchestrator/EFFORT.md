@@ -51,7 +51,7 @@ The Goal and Scope above describe the **core (phases 01–03)**: dependency-free
 | 01 | Config loader + run-log writer | `01-config-and-runlog.md` | — | done |
 | 02 | Stage/agent sequencer (dry-run) | `02-sequencer.md` | 01 | done |
 | 03 | CLI + eval hook | `03-cli-and-eval-hook.md` | 02 | done |
-| 04 | Execution adapter (opt-in) | `04-execution-adapter.md` | 03 | review |
+| 04 | Execution adapter (opt-in) | `04-execution-adapter.md` | 03 | done |
 
 Status values: `todo`, `doing`, `review`, `done`.
 
@@ -75,7 +75,7 @@ Phases 01–03 are the dependency-free, dry-run core. Phase 04 is the opt-in exe
 ## Run + Eval Links
 
 - Runs: dry-run records under `runs/` (e.g. `runs/20260529-*-<route>-<step>-<agent>.md`); execute-mode adds real per-step records plus captured stdout/stderr.
-- Evals: `evals/results/20260529-orchestrator-phase-01-03-validation.md` — Phases 01–03 PASS, 5.0/5.0 across all 8 criteria of `evals/rubrics/orchestrator-output-quality.md`. A Phase 04 eval is future work, once a `cli.command` is configured.
+- Evals: `evals/results/20260529-orchestrator-phase-01-03-validation.md` — Phases 01–03 PASS, 5.0/5.0. Phase 04 `--execute` UAT: `evals/results/20260529-orchestrator-phase-04-execute-uat.md` (stub CLI configured in `configs/execution.yaml`).
 
 ## Open Questions
 

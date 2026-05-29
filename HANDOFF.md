@@ -2,7 +2,7 @@
 
 ## Last Updated
 
-**May 29, 2026** — end-of-session pause. Native Orchestrator Phases 01–04 are implemented in code; formal eval for 01–03 **PASS** (5.0/5.0). Harness validator **93/93**; orchestrator unit tests **69/69**. Archon project **Th3rdai-Harness** is synced.
+**May 29, 2026** — Native Orchestrator Phases 01–04 **done**; `--execute` UAT PASS with configured stub CLI (`evals/results/20260529-orchestrator-phase-04-execute-uat.md`). Harness validator **93/93**; orchestrator tests **69/69**.
 
 ---
 
@@ -27,10 +27,9 @@ python3 scripts/orchestrate.py eval evals/cases/orchestrator/config-subset-parsi
 
 **Pick up in priority order:**
 
-1. **User decision (Archon: review)** — Phase 04 execution adapter is *implemented* (`--execute`, `noop`/`cli`, `configs/execution.yaml`). Confirm: accept as shipped, defer until `cli.command` is configured + UAT, or harden further. Default is safe: `default_adapter: noop`, `cli.command: []` (refuses to run until configured).
-2. **Doc drift** — ✅ Resolved. `plans/native-orchestrator/EFFORT.md` (header, scope, Run+Eval links, validation checklist) and `evals/results/20260529-orchestrator-phase-01-03-validation.md` (follow-up + notes) now reflect Phase 04 implemented. EFFORT phase table reads 01–03 `done`, 04 `review`.
-3. **Promote phases** — If Phase 04 is accepted: set EFFORT.md 01–04 to `done`, update `VERSION3.md` phase table to match.
-4. **Optional** — Add orchestrator error-handling eval cases; configure `configs/execution.yaml` for a real agent CLI and smoke-test `--execute` with `--max-steps 1`.
+1. **Optional** — Swap `configs/execution.yaml` `cli.command` from UAT stub to a real agent CLI (e.g. `claude -p`); may need adapter env allowlisting for auth.
+2. **Optional** — Add orchestrator error-handling eval cases; formal rubric case for cli-execute stub.
+3. **VERSION3.md** — Confirm phase table lists 01–04 as done if not already aligned.
 
 **Do not assume** the harness autonomously builds apps without an external agent/CLI — even with Phase 04, it coordinates and optionally shells out; commits and destructive actions still require human approval per `configs/tools.yaml` and `CLAUDE.md`.
 

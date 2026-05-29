@@ -55,7 +55,7 @@ python3 scripts/orchestrate.py route <route-name> --execute --adapter cli --max-
 
 Routes: `task_definition`, `agent_design`, `prompt_design`, `tool_integration`, `evaluation`, `iteration`, `release` (`configs/routing.yaml`).
 
-**Phase status (EFFORT.md):** 01–03 done/review; 04 execution adapter in review (code present; `configs/execution.yaml` `cli.command` empty by default).
+**Phase status (EFFORT.md):** 01–04 done. `configs/execution.yaml` uses UAT stub (`scripts/orchestrator/uat_cli_stub.py`); swap `cli.command` for e.g. `claude -p` for real model runs.
 
 **Import convention:** `from scripts.orchestrator import ...`; run tests from repo root.
 
@@ -95,5 +95,4 @@ Writes PENDING `evals/results/` stub + run record; Evaluator still scores manual
 
 ## Open decisions (this repo)
 
-- **Phase 04 adoption:** accept shipped execution adapter, defer until CLI configured, or harden further (Archon: user review).
-- **Doc drift:** align `EFFORT.md` header and eval result follow-up with README (Phase 04 implemented).
+- **Real agent CLI:** replace UAT stub in `configs/execution.yaml` with your CLI; may need env allowlisting if auth vars are stripped by `CliAdapter` (see `evals/results/20260529-orchestrator-phase-04-execute-uat.md`).

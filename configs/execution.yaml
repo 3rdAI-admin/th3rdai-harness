@@ -1,10 +1,10 @@
 # Execution config for the optional `orchestrate route --execute` mode (Phase 04).
 #
-# Disabled by default: no CLI command is configured, so `--adapter cli` refuses to
-# run until you set one. This file is the ONLY place a real model/CLI command is
-# wired — the orchestrator core stays dependency-free and dry-run by default.
+# Default: UAT stub (stdlib, no API keys). Proves CliAdapter + driver plumbing.
+# Replace cli.command with your agent CLI when you want real model execution.
 #
-# To enable a real run, set cli.command to an installed agent CLI, e.g.:
+# Real agent example (requires login / credentials visible to the subprocess;
+# CliAdapter only passes PATH, HOME, LANG — see adapter.py):
 #   command:
 #     - claude
 #     - -p
@@ -12,5 +12,7 @@
 execution:
   default_adapter: noop      # noop (dry-run; default) | cli
   cli:
-    command: []              # empty = not configured (cli adapter refuses to run)
+    command:
+      - python3
+      - scripts/orchestrator/uat_cli_stub.py
     timeout_seconds: 120
