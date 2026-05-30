@@ -1,0 +1,17 @@
+I understand the issue now. The workflow shows that in the `task_definition` route, there are two agents:
+1. **researcher** (Step 1) - which has already been executed and is waiting for user input
+2. **planner** (Step 2) - which you're asking me to execute now
+
+However, the researcher step is blocked waiting for the user to provide their goal/request. **I cannot proceed with Step 2 (planner) until the user responds to Step 1 (researcher).**
+
+According to the orchestrator workflow, the researcher should have collected the user's request, and then the planner would create an implementation plan based on that input. Since the researcher is still waiting for user input, I need that information before I can create a plan.
+
+**Could you please provide:**
+
+1. What would you like to accomplish? (The goal/request that the researcher was asking for)
+
+Or, if this is a test of the orchestrator itself:
+
+2. Are you testing the orchestrator's ability to handle this workflow, and if so, should I use a sample/example request to demonstrate the planner step?
+
+Please clarify so I can properly execute the planner step according to the harness methodology.

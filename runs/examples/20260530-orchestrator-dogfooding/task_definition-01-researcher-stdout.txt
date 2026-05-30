@@ -1,0 +1,33 @@
+I'll help you navigate and work within this AI Agent Development Harness. Based on the context provided, I understand:
+
+## Current State
+
+You're working with an **AI Agent Development Harness** that follows the Interpretable Context Methodology (ICM) for building, evaluating, and improving reusable AI agents.
+
+**Project**: th3rdai-harness (GitNexus indexed: 1736 symbols, 2136 relationships, 32 execution flows)
+
+**Recent Work** (from git status):
+- Modified framework and handoff documentation
+- Created orchestrator evaluation results
+- Generated multiple iteration runs (planner, builder, evaluator)
+- Working on task definition stage outputs
+
+## Next Steps
+
+You've indicated **Step 1: researcher @ stages/01-task-definition**. To proceed correctly, I should:
+
+1. **Read the framework** - `FRAMEWORK.md` to understand the harness concepts
+2. **Check routing** - `CONTEXT.md` for stage navigation
+3. **Load the researcher contract** - `agents/researcher.agent.md`
+4. **Review the stage contract** - `stages/01-task-definition/CONTEXT.md`
+5. **Check the research skill** - `skills/research/research.md`
+6. **Load the prompt template** - `prompts/researcher/v1.md`
+
+## What would you like to do?
+
+- **Start a new task definition?** - I'll load the researcher agent and guide you through defining a new task
+- **Review existing runs?** - I can analyze the recent iteration outputs in `runs/`
+- **Continue existing work?** - Tell me which task or phase you're working on
+- **Navigate the harness?** - I can help you understand the structure and workflows
+
+What's your goal for this session?
