@@ -88,6 +88,58 @@ echo $?  # Should be non-zero
 # Verify error is caught during route resolution
 ```
 
+## Example Outputs
+
+### Non-Existent Route
+```
+Error: Route 'nonexistent_route' not found in configs/routing.yaml
+
+Available routes:
+  - task_definition
+  - agent_design
+  - prompt_design
+  - tool_integration
+  - evaluation
+  - iteration
+  - release
+
+Run: python3 scripts/orchestrate.py --help
+```
+
+### Typo with Suggestion
+```
+Error: Route 'task_defination' not found in configs/routing.yaml
+
+Did you mean: task_definition?
+
+Available routes:
+  - task_definition  ← closest match
+  - agent_design
+  - prompt_design
+  - tool_integration
+  - evaluation
+  - iteration
+  - release
+```
+
+### Empty Route Name
+```
+Error: Invalid route name ''
+
+Usage: python3 scripts/orchestrate.py route <route-name> [OPTIONS]
+
+Available routes:
+  - task_definition
+  - agent_design
+  - prompt_design
+  - tool_integration
+  - evaluation
+  - iteration
+  - release
+
+Run: python3 scripts/orchestrate.py --help
+```
+
 ## Rubric
 
 Use `evals/rubrics/orchestrator-output-quality.md`. Focus on:

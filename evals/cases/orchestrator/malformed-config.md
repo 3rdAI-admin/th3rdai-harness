@@ -67,6 +67,37 @@ python3 scripts/orchestrate.py route task_definition --config-dir /tmp/orchestra
 echo $?  # Should be non-zero
 ```
 
+## Example Outputs
+
+### Inconsistent Indentation Error
+```
+Error: YAML parse error in configs/agents.yaml
+Line 4: Inconsistent indentation
+  Expected 2 spaces, found 1 space
+
+  3: researcher:
+  4:  role: Research  # ← inconsistent indent
+  5:   contract: agents/researcher.md
+```
+
+### Unsupported Feature Error
+```
+Error: YAML parse error in configs/agents.yaml
+Line 2: Anchors and aliases not supported
+
+  1: base: &base
+  2:   timeout: 120  # ← anchor/alias syntax not in subset
+  3: agent:
+  4:   <<: *base
+
+The orchestrator YAML parser supports only:
+- Nested mappings and lists
+- Scalar values (strings, numbers, booleans, null)
+- Comments (# prefix)
+
+Use explicit duplication or generate configs if advanced YAML features are needed.
+```
+
 ## Rubric
 
 Use `evals/rubrics/orchestrator-output-quality.md`. Focus on:

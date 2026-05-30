@@ -78,6 +78,45 @@ python3 scripts/orchestrate.py route task_definition --config-dir /tmp/orchestra
 # - Expected repo-relative path
 ```
 
+## Example Outputs
+
+### Missing Contract Error
+```
+Error: Missing file referenced in route resolution
+
+Route: task_definition
+  Step 1: agent 'researcher'
+    Field: contract
+    Path: agents/missing-researcher.md
+    Status: NOT FOUND
+
+Expected file at: /path/to/repo/agents/missing-researcher.md
+
+Reference chain:
+  configs/routing.yaml → route 'task_definition'
+    → step 1 → agent 'researcher'
+      → configs/agents.yaml → researcher.contract
+        → agents/missing-researcher.md (NOT FOUND)
+```
+
+### Missing Skill Error
+```
+Error: Missing file referenced in route resolution
+
+Route: task_definition
+  Step 1: agent 'researcher'
+    Field: default_skill
+    Path: skills/research/missing-skill.md
+    Status: NOT FOUND
+
+Expected file at: /path/to/repo/skills/research/missing-skill.md
+
+Check:
+  - File path in configs/agents.yaml (researcher.default_skill)
+  - Spelling and capitalization
+  - File exists in repository
+```
+
 ## Rubric
 
 Use `evals/rubrics/orchestrator-output-quality.md`. Focus on:
