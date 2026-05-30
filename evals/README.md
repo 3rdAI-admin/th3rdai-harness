@@ -42,5 +42,10 @@ Use this folder for repeatable rubrics, test cases, and results.
 | `cases/orchestrator/config-subset-parsing.md` | `orchestrator-output-quality` |
 | `cases/orchestrator/run-record-fidelity.md` | `orchestrator-output-quality` |
 | `cases/orchestrator/route-context-bundle.md` | `orchestrator-output-quality` |
+| `cases/orchestrator/malformed-config.md` | `orchestrator-output-quality` |
+| `cases/orchestrator/missing-references.md` | `orchestrator-output-quality` |
+| `cases/orchestrator/invalid-route.md` | `orchestrator-output-quality` |
+| `cases/orchestrator/phase-04-timeout-handling.md` | `orchestrator-output-quality` |
+| `cases/orchestrator/phase-04-execute-real-cli.md` | `orchestrator-output-quality` |
 
 Every case declares its rubric in a `Use \`evals/rubrics/....md\`` line; `scripts/07-validate-harness.sh` enforces that each reference resolves.
