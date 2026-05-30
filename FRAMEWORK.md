@@ -8,7 +8,7 @@ The harness uses structured context, reusable skills, versioned prompts, explici
 
 ## Operating Model
 
-The harness is **agent-driven, not engine-driven**. There is no runtime that executes agents or enforces handoffs automatically; the "agents" are role contracts and the "skills" are procedures that a capable AI agent (or a human) reads and follows. Routing (`configs/routing.yaml`) and stage contracts describe the intended sequence — the driver follows it. This keeps the whole system inspectable and dependency-free. A native orchestrator that would automate this is specified under `plans/native-orchestrator/`.
+The harness is **agent-driven, not engine-driven** by default: "agents" are role contracts and "skills" are procedures a capable AI agent (or human) follows. Routing (`configs/routing.yaml`) and stage contracts describe the intended sequence. An optional **Native Orchestrator** (`scripts/orchestrate.py`, `plans/native-orchestrator/`) automates sequencing, context-bundle assembly, and run logging — dry-run by default, with opt-in `--execute` via `configs/execution.yaml`. The core stays dependency-free (Python stdlib only).
 
 ## Core Concepts
 

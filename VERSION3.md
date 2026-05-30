@@ -187,9 +187,10 @@ root; no absolute paths are persisted.
 | 04 | `plans/native-orchestrator/04-execution-adapter.md` | Opt-in, approval-gated execution adapter (`--execute`) | done |
 
 Dry-run is the default. Phase 04 adds opt-in execution via `configs/execution.yaml`
-(UAT stub by default; swap in a real agent CLI when ready). `--execute` honors
+(this repo: `claude -p` with scrubbed env + `env_allowlist`). `--execute` honors
 `configs/tools.yaml` approval gates, performs no autonomous commits, and forbids
-self-modification without approval. UAT: `evals/results/20260529-orchestrator-phase-04-execute-uat.md`.
+self-modification without approval. UAT: `evals/results/20260529-orchestrator-phase-04-execute-uat.md`;
+dogfood: `evals/results/20260530-orchestrator-dogfood-and-error-handling.md`.
 
 ## Recommended Workflow Paths
 
@@ -256,6 +257,6 @@ The following were completed and are no longer pending:
 
 ## Next Steps
 
-1. Optional: replace `configs/execution.yaml` UAT stub with a real agent CLI (e.g. `claude -p`).
-2. Continue expanding eval cases and run records as workflows mature.
-3. Use the orchestrator in real development flows and record outcomes under `runs/` and `evals/results/`.
+1. **Dogfood** — Apply the harness to a real application or feature (bootstrap via `skills/new-project.md`).
+2. **Operate** — Run multi-step `--execute` on lifecycle routes when cost/latency are acceptable.
+3. **Evolve** — Optional generated JSON config mirrors; stronger execute/resume semantics (see `EFFORT.md` open questions).

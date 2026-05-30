@@ -31,8 +31,8 @@ python3 -m unittest discover scripts/orchestrator/tests
 Latest known targets (capture actual output — counts may change):
 
 ```text
-Harness validator:  Passed 93 | Warnings 0 | Failed 0
-Orchestrator tests: 69 passed (from repo root)
+Harness validator:  Passed 98 | Warnings 0 | Failed 0
+Orchestrator tests: 70 passed (from repo root)
 ```
 
 ## Optional Native Orchestrator
