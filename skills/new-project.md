@@ -44,7 +44,12 @@ down the harness and wires it to the app:
 scripts/new-project.sh <target-app-path>
 # include the Native Orchestrator CLI:
 scripts/new-project.sh <target-app-path> --with-orchestrator
+# a root symlink is also provided, so from the harness root you can run:
+./new-project.sh <target-app-path>
 ```
+
+The installer is current-directory independent (it locates its delegate via its
+own path), so it can be called from anywhere; only `<target-app-path>` matters.
 
 Non-interactive:
 

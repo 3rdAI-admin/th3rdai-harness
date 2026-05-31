@@ -27,6 +27,7 @@ while [ $# -gt 0 ]; do
     -h|--help)
       cat <<'EOF'
 Usage: scripts/new-project.sh [target-repo-path] [--with-orchestrator]
+       ./new-project.sh        [target-repo-path] [--with-orchestrator]   (root symlink)
 
 Installs the harness into an existing app/repo as a segmented subfolder
 (default: harness/), records what app it orchestrates, seeds an initial task
@@ -65,9 +66,14 @@ echo -e "and hands off to the ${BOLD}/plan${NC} process to start development."
 echo ""
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-DELEGATE="$SCRIPT_DIR/01-create-project.sh"
-if [ ! -f "$DELEGATE" ]; then
-  echo -e "${YELLOW}✗${NC} Cannot find scripts/01-create-project.sh next to this script." >&2
+# Resolve the delegate whether this script lives in scripts/ or at the repo root
+# (e.g. invoked via a root-level symlink: new-project.sh -> scripts/new-project.sh).
+DELEGATE=""
+for cand in "$SCRIPT_DIR/01-create-project.sh" "$SCRIPT_DIR/scripts/01-create-project.sh"; do
+  if [ -f "$cand" ]; then DELEGATE="$cand"; break; fi
+done
+if [ -z "$DELEGATE" ]; then
+  echo -e "${YELLOW}✗${NC} Cannot find 01-create-project.sh (looked in $SCRIPT_DIR and $SCRIPT_DIR/scripts)." >&2
   exit 1
 fi
 

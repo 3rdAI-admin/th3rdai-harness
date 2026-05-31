@@ -113,6 +113,7 @@ hands off to `/plan` to start development.
 ```bash
 # Prompts for the project goal, installs into ./my-app/harness/
 scripts/new-project.sh ./my-app --with-orchestrator
+# (a root symlink is provided too: ./new-project.sh ./my-app --with-orchestrator)
 
 # Non-interactive
 HARNESS_TARGET_REPO=./my-app \
