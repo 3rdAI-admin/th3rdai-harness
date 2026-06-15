@@ -37,6 +37,7 @@ Examples:
 - `/plan`
 - `/build`
 - `/validate`
+- `/security`
 - `/tests/e2e-test.md`
 - `/gitcommit`
 
@@ -80,7 +81,7 @@ Runs answer the question: **what happened, with which inputs, model, outputs, an
 | Stages | `stages/` | Organize lifecycle work from task definition through release |
 | Runs | `runs/` | Store execution records and experiment notes |
 | Telemetry | `telemetry/` | Define logging and observability conventions |
-| Scripts | `scripts/` | Bootstrap, validate, and maintain harness workspaces |
+| Scripts | `scripts/` | Bootstrap, validate, and maintain harness workspaces (see `DISTRIBUTION.md`) |
 | Deployment overlay | `_config/project-notes.md` | Optional per-project commands, verify steps, and tooling pointers (see below) |
 
 ## Deployment overlay (optional)
@@ -88,6 +89,8 @@ Runs answer the question: **what happened, with which inputs, model, outputs, an
 Skills under `skills/` stay **portable**: they describe harness workflows without hardcoding paths, test counts, or CLIs that belong to one application.
 
 When a bootstrapped project needs local detail (verify commands, optional subsystems, resume pointers, tracker IDs), maintain **`_config/project-notes.md`**. Copy from `_config/project-notes.TEMPLATE.md` during bootstrap (`skills/new-project.md`).
+
+For web application security baseline regression (WASA/threat-model P0/P1/P2), maintain **`_config/security-baseline.md`**. Copy from `_config/security-baseline.TEMPLATE.md`. Use the portable `/security` skill for diff review and threat modeling; add an optional `skills/security-<project>/` overlay for `wasa` mode against your assessment doc.
 
 Skill procedures may instruct agents to read `project-notes.md` when it exists. Keep deployment-specific content there — not duplicated inside portable skill files.
 

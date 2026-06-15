@@ -102,6 +102,11 @@ my-app/
     └── _config/project-notes.md
 ```
 
+**Portable vs project skills:** Ship `skills/security/` in every template (diff review +
+threat-model). Keep app-specific overlays such as `skills/security-<project>/` and
+`_config/security-baseline.md` in the application repo only — copy
+`security-baseline.TEMPLATE.md` when bootstrapping.
+
 ### Steps (recommended: app-aware installer)
 
 The ergonomic path is `scripts/new-project.sh`, which wraps the subfolder

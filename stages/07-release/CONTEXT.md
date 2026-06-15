@@ -12,6 +12,7 @@ Prepare a stable agent, prompt, skill, model profile, eval, config, or framework
 | Evaluation results | Full if present | Confirm quality evidence |
 | Relevant changelogs | Full | Ensure history is documented |
 | `skills/commit/gitcommit.md` | Full if committing | Follow safe commit process |
+| `skills/security/security.md` | Targeted if auth/API/security headers changed | Web security diff review or threat-model gate |
 | `telemetry/run-log-schema.md` | Targeted | Record final run metadata |
 
 ## Process

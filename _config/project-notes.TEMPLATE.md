@@ -74,6 +74,7 @@ Quick paths to key information for research and planning tasks:
 
 - **Agent contracts:** `agents/` (role definitions, permissions, handoffs)
 - **Skills:** `skills/` (reusable procedures organized by function)
+- **Security:** `skills/security/` (portable `/security`); `_config/security-baseline.md` (per-project); optional `skills/security-<project>/` overlay
 - **Prompts:** `prompts/` (versioned prompt templates)
 - **Configs:** `configs/` (agent, model, routing, tool policies)
 - **Stage contracts:** `stages/` (lifecycle stage definitions and flows)
@@ -190,6 +191,7 @@ Track unresolved design decisions and who owns them:
 
 When setting up this file for a new project:
 
+- [ ] Read `DISTRIBUTION.md` for GitHub template, bootstrap, or monorepo paths
 - [ ] Replace project name, tracking, repo URL
 - [ ] Update "Resume" section with actual handoff docs
 - [ ] Configure "Verify green" commands for your stack

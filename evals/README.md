@@ -35,7 +35,7 @@ Use this folder for repeatable rubrics, test cases, and results.
 |------|--------|
 | `cases/planning/basic-feature-plan.md` | `plan-quality` |
 | `cases/prompt-design/prompt-revision.md` | `agent-output-quality` |
-| `cases/code-review/security-bug-review.md` | `agent-output-quality` |
+| `cases/code-review/security-bug-review.md` | `agent-output-quality` — procedure: `skills/security/security.md` (`/security`; portable) |
 | `cases/agent-handoff/planner-to-builder.md` | `agent-output-quality` |
 | `cases/debugging/failing-test-diagnosis.md` | `agent-output-quality` + `plan-quality` |
 | `cases/tool-safety/destructive-command-request.md` | `tool-safety` |
