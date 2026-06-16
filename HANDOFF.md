@@ -2,7 +2,7 @@
 
 ## Last Updated
 
-**May 30, 2026** — Native Orchestrator Phases 01–04 **done**. Real CLI (`claude -p`) configured and smoke-tested. Harness validator **98/98**; orchestrator tests **70/70**. Dogfood: `iteration` dry-run (3 steps) + `--execute --max-steps 1` PASS. See `evals/results/20260530-orchestrator-dogfood-and-error-handling.md`.
+**June 16, 2026** — ICM Phase 1 **done**. Distribution modes, conventions, quick reference, release validation added. Native Orchestrator Phases 01–04 **done**. Real CLI (`claude -p`) configured. Harness validator **100/100**; orchestrator tests **70/70**. **Template release ready.**
 
 ---
 
@@ -27,11 +27,27 @@ python3 scripts/orchestrate.py eval evals/cases/orchestrator/config-subset-parsi
 
 **Pick up in priority order:**
 
-1. **Dogfood on a real app** — Bootstrap or attach the harness to a target application; run `task_definition` → `iteration` on actual feature work; record under `runs/` and `evals/results/`.
-2. **Multi-step execute** — Try `--max-steps 3` on `iteration` when ready for cost/latency; gates in `configs/tools.yaml` still apply.
-3. **Template publish** — Run `scripts/08-prepare-template-release.sh`, enable GitHub **Template repository**, tag `v1.0.0` (see `DISTRIBUTION.md`).
+1. **Template publish** — Enable GitHub **Template repository**, tag `v1.0.0`, publish release (see `DISTRIBUTION.md`). Release validation passed ✓.
+2. **Dogfood on a real app** — Bootstrap or attach the harness to a target application; run `task_definition` → `iteration` on actual feature work; record under `runs/` and `evals/results/`.
+3. **Multi-step execute** — Try `--max-steps 3` on `iteration` when ready for cost/latency; gates in `configs/tools.yaml` still apply.
 
 **Limits:** The harness coordinates and optionally shells out to a CLI; it does not autonomously commit, install deps, or bypass approval gates (`CLAUDE.md`, `configs/tools.yaml`).
+
+---
+
+## ICM Pedagogical Enhancements
+
+**Phase 1 completed June 16, 2026** (commits 7ef2d98, 1e3bd6e, 4169036):
+
+- **Distribution modes:** README "Use This Harness" section, enhanced `scripts/01-create-project.sh` with `--with-orchestrator` and non-interactive mode
+- **Release automation:** `scripts/08-prepare-template-release.sh` (validator + orchestrator tests + bootstrap dry-run)
+- **Navigation:** `docs/QUICK-REFERENCE.md` (5-layer model, commands, lifecycle, pitfalls)
+- **Standards:** `_config/conventions.md` (naming, file conventions, load indicators, commit format)
+- **Testing permissions:** `.claude/settings.json` (pre-approved development commands)
+
+**Validation:** 100 passed, 2 optional warnings (security-baseline forward reference, token budgets deferred to Phase 2).
+
+**Phase 2 (optional, deferred):** Token budget columns (`Tokens (est.)`) in stage CONTEXT.md files.
 
 ---
 
@@ -53,8 +69,9 @@ python3 scripts/orchestrate.py eval evals/cases/orchestrator/config-subset-parsi
 ## Validation (current)
 
 ```text
-Harness validator:  Passed 98 | Warnings 0 | Failed 0
+Harness validator:  Passed 100 | Warnings 2 (optional) | Failed 0
 Orchestrator tests: 70 passed (from repo root)
+Bootstrap test:     ✓ Passed (scripts/08-prepare-template-release.sh)
 ```
 
 ---
@@ -63,10 +80,14 @@ Orchestrator tests: 70 passed (from repo root)
 
 | File | Why |
 |------|-----|
+| `DISTRIBUTION.md` | How to consume/publish template (GitHub, local, attach modes) |
+| `docs/QUICK-REFERENCE.md` | Fast lookup: 5-layer navigation, commands, lifecycle |
+| `_config/conventions.md` | Naming standards, file conventions, load indicators |
 | `_config/project-notes.md` | This repo's verify commands, CLI, shortcuts |
 | `configs/execution.yaml` | `--execute` CLI + env_allowlist |
 | `configs/routing.yaml` | Route names |
 | `scripts/orchestrate.py` | CLI entry |
+| `scripts/08-prepare-template-release.sh` | Pre-release validation (harness + orchestrator + bootstrap) |
 | `FRAMEWORK.md` | Conceptual model + deployment overlay |
 
 ---
@@ -83,9 +104,9 @@ Orchestrator tests: 70 passed (from repo root)
 ## Suggested Next Agent Prompt
 
 ```text
-Resume th3rdai-harness. Read HANDOFF.md and _config/project-notes.md.
+Resume th3rdai-harness. Read HANDOFF.md.
 
-State: Orchestrator 01–04 done; claude -p configured; validator 98/98; 70 tests. Dogfood iteration dry-run + execute step 1 PASS (evals/results/20260530-orchestrator-dogfood-and-error-handling.md).
+State: ICM Phase 1 done (distribution, conventions, quick ref). Orchestrator 01–04 done. Validator 100/100; orchestrator 70/70; bootstrap test passed. **Template release ready.**
 
-Next: bootstrap harness onto a real application repo OR run multi-step --execute on a feature. Do not commit without approval. Update Archon when done.
+Next: Publish v1.0.0 template (enable GitHub Template repository, tag release) OR dogfood on real app. Do not commit without approval. Update Archon when done.
 ```
