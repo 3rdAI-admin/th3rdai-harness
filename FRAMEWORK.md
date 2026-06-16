@@ -10,6 +10,62 @@ The harness uses structured context, reusable skills, versioned prompts, explici
 
 The harness is **agent-driven, not engine-driven** by default: "agents" are role contracts and "skills" are procedures a capable AI agent (or human) follows. Routing (`configs/routing.yaml`) and stage contracts describe the intended sequence. An optional **Native Orchestrator** (`scripts/orchestrate.py`, `plans/native-orchestrator/`) automates sequencing, context-bundle assembly, and run logging — dry-run by default, with opt-in `--execute` via `configs/execution.yaml`. The core stays dependency-free (Python stdlib only).
 
+## 5-Layer Navigation Model
+
+The harness uses a **5-layer navigation model** to help you load context progressively. Think of it like an employee handbook: you don't read every page on day one — you consult different sections based on your current question.
+
+### The Five Layers
+
+```text
+┌─────────────────────────────────────────────────┐
+│ Layer 1: ORIENTATION (CLAUDE.md, CONTEXT.md)  │
+│ "Where am I? What's my role? Where do I start?"│
+│ ~1,200 tokens                                   │
+└─────────────────────────────────────────────────┘
+         ↓
+┌─────────────────────────────────────────────────┐
+│ Layer 2: FOUNDATION (FRAMEWORK.md, agents/)    │
+│ "What are the concepts? Who does what?"         │
+│ ~2,000-3,000 tokens (targeted)                  │
+└─────────────────────────────────────────────────┘
+         ↓
+┌─────────────────────────────────────────────────┐
+│ Layer 3: DOMAIN (skills/, prompts/, models/)   │
+│ "How do I perform this specific task?"          │
+│ ~1,000-2,000 tokens (single skill/prompt)       │
+└─────────────────────────────────────────────────┘
+         ↓
+┌─────────────────────────────────────────────────┐
+│ Layer 4: EXECUTION (stages/, configs/, evals/)│
+│ "What's the step-by-step process for this stage?"│
+│ ~1,500-3,000 tokens (single stage)              │
+└─────────────────────────────────────────────────┘
+         ↓
+┌─────────────────────────────────────────────────┐
+│ Layer 5: CONTINUITY (runs/, telemetry/, plans/)│
+│ "What happened? What's the history? What's next?"│
+│ ~1,000-5,000 tokens (targeted runs/plans)       │
+└─────────────────────────────────────────────────┘
+```
+
+### Navigation Guide
+
+| Question | Start Here | Estimated Tokens |
+|----------|-----------|------------------|
+| "What is this workspace?" | CLAUDE.md + CONTEXT.md | ~1,200 |
+| "How do agents work?" | FRAMEWORK.md (Foundation section) | ~600 |
+| "How do I create a plan?" | skills/plan/planner.md | ~1,500 |
+| "What's the task definition process?" | stages/01-task-definition/CONTEXT.md | ~350 |
+| "What did we try before?" | runs/ (targeted) | Variable |
+
+### Token Budget Best Practices
+
+**AI assistants**: Load context progressively. Each stage CONTEXT.md specifies exactly which files to load and how much (see Load column).
+
+**Rule**: Trust the Load indicators in stage contracts. Don't load entire files when "Relevant sections" is specified.
+
+**Token Calculation**: Files measured as `words × 1.3 = tokens`. Budget estimates include ±20% margin.
+
 ## Core Concepts
 
 ### Agent
