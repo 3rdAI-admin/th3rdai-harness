@@ -217,6 +217,45 @@ shopt -u nullglob
 [ "$eval_case_found" -eq 0 ] && warn "no eval cases found under evals/cases/"
 
 echo ""
+echo "ICM pedagogical enhancements (optional)"
+
+# New documentation from ICM integration - warnings only (backward compatible)
+if [ -f "$ROOT/_config/conventions.md" ]; then
+  ok "_config/conventions.md exists"
+else
+  warn "_config/conventions.md not found (optional ICM enhancement)"
+fi
+
+if [ -d "$ROOT/docs" ]; then
+  ok "docs/ directory exists"
+  if [ -f "$ROOT/docs/QUICK-REFERENCE.md" ]; then
+    ok "docs/QUICK-REFERENCE.md exists"
+  else
+    warn "docs/QUICK-REFERENCE.md not found (optional ICM enhancement)"
+  fi
+else
+  warn "docs/ directory not found (optional ICM enhancement)"
+fi
+
+# Check if stage CONTEXT.md files have token budget columns
+token_budget_found=0
+for stage in 01-task-definition 02-agent-design 03-prompt-design 04-tool-integration 05-evaluation 06-iteration 07-release; do
+  if [ -f "$ROOT/stages/$stage/CONTEXT.md" ]; then
+    if grep -q "Tokens (est.)" "$ROOT/stages/$stage/CONTEXT.md"; then
+      token_budget_found=$((token_budget_found + 1))
+    fi
+  fi
+done
+
+if [ "$token_budget_found" -eq 7 ]; then
+  ok "all stage CONTEXT.md files have token budget columns"
+elif [ "$token_budget_found" -gt 0 ]; then
+  warn "$token_budget_found/7 stage CONTEXT.md files have token budgets (partial adoption)"
+else
+  warn "no stage CONTEXT.md files have token budgets (optional ICM enhancement)"
+fi
+
+echo ""
 echo "Passed:   $PASS"
 echo "Warnings: $WARN"
 echo "Failed:   $FAIL"

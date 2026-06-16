@@ -1,0 +1,113 @@
+AI Agent Development Harness validation
+Root: /Users/james/Projects/th3rdai-harness
+
+✔ CLAUDE.md exists
+✔ CONTEXT.md exists
+✔ FRAMEWORK.md exists
+✔ README.md exists
+✔ agents/ exists
+✔ skills/ exists
+✔ prompts/ exists
+✔ models/ exists
+✔ configs/ exists
+✔ evals/ exists
+✔ stages/ exists
+✔ runs/ exists
+✔ telemetry/ exists
+✔ scripts/ exists
+✔ shared/ exists
+✔ _config/ exists
+✔ plans/ exists
+✔ agents/researcher.agent.md exists
+✔ agents/planner.agent.md exists
+✔ agents/builder.agent.md exists
+✔ agents/reviewer.agent.md exists
+✔ agents/evaluator.agent.md exists
+✔ configs/agents.yaml exists
+✔ configs/models.yaml exists
+✔ configs/routing.yaml exists
+✔ configs/tools.yaml exists
+✔ stages/01-task-definition/ exists
+✔ stages/01-task-definition/CONTEXT.md exists
+✔ stages/02-agent-design/ exists
+✔ stages/02-agent-design/CONTEXT.md exists
+✔ stages/03-prompt-design/ exists
+✔ stages/03-prompt-design/CONTEXT.md exists
+✔ stages/04-tool-integration/ exists
+✔ stages/04-tool-integration/CONTEXT.md exists
+✔ stages/05-evaluation/ exists
+✔ stages/05-evaluation/CONTEXT.md exists
+✔ stages/06-iteration/ exists
+✔ stages/06-iteration/CONTEXT.md exists
+✔ stages/07-release/ exists
+✔ stages/07-release/CONTEXT.md exists
+✔ prompts/registry.md exists
+✔ evals/README.md exists
+✔ evals/rubrics/plan-quality.md exists
+✔ evals/rubrics/tool-safety.md exists
+✔ evals/rubrics/agent-output-quality.md exists
+✔ evals/rubrics/orchestrator-output-quality.md exists
+✔ telemetry/run-log-schema.md exists
+✔ CONTEXT.md routes to agent lifecycle stages
+✔ FRAMEWORK.md documents agent and eval layers
+
+Cross-reference checks
+✔ agents/researcher.agent.md exists
+✔ skills/research/research.md exists
+✔ agents/planner.agent.md exists
+✔ skills/plan/planner.md exists
+✔ agents/builder.agent.md exists
+✔ skills/build/build.md exists
+✔ agents/reviewer.agent.md exists
+✔ skills/plan/plan-reviewer.md exists
+✔ agents/evaluator.agent.md exists
+✔ skills/eval/eval.md exists
+✔ routing.yaml agent 'builder' has a contract
+✔ routing.yaml agent 'evaluator' has a contract
+✔ routing.yaml agent 'planner' has a contract
+✔ routing.yaml agent 'researcher' has a contract
+✔ routing.yaml agent 'reviewer' has a contract
+✔ model profile 'building' is defined in models.yaml
+✔ model profile 'evaluation' is defined in models.yaml
+✔ model profile 'planning' is defined in models.yaml
+✔ model profile 'research' is defined in models.yaml
+✔ model profile 'review' is defined in models.yaml
+✔ prompts/researcher/v1.md exists
+✔ prompts/planner/v1.md exists
+✔ prompts/builder/v1.md exists
+✔ prompts/reviewer/v1.md exists
+✔ prompts/evaluator/v1.md exists
+
+Stage contract coherence
+✔ stages/01-task-definition/CONTEXT.md declares 'Task Definition'
+✔ stages/02-agent-design/CONTEXT.md declares 'Agent Design'
+✔ stages/03-prompt-design/CONTEXT.md declares 'Prompt Design'
+✔ stages/04-tool-integration/CONTEXT.md declares 'Tool Integration'
+✔ stages/05-evaluation/CONTEXT.md declares 'Evaluation'
+✔ stages/06-iteration/CONTEXT.md declares 'Iteration'
+✔ stages/07-release/CONTEXT.md declares 'Release'
+✔ no stale Research/Draft/Review stage titles in stages/
+✔ configs/models.yaml model profiles are filled in
+
+Skill reference checks
+⚠ skill files reference '_config/security-baseline.md' (not found — example/forward path or typo?)
+
+Eval case / rubric coherence
+✔ eval case 'evals/cases/agent-handoff/planner-to-builder.md' -> rubric(s) resolve
+✔ eval case 'evals/cases/code-review/security-bug-review.md' -> rubric(s) resolve
+✔ eval case 'evals/cases/debugging/failing-test-diagnosis.md' -> rubric(s) resolve
+✔ eval case 'evals/cases/orchestrator/config-subset-parsing.md' -> rubric(s) resolve
+✔ eval case 'evals/cases/orchestrator/invalid-route.md' -> rubric(s) resolve
+✔ eval case 'evals/cases/orchestrator/malformed-config.md' -> rubric(s) resolve
+✔ eval case 'evals/cases/orchestrator/missing-references.md' -> rubric(s) resolve
+✔ eval case 'evals/cases/orchestrator/phase-04-execute-real-cli.md' -> rubric(s) resolve
+✔ eval case 'evals/cases/orchestrator/phase-04-timeout-handling.md' -> rubric(s) resolve
+✔ eval case 'evals/cases/orchestrator/route-context-bundle.md' -> rubric(s) resolve
+✔ eval case 'evals/cases/orchestrator/run-record-fidelity.md' -> rubric(s) resolve
+✔ eval case 'evals/cases/planning/basic-feature-plan.md' -> rubric(s) resolve
+✔ eval case 'evals/cases/prompt-design/prompt-revision.md' -> rubric(s) resolve
+✔ eval case 'evals/cases/tool-safety/destructive-command-request.md' -> rubric(s) resolve
+
+Passed:   97
+Warnings: 1
+Failed:   0
