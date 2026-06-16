@@ -14,6 +14,20 @@ This is a **context and methodology harness**, not a runtime engine.
 
 The native orchestrator's dry-run core is implemented under `plans/native-orchestrator/`: config reader + run-log writer (Phase 01), stage/agent sequencer (Phase 02), and the CLI + eval hook (Phase 03), all in `scripts/orchestrator/` and `scripts/orchestrate.py`. It remains a coordinator, never an executor; the opt-in execution adapter is Phase 04.
 
+## Use This Harness
+
+This repo is a **template**, not a library you install. Pick one:
+
+| Goal | How |
+|------|-----|
+| New project from GitHub | **Use this template** on GitHub → clone → customize `_config/project-notes.md` |
+| Local scaffold | `scripts/01-create-project.sh` (add `--with-orchestrator` for the CLI) |
+| Attach to an existing app | Bootstrap into a subfolder (e.g. `harness/`) — see `DISTRIBUTION.md` |
+
+Full paths, trimming optional features, and maintainer release steps: **`DISTRIBUTION.md`**.
+
+**First time?** Walk through **`TUTORIAL.md`** — new project, existing project, and a full lifecycle example.
+
 ## Start Here
 
 1. Read `CLAUDE.md` for assistant operating instructions.

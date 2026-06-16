@@ -6,7 +6,7 @@ You are an AI assistant working inside an AI Agent Development Harness. Your rol
 
 ## Navigation
 
-This workspace uses an agent-oriented version of the Interpretable Context Methodology (ICM). Context is organized into framework layers and lifecycle stages. Start with `FRAMEWORK.md`, then use `CONTEXT.md` to route work.
+This workspace uses an agent-oriented version of the Interpretable Context Methodology (ICM). Context is organized into framework layers and lifecycle stages. Start with `FRAMEWORK.md`, then use `CONTEXT.md` to route work. New users: see `TUTORIAL.md` for setup (new or existing project) and a first lifecycle walkthrough.
 
 ### Folder Map
 
@@ -47,7 +47,7 @@ This workspace uses an agent-oriented version of the Interpretable Context Metho
 <!-- gitnexus:start -->
 # GitNexus — Code Intelligence
 
-This project is indexed by GitNexus as **th3rdai-harness** (1736 symbols, 2136 relationships, 32 execution flows). Use the GitNexus MCP tools to understand code, assess impact, and navigate safely.
+This project is indexed by GitNexus as **th3rdai-harness** (1942 symbols, 2339 relationships, 32 execution flows). Use the GitNexus MCP tools to understand code, assess impact, and navigate safely.
 
 > If any GitNexus tool warns the index is stale, run `npx gitnexus analyze` in terminal first.
 

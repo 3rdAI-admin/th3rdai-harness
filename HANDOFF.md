@@ -29,7 +29,7 @@ python3 scripts/orchestrate.py eval evals/cases/orchestrator/config-subset-parsi
 
 1. **Dogfood on a real app** — Bootstrap or attach the harness to a target application; run `task_definition` → `iteration` on actual feature work; record under `runs/` and `evals/results/`.
 2. **Multi-step execute** — Try `--max-steps 3` on `iteration` when ready for cost/latency; gates in `configs/tools.yaml` still apply.
-3. **Template publish** — Tag/release harness v1, or document bootstrap flow for new repos (`skills/new-project.md`, `project-notes.TEMPLATE.md`).
+3. **Template publish** — Run `scripts/08-prepare-template-release.sh`, enable GitHub **Template repository**, tag `v1.0.0` (see `DISTRIBUTION.md`).
 
 **Limits:** The harness coordinates and optionally shells out to a CLI; it does not autonomously commit, install deps, or bypass approval gates (`CLAUDE.md`, `configs/tools.yaml`).
 

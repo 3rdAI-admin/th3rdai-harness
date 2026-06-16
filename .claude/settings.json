@@ -1,0 +1,16 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(git -C /tmp/test-app init -q)",
+      "Bash(git -C /tmp/test-app remote add origin https://example.com/me/test-app.git)",
+      "Bash(HARNESS_PROJECT_GOAL='Add a /health endpoint that returns build version' scripts/new-project.sh /tmp/test-app)",
+      "Bash(PROJECT_ROOT=/tmp/test-app/harness /tmp/test-app/harness/scripts/07-validate-harness.sh)",
+      "Bash(rm -rf /tmp/plain-app)",
+      "Bash(mkdir -p /tmp/plain-app)",
+      "Bash(HARNESS_PROJECT_GOAL='Document the architecture' scripts/new-project.sh /tmp/plain-app)",
+      "Bash(HARNESS_PROJECT_GOAL='Add a /health endpoint' HARNESS_OVERWRITE=1 scripts/new-project.sh /tmp/test-app --with-orchestrator)",
+      "Bash(HARNESS_PROJECT_GOAL=\"x\" scripts/new-project.sh /tmp/test-app)",
+      "Bash(HARNESS_PROJECT_GOAL=\"x\" HARNESS_OVERWRITE=1 scripts/new-project.sh /tmp/test-app)"
+    ]
+  }
+}

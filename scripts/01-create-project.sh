@@ -10,6 +10,24 @@ warn()  { echo -e "${YELLOW}⚠${NC}  $1"; }
 step()  { echo -e "\n${CYAN}━━━${NC} ${BOLD}$1${NC}"; }
 detail(){ echo -e "   ${DIM}→ $1${NC}"; }
 
+WITH_ORCHESTRATOR=0
+while [ $# -gt 0 ]; do
+  case "$1" in
+    --with-orchestrator) WITH_ORCHESTRATOR=1; shift ;;
+    -h|--help)
+      echo "Usage: scripts/01-create-project.sh [--with-orchestrator]"
+      echo ""
+      echo "  --with-orchestrator   Copy orchestrator CLI, tests, and eval cases"
+      echo ""
+      echo "Environment (non-interactive):"
+      echo "  HARNESS_PROJECT_PATH   Destination path (required to skip prompt)"
+      echo "  HARNESS_OVERWRITE=1    Overwrite files if destination exists"
+      exit 0
+      ;;
+    *) echo "Unknown option: $1" >&2; exit 1 ;;
+  esac
+done
+
 echo ""
 echo -e "${BOLD}╔══════════════════════════════════════════════════╗${NC}"
 echo -e "${BOLD}║   Agent Harness — Create Project Structure      ║${NC}"
@@ -18,7 +36,12 @@ echo ""
 echo -e "This will create a complete AI agent/model development harness."
 echo ""
 
-read -rp "$(echo -e "${CYAN}?${NC} Where should I create the project? (path): ")" PROJECT_PATH
+if [ -n "${HARNESS_PROJECT_PATH:-}" ]; then
+  PROJECT_PATH="$HARNESS_PROJECT_PATH"
+  detail "Using HARNESS_PROJECT_PATH: $PROJECT_PATH"
+else
+  read -rp "$(echo -e "${CYAN}?${NC} Where should I create the project? (path): ")" PROJECT_PATH
+fi
 PROJECT_PATH="${PROJECT_PATH/#\~/$HOME}"
 
 if [ -z "$PROJECT_PATH" ]; then
@@ -26,12 +49,16 @@ if [ -z "$PROJECT_PATH" ]; then
   exit 1
 fi
 
-if [ -d "$PROJECT_PATH" ]; then
+if [ -d "$PROJECT_PATH" ] && [ "$(ls -A "$PROJECT_PATH" 2>/dev/null)" ]; then
   warn "Folder already exists: $PROJECT_PATH"
-  read -rp "$(echo -e "${CYAN}?${NC} Overwrite files in this folder? (y/N): ")" OVERWRITE
-  if [[ ! "$OVERWRITE" =~ ^[Yy]$ ]]; then
-    echo "Exiting. Choose a different path."
-    exit 1
+  if [ "${HARNESS_OVERWRITE:-}" = "1" ]; then
+    detail "HARNESS_OVERWRITE=1 — continuing"
+  else
+    read -rp "$(echo -e "${CYAN}?${NC} Overwrite files in this folder? (y/N): ")" OVERWRITE
+    if [[ ! "$OVERWRITE" =~ ^[Yy]$ ]]; then
+      echo "Exiting. Choose a different path or set HARNESS_OVERWRITE=1."
+      exit 1
+    fi
   fi
 fi
 
@@ -54,25 +81,25 @@ copy_dir() {
   local src="$TEMPLATE_ROOT/$1"
   local dest="$PROJECT_PATH/$1"
   mkdir -p "$dest"
-  cp -R "$src"/. "$dest"/ 
+  cp -R "$src"/. "$dest"/
   detail "Copied: $1/"
 }
 
 step "Step 1/4 — Creating directory structure"
 mkdir -p "$PROJECT_PATH"
 
-for d in agents prompts models configs evals stages runs telemetry scripts shared _config skills; do
+for d in agents prompts models configs evals stages runs telemetry scripts shared _config skills plans; do
   mkdir -p "$PROJECT_PATH/$d"
   detail "Created: $d/"
 done
 ok "Folder structure created"
 
 step "Step 2/4 — Copying canonical harness files"
-for f in README.md FRAMEWORK.md CLAUDE.md CONTEXT.md VERSION2.md VERSION3.md; do
+for f in README.md FRAMEWORK.md CLAUDE.md CONTEXT.md VERSION2.md VERSION3.md DISTRIBUTION.md TUTORIAL.md; do
   [ -f "$TEMPLATE_ROOT/$f" ] && copy_file "$f"
 done
 
-for d in agents prompts models configs evals stages runs telemetry shared _config skills; do
+for d in agents prompts models configs evals stages runs telemetry shared _config skills plans; do
   [ -d "$TEMPLATE_ROOT/$d" ] && copy_dir "$d"
 done
 
@@ -83,6 +110,18 @@ for script_file in "$TEMPLATE_ROOT"/scripts/*.sh; do
 done
 [ -f "$TEMPLATE_ROOT/scripts/.icm-helpers.sh" ] && copy_file "scripts/.icm-helpers.sh"
 chmod +x "$PROJECT_PATH/scripts"/*.sh 2>/dev/null || true
+
+if [ "$WITH_ORCHESTRATOR" -eq 1 ]; then
+  detail "Including Native Orchestrator"
+  for f in scripts/__init__.py scripts/orchestrate.py; do
+    [ -f "$TEMPLATE_ROOT/$f" ] && copy_file "$f"
+  done
+  [ -d "$TEMPLATE_ROOT/scripts/orchestrator" ] && copy_dir "scripts/orchestrator"
+  [ -f "$TEMPLATE_ROOT/configs/execution.yaml" ] && copy_file "configs/execution.yaml"
+  [ -d "$TEMPLATE_ROOT/evals/cases/orchestrator" ] && copy_dir "evals/cases/orchestrator"
+  [ -d "$TEMPLATE_ROOT/plans/native-orchestrator" ] && copy_dir "plans/native-orchestrator"
+fi
+
 ok "Harness files copied"
 
 step "Step 3/4 — Customizing project identity"
@@ -115,10 +154,13 @@ echo -e "${GREEN}╚════════════════════
 echo ""
 echo -e "  ${BOLD}Location:${NC} $PROJECT_PATH"
 echo -e "  ${BOLD}Files:${NC}    $(find "$PROJECT_PATH" -type f | wc -l | tr -d ' ') files in $(find "$PROJECT_PATH" -type d | wc -l | tr -d ' ') folders"
+if [ "$WITH_ORCHESTRATOR" -eq 1 ]; then
+  echo -e "  ${BOLD}Orchestrator:${NC} included (python3 scripts/orchestrate.py --help)"
+fi
 echo ""
 echo -e "  ${CYAN}Next steps:${NC}"
 echo -e "  1. Review ${BOLD}CLAUDE.md${NC} and ${BOLD}FRAMEWORK.md${NC}"
-echo -e "  2. Configure ${BOLD}configs/models.yaml${NC} for your preferred providers"
-echo -e "  3. Add or revise agents in ${BOLD}agents/${NC}"
-echo -e "  4. Run ${BOLD}scripts/07-validate-harness.sh${NC} before release"
+echo -e "  2. Copy ${BOLD}_config/project-notes.TEMPLATE.md${NC} → ${BOLD}project-notes.md${NC}"
+echo -e "  3. Configure ${BOLD}configs/models.yaml${NC} for your preferred providers"
+echo -e "  4. See ${BOLD}DISTRIBUTION.md${NC} for GitHub template and monorepo options"
 echo ""
