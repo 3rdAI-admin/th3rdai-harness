@@ -38,6 +38,7 @@ Examples:
 - `/build`
 - `/validate`
 - `/security`
+- `/code-cleanup`
 - `/tests/e2e-test.md`
 - `/gitcommit`
 
