@@ -192,6 +192,25 @@ Dry-run is the default. Phase 04 adds opt-in execution via `configs/execution.ya
 self-modification without approval. UAT: `evals/results/20260529-orchestrator-phase-04-execute-uat.md`;
 dogfood: `evals/results/20260530-orchestrator-dogfood-and-error-handling.md`.
 
+## ICM Pedagogical Enhancements (Optional)
+
+**Completed June 16, 2026** — Commits: 7ef2d98, 1e3bd6e, 4169036
+
+Interpretable Context Methodology (ICM) enhancements improve harness onboarding, navigation, and distribution:
+
+| Component | Artifact | Purpose |
+|-----------|----------|---------|
+| **Distribution modes** | README "Use This Harness" section | GitHub template, local scaffold, attach to existing app |
+| **Bootstrap enhancements** | `scripts/01-create-project.sh` | `--with-orchestrator` flag, non-interactive mode (env vars), help text |
+| **Release automation** | `scripts/08-prepare-template-release.sh` | Pre-release validation (harness + orchestrator + bootstrap dry-run) |
+| **Navigation guide** | `docs/QUICK-REFERENCE.md` | 5-layer navigation model, common commands, lifecycle quick lookup, pitfalls |
+| **Naming standards** | `_config/conventions.md` | File naming, slugification, load indicators, commit format |
+| **Testing permissions** | `.claude/settings.json` | Pre-approved commands for harness development workflow |
+
+**Validation:** 100 passed, 2 optional warnings (security-baseline forward reference, token budget columns deferred to Phase 2).
+
+**Phase 2 (optional, deferred):** Add `Tokens (est.)` columns to stage CONTEXT.md files for explicit token budgeting.
+
 ## Recommended Workflow Paths
 
 ### Create a New Agent
@@ -227,14 +246,16 @@ dogfood: `evals/results/20260530-orchestrator-dogfood-and-error-handling.md`.
 Run:
 
 ```bash
-scripts/07-validate-harness.sh
+scripts/07-validate-harness.sh                                    # Harness structure + cross-refs (100 checks)
+python3 -m unittest discover scripts/orchestrator/tests           # Orchestrator unit tests (70 tests)
+scripts/08-prepare-template-release.sh                            # Pre-release validation (all of the above + bootstrap)
 ```
 
-This checks structure, cross-references (agent ↔ skill ↔ prompt ↔ config ↔
-model profile), stage-contract coherence, skill path resolution, and eval
-case ↔ rubric coherence. The Native Orchestrator additionally has stdlib unit
-tests under `scripts/orchestrator/tests/` (run from `scripts/`:
-`python3 -m unittest discover -s orchestrator/tests`).
+The validator checks structure, cross-references (agent ↔ skill ↔ prompt ↔ config ↔
+model profile), stage-contract coherence, skill path resolution, eval case ↔ rubric
+coherence, and optional ICM enhancements (conventions.md, QUICK-REFERENCE.md, token budgets).
+The Native Orchestrator has stdlib unit tests under `scripts/orchestrator/tests/`.
+The release script performs a full validation sweep plus a dry-run bootstrap to a temp directory.
 
 ## Safety Principles
 
@@ -249,14 +270,17 @@ tests under `scripts/orchestrator/tests/` (run from `scripts/`:
 
 The following were completed and are no longer pending:
 
-- Bootstrap scripts (`scripts/01`–`07`) generate the full agent harness structure by default.
-- Eval cases added for prompt design, code review, tool safety, agent handoff, and debugging.
+- Bootstrap scripts (`scripts/01`–`08`) generate the full agent harness structure and validate template releases.
+- Native Orchestrator Phases 01–04 (config, sequencer, CLI, execution adapter) — **done**.
+- ICM Phase 1 (distribution modes, conventions, quick reference, release automation) — **done**.
+- Eval cases added for prompt design, code review, tool safety, agent handoff, debugging, and orchestrator.
 - Model-comparison result template added (`evals/results/_TEMPLATE-model-comparison.md`).
 - Run-record examples added under `runs/examples/`.
 - Core skill files refined to reference the relevant agent and eval layer.
 
 ## Next Steps
 
-1. **Dogfood** — Apply the harness to a real application or feature (bootstrap via `skills/new-project.md`).
-2. **Operate** — Run multi-step `--execute` on lifecycle routes when cost/latency are acceptable.
-3. **Evolve** — Optional generated JSON config mirrors; stronger execute/resume semantics (see `EFFORT.md` open questions).
+1. **Template Release** — Enable GitHub "Template repository" setting, tag `v1.0.0`, publish release (see `DISTRIBUTION.md`). **Release validation passed** ✓.
+2. **Dogfood** — Apply the harness to a real application or feature (bootstrap via `scripts/01-create-project.sh` or attach mode).
+3. **Operate** — Run multi-step `--execute` on lifecycle routes when cost/latency are acceptable.
+4. **Evolve** — Optional: ICM Phase 2 (token budget columns); generated JSON config mirrors; stronger execute/resume semantics (see `EFFORT.md` open questions).
