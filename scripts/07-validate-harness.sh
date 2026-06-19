@@ -237,18 +237,18 @@ else
   warn "docs/ directory not found (optional ICM enhancement)"
 fi
 
-# Check if stage CONTEXT.md files have token budget columns
+# Check if stage CONTEXT.md files have token budget sections
 token_budget_found=0
 for stage in 01-task-definition 02-agent-design 03-prompt-design 04-tool-integration 05-evaluation 06-iteration 07-release; do
   if [ -f "$ROOT/stages/$stage/CONTEXT.md" ]; then
-    if grep -q "Tokens (est.)" "$ROOT/stages/$stage/CONTEXT.md"; then
+    if grep -q "## Token Budget" "$ROOT/stages/$stage/CONTEXT.md"; then
       token_budget_found=$((token_budget_found + 1))
     fi
   fi
 done
 
 if [ "$token_budget_found" -eq 7 ]; then
-  ok "all stage CONTEXT.md files have token budget columns"
+  ok "all stage CONTEXT.md files have token budget sections"
 elif [ "$token_budget_found" -gt 0 ]; then
   warn "$token_budget_found/7 stage CONTEXT.md files have token budgets (partial adoption)"
 else
