@@ -4,6 +4,22 @@
 
 Create or revise an agent contract: its role, permissions, inputs, outputs, success criteria, and handoff rules. Agents answer the question **who is doing the work?**
 
+## Token Budget
+
+**Estimated context cost:** ~10K-15K tokens
+
+**Breakdown:**
+- Planner agent contract (~1K tokens)
+- Planning skill (~800 tokens)
+- This stage context (~500 tokens)
+- Task definition from Stage 01 (~2K-4K tokens)
+- FRAMEWORK.md agent section (~1.5K tokens)
+- agents/README.md (~800 tokens)
+- Existing agent contracts for reference (~3K-5K tokens)
+- configs/agents.yaml + configs/tools.yaml (~1K tokens)
+
+**Variance drivers:** Number of existing agents reviewed, complexity of permissions model, extent of configs/tools.yaml updates.
+
 ## Inputs
 
 | File | Load | Reason |

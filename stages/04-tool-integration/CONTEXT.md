@@ -4,6 +4,21 @@
 
 Define, review, or implement tool permissions, runtime behavior, scripts, and integrations used by agents or skills.
 
+## Token Budget
+
+**Estimated context cost:** ~6K-9K tokens
+
+**Breakdown:**
+- Builder or Reviewer agent contract (~1K tokens)
+- This stage context (~400 tokens)
+- FRAMEWORK.md relevant sections (~1K tokens)
+- configs/tools.yaml (~1.5K tokens)
+- Relevant agent contracts (~1K-2K tokens)
+- Relevant skills (~1K-2K tokens)
+- Scripts or integration code (~1K-2K tokens)
+
+**Variance drivers:** Number of tools/scripts involved, complexity of permissions model, extent of integration code review.
+
 ## Inputs
 
 | File | Load | Reason |

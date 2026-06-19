@@ -4,6 +4,23 @@
 
 Prepare a stable agent, prompt, skill, model profile, eval, config, or framework update for use, documentation, or commit.
 
+## Token Budget
+
+**Estimated context cost:** ~8K-13K tokens
+
+**Breakdown:**
+- Reviewer agent contract (~1K tokens)
+- Release skill (~800 tokens)
+- This stage context (~500 tokens)
+- Changed artifacts for review (~3K-6K tokens)
+- Evaluation results (~1.5K-2K tokens)
+- Changelogs (~1K tokens)
+- skills/commit/gitcommit.md (~800 tokens)
+- skills/security/security.md (if security review needed) (~2K tokens)
+- telemetry/run-log-schema.md (~500 tokens)
+
+**Variance drivers:** Number and size of changed files, whether security review required, extent of evaluation evidence, whether release notes or git commit needed.
+
 ## Inputs
 
 | File | Load | Reason |

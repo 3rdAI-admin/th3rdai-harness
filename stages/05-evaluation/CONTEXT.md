@@ -4,6 +4,23 @@
 
 Evaluate agents, prompts, skills, model profiles, and workflows using repeatable rubrics and representative cases.
 
+## Token Budget
+
+**Estimated context cost:** ~9K-14K tokens
+
+**Breakdown:**
+- Evaluator agent contract (~1K tokens)
+- Evaluation skill (~800 tokens)
+- This stage context (~500 tokens)
+- evals/README.md (~1K tokens)
+- Relevant rubric (~1.5K-2K tokens)
+- Relevant eval case (~1K-2K tokens)
+- Artifact under test (agent/prompt/skill) (~2K-4K tokens)
+- configs/models.yaml (~1K tokens)
+- Test outputs and results (~1K-2K tokens)
+
+**Variance drivers:** Complexity of artifact being evaluated, number of rubric criteria, length of test outputs, whether comparison testing (multiple versions/models).
+
 ## Inputs
 
 | File | Load | Reason |

@@ -4,6 +4,21 @@
 
 Clarify what is being built or changed before any agent, prompt, skill, or config work begins. Define the task, target artifact type, scope, constraints, success criteria, assumptions, and open questions.
 
+## Token Budget
+
+**Estimated context cost:** ~8K-12K tokens
+
+**Breakdown:**
+- Researcher agent contract (~800 tokens)
+- Research skill (~600 tokens)
+- This stage context (~400 tokens)
+- FRAMEWORK.md (relevant sections) (~2K tokens)
+- CONTEXT.md routing table (~500 tokens)
+- User request and clarifications (~2K-5K tokens)
+- Relevant agent/rubric references (~2K-3K tokens)
+
+**Variance drivers:** Complexity of user request, number of clarifying exchanges, depth of framework review needed.
+
 ## Inputs
 
 | File | Load | Reason |

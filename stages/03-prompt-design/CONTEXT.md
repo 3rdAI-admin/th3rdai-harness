@@ -4,6 +4,21 @@
 
 Create or revise the versioned prompt template used by an agent or skill, and keep its changelog and registry entry current. Prompts answer the question **what exact instruction pattern is being tested or reused?**
 
+## Token Budget
+
+**Estimated context cost:** ~7K-10K tokens
+
+**Breakdown:**
+- Planner or Reviewer agent contract (~1K tokens)
+- This stage context (~500 tokens)
+- Task definition from Stage 01 (~2K tokens)
+- Relevant agent contract (~1K tokens)
+- prompts/registry.md (~800 tokens)
+- Existing prompt versions for reference (~1.5K-3K tokens)
+- Relevant eval rubrics (~1K-2K tokens)
+
+**Variance drivers:** Number of existing prompt versions reviewed, complexity of behavioral requirements, extent of rubric analysis.
+
 ## Inputs
 
 | File | Load | Reason |

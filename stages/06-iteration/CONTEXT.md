@@ -4,6 +4,23 @@
 
 Improve agents, prompts, skills, model profiles, configs, or evaluations based on findings from review or evaluation.
 
+## Token Budget
+
+**Estimated context cost:** ~10K-18K tokens
+
+**Breakdown:**
+- Planner, Builder, or Evaluator agent contract (~1K tokens)
+- Relevant skill (~800 tokens)
+- This stage context (~500 tokens)
+- Evaluation findings (~2K-5K tokens)
+- Review findings (~1K-3K tokens)
+- Artifact being revised (~2K-4K tokens)
+- Changelog and version history (~1K-2K tokens)
+- Relevant configs (~1K tokens)
+- Re-evaluation results (~1K-2K tokens)
+
+**Variance drivers:** Number of findings to address, scope of revisions (minor tweaks vs major redesign), whether iterating across multiple artifacts, extent of re-evaluation.
+
 ## Inputs
 
 | File | Load | Reason |
