@@ -7,30 +7,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
-### Added
-- Comprehensive environment adaptation guides for multi-platform support (f38d858)
-  - Aider guide (98% compatible, best orchestrator fit)
-  - Cursor guide (95% compatible, @-mentions support)
-  - Windsurf guide (90% compatible, Cascade AI integration)
-  - Generic template with compatibility scoring system
-  - Central index with comparison matrix
-- ICM token budget sections to all 7 stage CONTEXT.md files (6fc28ae)
-  - Stage-specific token cost estimates (~6K-18K per stage)
-  - Breakdown of context loading components
-  - Variance drivers documentation
-- Enhanced `_config/security-baseline.TEMPLATE.md` (6fc28ae)
-  - Secret detection patterns (OpenAI, GitHub, AWS, JWT, etc.)
-  - P0/P1/P2 remediation priorities
-  - Comprehensive .gitignore configuration guidance
-  - Verification commands and security resources
-
-### Changed
-- Updated validator to detect ICM-compliant "## Token Budget" sections (9ca5666)
-- Updated README.md, DISTRIBUTION.md, TUTORIAL.md with environment portability callouts (4312bb6)
-
-### Fixed
-- Validator false negative for token budget detection (was expecting table columns, now recognizes section headers)
-
 ## [1.2.0] - 2026-06-19
 
 ### Added
@@ -49,12 +25,37 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - Mode validation and error handling
 - Documentation and validation (86fe6b7)
   - Autonomy system documentation in README.md
-  - 80/80 orchestrator tests passing (includes autonomy tests)
+  - 101/101 orchestrator tests passing (includes autonomy tests)
   - Comprehensive validation report
+- **Multi-Environment Support** - Comprehensive environment adaptation guides (f38d858)
+  - Aider guide (98% compatible, best orchestrator fit)
+  - Cursor guide (95% compatible, @-mentions support)
+  - Windsurf guide (90% compatible, Cascade AI integration)
+  - Generic template with compatibility scoring system
+  - Central index with comparison matrix in `docs/adapters/`
+- **ICM Token Budgets** - Pedagogical enhancements to all 7 stage CONTEXT.md files (6fc28ae)
+  - Stage-specific token cost estimates (~6K-18K per stage)
+  - Breakdown of context loading components
+  - Variance drivers documentation
+- **Security Baseline Template** - Enhanced `_config/security-baseline.TEMPLATE.md` (6fc28ae)
+  - Secret detection patterns (OpenAI, GitHub, AWS, JWT, etc.)
+  - P0/P1/P2 remediation priorities
+  - Comprehensive .gitignore configuration guidance
+  - Verification commands and security resources
+- **Canonical CHANGELOG** - Version history following keepachangelog.com (9c648f2, bab1144)
+  - Documents v1.0.0, v1.1.0, v1.2.0 with detailed release notes
+  - Migration guides and compatibility notes
+  - Integrated into README.md and VERSION3.md
 
 ### Changed
 - Orchestrator execution adapter now respects autonomy mode settings
 - Approval gates enhanced with risk-aware decision logic
+- Updated validator to detect ICM-compliant "## Token Budget" sections (9ca5666)
+- Updated README.md, DISTRIBUTION.md, TUTORIAL.md with environment portability callouts (4312bb6)
+- Updated HANDOFF.md to reflect v1.2.0 completion and all enhancements (7f724e0)
+
+### Fixed
+- Validator false negative for token budget detection (was expecting table columns, now recognizes section headers)
 
 ## [1.1.0] - 2026-06-19
 
