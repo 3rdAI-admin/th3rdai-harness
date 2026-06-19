@@ -47,6 +47,21 @@ developer or agent can understand the codebase.
 - Commit (optional, after approval): `skills/commit/` (`/gitcommit`)
 - Archive location: `archive/` (repo root)
 
+## Autonomy Mode Recommendation
+
+When running cleanup workflows via orchestrator:
+
+```bash
+python3 scripts/orchestrate.py route iteration --execute --adapter cli --autonomy cautious
+```
+
+**Cautious mode** is recommended for cleanup workflows because:
+- Auto-approves LOW/MEDIUM risk operations (file moves, archive operations)
+- Prompts for HIGH risk operations (large refactors, breaking moves)
+- Blocks CRITICAL operations (force operations, mass deletions)
+
+Review `runs/autonomy-decisions.jsonl` after completion to verify appropriate risk classifications.
+
 ## Next Step
 - Success: run `/validate` (or the project test suite) to confirm health, then commit on a branch.
 - If impact analysis flags HIGH/CRITICAL risk: stop, report blast radius, and hand back to the user for a decision.

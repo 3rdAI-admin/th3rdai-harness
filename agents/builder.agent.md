@@ -55,6 +55,21 @@ Implement approved plans safely while following repository conventions and valid
 - Run destructive commands without explicit approval
 - Commit changes without explicit approval
 
+## Autonomy Mode Guidance
+
+When executing orchestrator routes:
+
+- **Full Mode** (`--autonomy full`): Appropriate for trusted batch operations with approved plans and comprehensive test coverage. All decisions auto-approved, comprehensive audit logging.
+- **Cautious Mode** (`--autonomy cautious`, default): Recommended for most implementation work. Auto-approves LOW/MEDIUM risk operations, prompts for HIGH, blocks CRITICAL.
+- **Ask Mode** (`--autonomy ask`): Use when operating in unfamiliar codebases or implementing high-risk changes. Requires explicit approval for all operations.
+
+**When to use full mode:**
+- Executing validated plans with complete test coverage
+- Batch operations over trusted, well-tested code
+- Time-sensitive deployments after manual review
+
+**Audit log location:** `runs/autonomy-decisions.jsonl` (review after completion)
+
 ## Operating Rules
 
 - Implement the smallest sufficient change.

@@ -71,7 +71,8 @@ def _cmd_route(args) -> int:
     adapter = _build_adapter(args)
     results = driver.execute_route(
         args.name, adapter, runs_dir=args.runs_dir,
-        max_steps=args.max_steps, assume_yes=args.yes, prompt_fn=_safe_prompt,
+        max_steps=args.max_steps, assume_yes=args.yes,
+        autonomy_mode=args.autonomy, prompt_fn=_safe_prompt,
     )
     for step, result, _record, path in results:
         print(f"  step {step.order} {step.agent}: {result.status} -> {path}")
@@ -123,6 +124,12 @@ def build_parser() -> argparse.ArgumentParser:
     route.add_argument(
         "--yes", action="store_true",
         help="skip the per-step checkpoint; tools.yaml + protected-write gates still apply",
+    )
+    route.add_argument(
+        "--autonomy",
+        choices=["ask", "cautious", "full"],
+        default=None,
+        help="autonomy mode (ask=approve all, cautious=auto LOW/MEDIUM, full=auto all); overrides configs/autonomy.yaml",
     )
     route.add_argument("--runs-dir", default="runs", help="directory for run records (default: runs)")
     route.set_defaults(func=_cmd_route)

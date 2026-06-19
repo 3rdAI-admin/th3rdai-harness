@@ -34,6 +34,21 @@ Turn a request, requirement, or research summary into an implementation-ready pl
 - Commit changes
 - Ignore unresolved ambiguity
 
+## Autonomy Mode Guidance
+
+When orchestrating multi-step workflows:
+
+- **Cautious Mode** (`--autonomy cautious`, default): Recommended for planning and coordination. Auto-approves LOW/MEDIUM risk analysis operations, prompts for HIGH-risk changes, blocks CRITICAL.
+- **Ask Mode** (`--autonomy ask`): Use when exploring unfamiliar domains or planning breaking changes. Requires explicit approval for all operations.
+- **Full Mode** (`--autonomy full`): Generally not recommended for planning; reserved for automated batch analysis with pre-approved scope.
+
+**When to use cautious mode:**
+- Orchestrating iteration workflows with multiple review checkpoints
+- Coordinating research, analysis, and synthesis steps
+- Multi-agent collaboration with handoffs
+
+**Audit log location:** `runs/autonomy-decisions.jsonl` (review for process optimization)
+
 ## Operating Rules
 
 - Make scope explicit.

@@ -26,6 +26,18 @@ Creates an approved git commit with a clear message, concise change summary, val
 - Run log schema: `telemetry/run-log-schema.md`
 - Deployment overlay (optional): `_config/project-notes.md`
 
+## Autonomy Mode Defaults
+
+Commit operations in orchestrator workflows default to **cautious mode**:
+- Git status, diff, add: LOW risk (auto-approved)
+- Git commit: MEDIUM risk (auto-approved)
+- Git push: HIGH risk (requires approval)
+- Force push: CRITICAL (blocked in cautious mode)
+
+Override with `--autonomy ask` for full control, or `--autonomy full` for trusted automated releases.
+
+Review `runs/autonomy-decisions.jsonl` to audit commit decisions.
+
 ## Next Step
 Review `git status` and `git diff`, confirm the intended files and commit message, then run the approved commit.
 

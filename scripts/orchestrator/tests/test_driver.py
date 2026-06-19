@@ -89,9 +89,9 @@ class TestExecuteRoute(unittest.TestCase):
         with tempfile.TemporaryDirectory() as d:
             results = driver.execute_route(
                 "task_definition", NoopAdapter(), runs_dir=d,
-                assume_yes=False, prompt_fn=_no, out=_silent, now=_NOW,
+                assume_yes=False, autonomy_mode="ask", prompt_fn=_no, out=_silent, now=_NOW,
             )
-            self.assertEqual(results, [])  # declined at first checkpoint
+            self.assertEqual(results, [])  # declined at first checkpoint (ask mode prompts for all)
 
 
 if __name__ == "__main__":

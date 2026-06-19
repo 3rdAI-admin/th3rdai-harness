@@ -24,6 +24,22 @@ Validation report with pass/fail status, skipped checks, command results, struct
 - Use `evals/rubrics/` and `evals/cases/` when validating agent, prompt, skill, or model behavior
 - Record notable runs in `runs/` when validation produces reusable evidence
 
+## Autonomy Audit Verification
+
+When validating orchestrator execution (v1.2.0+):
+
+1. **Check audit log exists:** `runs/autonomy-decisions.jsonl`
+2. **Verify decision alignment:**
+   - Count auto-approved vs user-approved vs blocked decisions
+   - Confirm risk classifications match operation types
+   - Check CRITICAL operations were handled appropriately
+3. **Sample validation:**
+   ```bash
+   # View last 10 decisions
+   tail -10 runs/autonomy-decisions.jsonl | python3 -c "import sys, json; [print(json.dumps(json.loads(l), indent=2)) for l in sys.stdin]"
+   ```
+4. **Report findings:** Include autonomy summary in validation output
+
 ## Harness References
 - Procedure: `skills/validate/validate.md`
 - Script: `scripts/07-validate-harness.sh`

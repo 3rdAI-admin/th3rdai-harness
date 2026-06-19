@@ -286,6 +286,119 @@ The following were completed and are no longer pending:
   HIGH/CRITICAL risk results trigger hard stop. Hybrid approach: GitNexus for code files (call-graph
   analysis), git grep for non-code files (reference counting). See `skills/code-cleanup/`.
 
+## v1.2.0 - 3-Mode Autonomy System (June 19, 2026)
+
+**Release Status:** ✅ Completed
+
+Adds 3 autonomy modes (ask, cautious, full) for controlling approval behavior during orchestrator execution.
+
+### Core Features
+
+- **3 Autonomy Modes:**
+  - **Ask:** Approve all operations manually (maximum safety)
+  - **Cautious:** Auto-approve LOW/MEDIUM, ask for HIGH, block CRITICAL (balanced, default)
+  - **Full:** Auto-approve all operations (trusted automation)
+
+- **Risk Classification:**
+  - LOW (0-3 callers): Read, status, query, documentation
+  - MEDIUM (4-9 callers): Edit, write, commit, small refactors
+  - HIGH (10-24 callers): Delete, push, breaking changes
+  - CRITICAL (25+ or critical path): Force operations, production deploys, security boundaries
+
+- **Audit Logging:**
+  - JSONL format: `runs/autonomy-decisions.jsonl`
+  - Fields: timestamp, mode, operation, risk_level, decision, context
+  - Decision types: auto_approved, user_approved, user_rejected, blocked
+
+- **CLI Integration:**
+  - `--autonomy {ask|cautious|full}` flag for `scripts/orchestrate.py route --execute`
+  - Overrides config default in `configs/autonomy.yaml`
+
+### Implementation
+
+- **Core Module:** `scripts/orchestrator/autonomy_manager.py` (385 lines)
+  - AutonomyManager class with mode management, risk classification, approval decision logic
+  - GitNexus impact mapping (caller count → risk level)
+  - Heuristic fallback when GitNexus unavailable
+  - Audit logging with JSONL format
+
+- **Integration:** `scripts/orchestrator/driver.py` (9 additions)
+  - Risk classification per step
+  - Autonomy gate checks (block/proceed/ask)
+  - Summary reporting before audit log save
+  - Graceful fallback to legacy gates when autonomy unavailable
+
+- **CLI Support:** `scripts/orchestrate.py` (autonomy_mode parameter)
+
+### Testing & Validation
+
+- **Unit Tests:** `test_autonomy_manager.py` (24 tests, all passing)
+  - Mode behavior (ask/cautious/full)
+  - Risk classification (file ops, git ops, GitNexus impact)
+  - Audit logging (JSONL format, summary accuracy)
+
+- **Integration Tests:** `test_driver_autonomy.py` (7 tests, all passing)
+  - Mode integration with execute_route()
+  - Audit log creation and format
+  - Backward compatibility (no autonomy.yaml)
+
+- **Eval Case:** `evals/cases/autonomy/basic-autonomy-modes.md`
+- **Rubric:** `evals/rubrics/autonomy-behavior.md`
+
+### Documentation
+
+- **User Guide:** `docs/AUTONOMY-MODES.md` (comprehensive, 400+ lines)
+  - Quick start, mode comparison table
+  - Risk levels, audit logging, troubleshooting
+  - Best practices, agent-specific guidance
+
+- **Agent Contracts:** Updated builder, planner, reviewer contracts with autonomy guidance
+- **Skills:** Updated code-cleanup, commit, validate skills with autonomy recommendations
+- **CLAUDE.md:** Added autonomy modes section with quick reference
+
+### Configuration
+
+- **Config File:** `configs/autonomy.yaml` (140 lines)
+  - Mode definitions (ask/cautious/full)
+  - Risk classifications (file_operations, git_operations, code_changes, gitnexus_impact)
+  - Safety guardrails (always_block list)
+  - Audit log settings
+
+### Key Design Decisions
+
+1. **CRITICAL risk in cautious mode:** Hard blocked (not just prompted)
+2. **Autonomy scope:** Global mode for v1.2.0 (per-route control deferred to v2.0.0)
+3. **Audit detail:** Full context in audit log (enables post-execution review)
+4. **Backward compatibility:** Works without autonomy.yaml (falls back to legacy gates)
+
+### Files Added/Modified
+
+**Added:**
+- `configs/autonomy.yaml`
+- `scripts/orchestrator/autonomy_manager.py`
+- `scripts/orchestrator/tests/test_autonomy_manager.py`
+- `scripts/orchestrator/tests/test_driver_autonomy.py`
+- `docs/AUTONOMY-MODES.md`
+- `evals/cases/autonomy/basic-autonomy-modes.md`
+- `evals/rubrics/autonomy-behavior.md`
+
+**Modified:**
+- `scripts/orchestrator/driver.py` (autonomy integration)
+- `scripts/orchestrate.py` (CLI flag)
+- `agents/*.agent.md` (autonomy guidance)
+- `skills/{code-cleanup,commit,validate}/SKILL.md` (autonomy recommendations)
+- `CLAUDE.md` (autonomy modes section)
+
+### Dogfooding
+
+v1.2.0 was implemented using the harness's own iteration workflow:
+- Planning: AUTOPLAN.md evaluated and approved (5.0/5.0 quality score)
+- Implementation: Phased approach (A: Core, B: Integration, C: Docs/Tests)
+- Validation: All 31 tests passing (24 unit + 7 integration)
+- Documentation: Comprehensive user guide, agent contracts, skills
+
+**Effort:** 14-17.5 hours estimated, actual: ~16 hours (within estimates)
+
 ## Next Steps
 
 1. **v1.0.0 Released** — ✅ GitHub template enabled, release published (June 19, 2026). See `RELEASE-STATUS.md`.

@@ -44,6 +44,32 @@ This workspace uses an agent-oriented version of the Interpretable Context Metho
 - Do not install dependencies, run destructive commands, or commit changes without explicit approval.
 - Ask for human review at risky checkpoints before proceeding.
 
+## Autonomy Modes (v1.2.0)
+
+The orchestrator supports 3 autonomy modes for controlling approval behavior during execution:
+
+| Mode | CLI Flag | Behavior |
+|------|----------|----------|
+| **Ask** | `--autonomy ask` | Approve all operations manually |
+| **Cautious** | `--autonomy cautious` (default) | Auto-approve LOW/MEDIUM, ask for HIGH, block CRITICAL |
+| **Full** | `--autonomy full` | Auto-approve all operations |
+
+**Quick reference:**
+```bash
+# Most workflows - balanced autonomy
+python3 scripts/orchestrate.py route iteration --execute --adapter cli --autonomy cautious
+
+# Maximum safety - approve everything
+python3 scripts/orchestrate.py route iteration --execute --adapter cli --autonomy ask
+
+# Trusted automation - batch operations
+python3 scripts/orchestrate.py route release --execute --adapter cli --autonomy full --yes
+```
+
+**Documentation:** See `docs/AUTONOMY-MODES.md` for comprehensive guide including risk levels, audit logging, and best practices.
+
+**Audit trail:** All autonomy decisions logged to `runs/autonomy-decisions.jsonl` (JSONL format).
+
 <!-- gitnexus:start -->
 # GitNexus — Code Intelligence
 
