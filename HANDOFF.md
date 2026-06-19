@@ -2,7 +2,7 @@
 
 ## Last Updated
 
-**June 16, 2026** — ICM Phase 1 **done**. Distribution modes, conventions, quick reference, release validation added. Native Orchestrator Phases 01–04 **done**. Real CLI (`claude -p`) configured. Harness validator **100/100**; orchestrator tests **70/70**. **Template release ready.**
+**June 19, 2026** — v1.0.0 **RELEASED** on GitHub. Template repository enabled, release published. Security hardened (0 npm vulnerabilities, comprehensive .gitignore, 0 secrets exposed). Documentation fix: `plans/INDEX.md` updated (native-orchestrator status corrected). v1.1.0 task created in Archon for GitNexus code-cleanup enhancements. Repository stable and production-ready.
 
 ---
 
@@ -27,9 +27,10 @@ python3 scripts/orchestrate.py eval evals/cases/orchestrator/config-subset-parsi
 
 **Pick up in priority order:**
 
-1. **Template publish** — Enable GitHub **Template repository**, tag `v1.0.0`, publish release (see `DISTRIBUTION.md`). Release validation passed ✓.
-2. **Dogfood on a real app** — Bootstrap or attach the harness to a target application; run `task_definition` → `iteration` on actual feature work; record under `runs/` and `evals/results/`.
-3. **Multi-step execute** — Try `--max-steps 3` on `iteration` when ready for cost/latency; gates in `configs/tools.yaml` still apply.
+1. ✅ **v1.0.0 Released** — Template repository enabled, GitHub release published (June 19, 2026). See `RELEASE-STATUS.md`.
+2. **v1.1.0 Planning** — Archon task created: "Enhance code-cleanup skill with GitNexus integration". See task `56c035fb-8701-493f-802a-30e14c6ffca9` in Archon project Th3rdai-Harness.
+3. **Dogfood on real app** — Bootstrap or attach the harness to a target application; run `task_definition` → `iteration` on actual feature work; record under `runs/` and `evals/results/`.
+4. **Multi-step execute** — Try `--max-steps 3` on `iteration` when ready for cost/latency; gates in `configs/tools.yaml` still apply.
 
 **Limits:** The harness coordinates and optionally shells out to a CLI; it does not autonomously commit, install deps, or bypass approval gates (`CLAUDE.md`, `configs/tools.yaml`).
 
@@ -106,7 +107,12 @@ Bootstrap test:     ✓ Passed (scripts/08-prepare-template-release.sh)
 ```text
 Resume th3rdai-harness. Read HANDOFF.md.
 
-State: ICM Phase 1 done (distribution, conventions, quick ref). Orchestrator 01–04 done. Validator 100/100; orchestrator 70/70; bootstrap test passed. **Template release ready.**
+State: v1.0.0 **RELEASED** (June 19, 2026). Template repository enabled, GitHub release published. Security hardened (0 vulnerabilities, 0 secrets). Documentation fixed (plans/INDEX.md). v1.1.0 task created in Archon.
 
-Next: Publish v1.0.0 template (enable GitHub Template repository, tag release) OR dogfood on real app. Do not commit without approval. Update Archon when done.
+Options:
+1. Plan v1.1.0 — Enhance code-cleanup skill with GitNexus integration (see Archon task 56c035fb)
+2. Dogfood — Apply harness to real app (bootstrap or attach mode)
+3. Multi-step execute — Test orchestrator on complex routes
+
+Do not commit without approval. Update Archon when done.
 ```
