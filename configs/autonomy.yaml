@@ -1,0 +1,169 @@
+# Autonomy Configuration
+# Controls agent decision-making authority during orchestrator execution
+
+# Default mode (used when --autonomy flag not provided)
+# Options: ask | cautious | full
+mode: cautious
+
+# Mode Definitions
+modes:
+  # Ask Mode: Require explicit approval for all decisions
+  ask:
+    description: "Require explicit approval for all decisions"
+    auto_approve_risk_levels: []
+    require_approval_for:
+      - file_modifications
+      - git_operations
+      - destructive_commands
+      - api_calls
+      - tool_usage
+      - code_changes
+    behavior: "Prompt for approval on every operation regardless of risk level"
+
+  # Cautious Mode: Autonomous for low-risk, ask for high-risk, block critical
+  cautious:
+    description: "Autonomous for low-risk, ask for high-risk, block critical"
+    auto_approve_risk_levels:
+      - LOW
+      - MEDIUM
+    require_approval_for:
+      - HIGH_risk_operations
+    stop_on_risk_levels:
+      - CRITICAL
+    behavior: "Auto-approve LOW/MEDIUM, prompt for HIGH, hard block CRITICAL"
+
+  # Full Mode: Full autonomy - make all decisions, log everything
+  full:
+    description: "Full autonomy - make all decisions"
+    auto_approve_risk_levels:
+      - LOW
+      - MEDIUM
+      - HIGH
+      - CRITICAL
+    require_approval_for: []
+    log_decisions: true
+    behavior: "Auto-approve all operations, comprehensive audit logging"
+
+# Risk Classifications
+# Maps operation types and contexts to risk levels (LOW|MEDIUM|HIGH|CRITICAL)
+risk_classifications:
+
+  # File Operations
+  file_operations:
+    read: LOW
+    list_directory: LOW
+    edit_existing: LOW
+    write_new: MEDIUM
+    delete: HIGH
+    bulk_archive: MEDIUM
+    bulk_delete: CRITICAL
+
+  # Git Operations
+  git_operations:
+    status: LOW
+    diff: LOW
+    log: LOW
+    add: LOW
+    commit: MEDIUM
+    checkout: MEDIUM
+    branch: LOW
+    merge: HIGH
+    push: HIGH
+    force_push: CRITICAL
+    reset_hard: CRITICAL
+    rebase: HIGH
+
+  # Code Changes (based on blast radius)
+  code_changes:
+    comment_addition: LOW
+    documentation: LOW
+    test_addition: LOW
+    refactor_with_tests: MEDIUM
+    feature_addition: MEDIUM
+    bug_fix: MEDIUM
+    breaking_api_change: HIGH
+    security_sensitive: CRITICAL
+    entrypoint_modification: CRITICAL
+
+  # GitNexus Impact Mapping
+  # Maps caller counts and process impact to risk levels
+  gitnexus_impact:
+    0-3_callers: LOW
+    4-9_callers: MEDIUM
+    10-24_callers: HIGH
+    25+_callers: CRITICAL
+    critical_path: CRITICAL
+    security_boundary: CRITICAL
+    public_api: HIGH
+
+  # Orchestrator Operations
+  orchestrator_operations:
+    dry_run: LOW
+    context_bundle_creation: LOW
+    step_execution: MEDIUM
+    batch_execution: HIGH
+    approval_bypass: CRITICAL
+
+  # Tool Invocations
+  tool_invocations:
+    read_only_tools: LOW
+    query_tools: LOW
+    analysis_tools: LOW
+    modification_tools: MEDIUM
+    destructive_tools: HIGH
+    system_tools: CRITICAL
+
+  # Agent Handoffs
+  agent_handoffs:
+    context_pass: LOW
+    approval_required: MEDIUM
+    autonomous_delegation: HIGH
+
+# Risk Modifiers
+# Additional factors that can increase risk level
+risk_modifiers:
+  production_environment: +1  # Increase risk by one level
+  test_failures_present: +1
+  security_context: +2  # Increase risk by two levels
+  multiple_systems_affected: +1
+  irreversible_operation: +2
+
+# Audit Log Configuration
+audit:
+  enabled: true
+  output_path: "runs/autonomy-decisions.jsonl"
+  include_context: true
+  include_risk_assessment: true
+  include_blast_radius: true
+  rotation: false  # v1.2.0: manual rotation, automatic in v2.0.0
+
+# Safety Guardrails
+safety:
+  # Hard blocks regardless of mode
+  always_block:
+    - force_push_to_main
+    - force_push_to_master
+    - production_database_drop
+    - recursive_delete_root
+
+  # Operations that require GitNexus impact analysis
+  require_impact_analysis:
+    - code_file_modification
+    - symbol_rename
+    - file_relocation
+    - api_endpoint_change
+
+  # Maximum risk thresholds
+  max_auto_approve_callers: 9  # MEDIUM threshold
+  max_cautious_callers: 24     # HIGH threshold
+
+# Fallback Behavior
+# What to do when risk cannot be classified
+fallback:
+  unknown_operation: MEDIUM  # Conservative default
+  missing_gitnexus: MEDIUM   # Fallback when GitNexus unavailable
+  parse_error: HIGH          # Fail-safe for malformed data
+
+# Version
+version: "1.2.0"
+schema_version: "1.0"
