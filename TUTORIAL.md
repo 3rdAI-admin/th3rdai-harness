@@ -5,7 +5,9 @@ Walk through using the AI Agent Development Harness in two common setups:
 1. **New project** — a fresh repo whose primary job is agent/model work (or a greenfield app you build *with* the harness).
 2. **Existing project** — an app that already has code; you attach the harness beside it.
 
-This tutorial assumes you work with a capable AI assistant (Cursor, Claude Code, etc.) that reads `CLAUDE.md` and follows skills. The harness does not run agents autonomously — **you or your assistant drive the lifecycle**, guided by contracts in plain text.
+This tutorial assumes you work with a capable AI assistant (Claude Code, Cursor, Windsurf, Aider, etc.) that reads environment instructions and follows skills. The harness does not run agents autonomously — **you or your assistant drive the lifecycle**, guided by contracts in plain text.
+
+**Using a different environment?** See [Environment Adaptation Guides](./docs/adapters/) for Cursor, Windsurf, Aider, or generic setup instructions.
 
 **Related docs:** `README.md` (overview) · `DISTRIBUTION.md` (how to copy or publish the template) · `FRAMEWORK.md` (concepts)
 
@@ -86,13 +88,18 @@ Set models in `configs/models.yaml` for your environment (provider + model IDs).
 
 ### Step 4: Point your AI assistant at the harness
 
-Open the project root in Cursor (or your IDE). The assistant should read:
+Open the project root in your AI coding environment. The assistant should read:
 
-1. `CLAUDE.md` — operating rules
+1. `CLAUDE.md` (or renamed to match your environment — see [Adaptation Guides](./docs/adapters/)) — operating rules
 2. `CONTEXT.md` — which stage to use
 3. `_config/project-notes.md` — your local commands and shortcuts
 
-Optional: add a Cursor rule that says “Start with `CLAUDE.md` and `CONTEXT.md`.”
+**Environment-specific setup:**
+- **Claude Code:** Reads `CLAUDE.md` automatically
+- **Cursor:** Add `.cursorrules` — see [CURSOR.md](./docs/adapters/CURSOR.md)
+- **Windsurf:** Add `.windsurfrules` — see [WINDSURF.md](./docs/adapters/WINDSURF.md)
+- **Aider:** Configure `.aider.conf.yml` — see [AIDER.md](./docs/adapters/AIDER.md)
+- **Other:** Follow [GENERIC.md](./docs/adapters/GENERIC.md)
 
 ### Step 5: Initialize git (if not from GitHub template)
 
@@ -167,8 +174,13 @@ the raw tree without wiring, use `scripts/01-create-project.sh` with
 
 Tell your AI assistant where the harness lives:
 
-- **Cursor:** workspace includes repo root; add a rule: “For agent harness work, read `harness/CLAUDE.md` and `harness/CONTEXT.md`.”
-- **Monorepo:** you can symlink `AGENTS.md` → `harness/CLAUDE.md` at repo root if your tools expect `AGENTS.md` there.
+- **Claude Code:** Point to `harness/CLAUDE.md` in workspace root
+- **Cursor:** Add `.cursorrules`: "For agent harness work, read `harness/CURSOR.md` and `harness/CONTEXT.md`."
+- **Windsurf:** Add `.windsurfrules` with harness path references
+- **Aider:** Configure `.aider.conf.yml` with read-only files pointing to `harness/` (see [AIDER.md](./docs/adapters/AIDER.md))
+- **Monorepo:** You can symlink `AGENTS.md` → `harness/CLAUDE.md` at repo root if your tools expect `AGENTS.md` there
+
+See [Environment Adaptation Guides](./docs/adapters/) for detailed setup per environment.
 
 Do **not** duplicate app-specific paths inside portable skills. Put them only in `harness/_config/project-notes.md`.
 

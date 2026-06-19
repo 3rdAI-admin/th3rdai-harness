@@ -2,6 +2,8 @@
 
 This harness is distributed as a **copyable workspace template**, not as an npm or PyPI install. The value is plain-text contracts (agents, skills, prompts, configs, evals) that a capable AI agent or human drives — plus optional stdlib-only Python tooling under `scripts/orchestrator/`.
 
+**✨ Environment-Agnostic:** Works with Claude Code, Cursor, Windsurf, Aider, or any AI coding environment. See [Environment Adaptation Guides](./docs/adapters/) for setup instructions.
+
 Choose the path that matches how you want to consume or ship the harness.
 
 **New to the harness?** Start with **`TUTORIAL.md`** for a step-by-step walkthrough (new repo + existing app).
@@ -67,7 +69,7 @@ HARNESS_PROJECT_PATH=~/projects/my-app-harness HARNESS_OVERWRITE=1 \
   scripts/01-create-project.sh --with-orchestrator
 ```
 
-The generator copies canonical harness files, renames the `CLAUDE.md` title to the project folder name, and runs `scripts/07-validate-harness.sh`.
+The generator copies canonical harness files, renames the `CLAUDE.md` title to the project folder name, and runs `scripts/07-validate-harness.sh`. (Note: `CLAUDE.md` can be renamed to match your environment — see [Environment Adaptation Guides](./docs/adapters/).)
 
 ### After bootstrap
 
