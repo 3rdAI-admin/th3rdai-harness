@@ -1,5 +1,7 @@
 # AI Agent Development Harness Alignment Plan - Version 3
 
+> **📋 For detailed release notes and migration guides, see [CHANGELOG.md](./CHANGELOG.md)**
+
 ## Overview
 
 This version aligns the repository around a plain-text, model-agnostic development harness for AI agents and model workflows.
@@ -399,10 +401,24 @@ v1.2.0 was implemented using the harness's own iteration workflow:
 
 **Effort:** 14-17.5 hours estimated, actual: ~16 hours (within estimates)
 
+## Completed Milestones
+
+1. ✅ **v1.0.0 Released** (June 16, 2026) — Initial public release with ICM Phase 1 enhancements
+2. ✅ **v1.1.0 Released** (June 19, 2026) — GitNexus code-cleanup integration with impact analysis
+3. ✅ **v1.2.0 Complete** (June 19, 2026) — 3-mode autonomy system shipped
+4. ✅ **Environment Portability** (June 19, 2026) — Multi-environment guides (Cursor, Windsurf, Aider, generic)
+5. ✅ **ICM Token Budgets** (June 19, 2026) — All 7 stage CONTEXT.md files enhanced
+6. ✅ **Security Baseline** (June 19, 2026) — Comprehensive template with P0/P1/P2 priorities
+
 ## Next Steps
 
-1. **v1.0.0 Released** — ✅ GitHub template enabled, release published (June 19, 2026). See `RELEASE-STATUS.md`.
-2. **v1.1.0 In Progress** — GitNexus code-cleanup integration (current feature branch).
-3. **Dogfood** — Apply the harness to a real application or feature (bootstrap via `scripts/01-create-project.sh` or attach mode).
-4. **Operate** — Run multi-step `--execute` on lifecycle routes when cost/latency are acceptable.
-5. **Evolve** — Optional: ICM Phase 2 (token budget columns); generated JSON config mirrors; stronger execute/resume semantics (see `EFFORT.md` open questions).
+1. **Tag v1.2.0** — Create git tag and GitHub release for autonomy system
+2. **Real-World Testing** — Validate environment guides with actual Cursor/Windsurf/Aider users
+3. **Dogfood** — Apply harness to production applications (bootstrap via `scripts/01-create-project.sh`)
+4. **Operate** — Exercise multi-step `--execute` workflows in production
+5. **Community Feedback** — Gather user feedback on portability and autonomy modes
+6. **Future Enhancements** — Consider: generated JSON config mirrors, stronger execute/resume semantics, additional environment adapters
+
+---
+
+**For detailed version history, see [CHANGELOG.md](./CHANGELOG.md)**

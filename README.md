@@ -5,6 +5,8 @@ A plain-text, model-agnostic harness for designing, evaluating, and improving AI
 **✨ Works with Multiple Environments:** Use with Cursor, Windsurf, Aider, or any AI coding environment.
 📖 **See:** [Environment Adaptation Guides](./docs/adapters/) for setup instructions.
 
+**📋 Version History:** See [CHANGELOG.md](./CHANGELOG.md) for release notes and upgrade guides.
+
 This repository evolved from an ICM workspace template into an agent/model development harness. It keeps the strengths of staged context, reusable skills, and human checkpoints while adding first-class support for agents, prompts, model profiles, evals, run records, and tool safety policies.
 
 ## What This Is (and Is Not)
@@ -136,3 +138,10 @@ For new or changed agent/model behavior:
 - Do not install dependencies without approval.
 - Do not stage or commit without approval.
 - Treat evaluation failures as useful evidence, not something to hide.
+
+## Version History
+
+See [CHANGELOG.md](./CHANGELOG.md) for:
+- Release notes for v1.0.0 (initial release), v1.1.0 (GitNexus integration), v1.2.0 (3-mode autonomy)
+- Upgrade guides and migration notes
+- Full changelog following [keepachangelog.com](https://keepachangelog.com/) format
