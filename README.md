@@ -2,6 +2,9 @@
 
 A plain-text, model-agnostic harness for designing, evaluating, and improving AI agents and model workflows.
 
+**✨ Works with Multiple Environments:** Use with Cursor, Windsurf, Aider, or any AI coding environment.
+📖 **See:** [Environment Adaptation Guides](./docs/adapters/) for setup instructions.
+
 This repository evolved from an ICM workspace template into an agent/model development harness. It keeps the strengths of staged context, reusable skills, and human checkpoints while adding first-class support for agents, prompts, model profiles, evals, run records, and tool safety policies.
 
 ## What This Is (and Is Not)
