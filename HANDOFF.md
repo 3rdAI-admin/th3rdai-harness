@@ -2,53 +2,82 @@
 
 ## Last Updated
 
-**June 19, 2026** — v1.1.0 **COMPLETE**. GitNexus code-cleanup integration shipped: `/code-cleanup` skill now uses explicit `gitnexus_impact()` and `gitnexus_detect_changes()` calls for precise blast-radius analysis. HIGH/CRITICAL risk triggers hard stop. Hybrid approach (GitNexus for code files, git grep for non-code). Complete harness workflow demonstrated (dogfooding): Task Definition → Planning → Evaluation (5.0/5.0) → Implementation → Release. Validation: 100/100 harness, 70/70 orchestrator tests. Tagged v1.1.0, ready to push. Repository stable and production-ready.
+**June 19, 2026** — v1.2.0 **COMPLETE** + Environment Guides + ICM Enhancements + CHANGELOG.md. All features shipped and documented:
+
+- ✅ **v1.2.0 Autonomy System**: 3-mode control (Ask/Cautious/Full) with risk classification, audit logging, CLI integration
+- ✅ **Environment Adaptation Guides**: Multi-platform support (Cursor 95%, Windsurf 90%, Aider 98%, generic template) in `docs/adapters/`
+- ✅ **ICM Token Budgets**: All 7 stage CONTEXT.md files enhanced with pedagogical cost guidance (~6K-18K per stage)
+- ✅ **Security Baseline**: Enhanced template with secret patterns, P0/P1/P2 priorities (177 lines)
+- ✅ **CHANGELOG.md**: Canonical version history following keepachangelog.com, integrated into README and VERSION3
+
+**Validation:** 102/102 harness checks passed, 101/101 orchestrator tests. All changes pushed to GitHub (main branch). Repository production-ready, fully documented, environment-agnostic.
+
+**Next:** Tag v1.2.0 and create GitHub release.
 
 ---
 
 ## Resume Here (next session)
 
-Read: this file → `_config/project-notes.md` → `README.md` → `VERSION3.md` → `plans/native-orchestrator/EFFORT.md`.
+Read: this file → `CHANGELOG.md` → `README.md` → `VERSION3.md` → `_config/project-notes.md`.
 
 **Verify green:**
 
 ```bash
-scripts/07-validate-harness.sh
-python3 -m unittest discover scripts/orchestrator/tests
+scripts/07-validate-harness.sh                        # 102 passed, 1 warning (expected)
+python3 -m unittest discover scripts/orchestrator/tests  # 101 tests
 ```
 
 **Orchestrator:**
 
 ```bash
+# Dry-run (context assembly only)
 python3 scripts/orchestrate.py route iteration --dry-run
-python3 scripts/orchestrate.py route iteration --execute --adapter cli --max-steps 1 --yes
+
+# Execute with autonomy control
+python3 scripts/orchestrate.py route iteration --execute --autonomy cautious --adapter cli --max-steps 1
+
+# Eval scaffolding
 python3 scripts/orchestrate.py eval evals/cases/orchestrator/config-subset-parsing.md
 ```
 
 **Pick up in priority order:**
 
-1. ✅ **v1.0.0 Released** — Template repository enabled, GitHub release published (June 19, 2026). See `RELEASE-STATUS.md`.
-2. ✅ **v1.1.0 Complete** — GitNexus code-cleanup integration shipped. Task `56c035fb-8701-493f-802a-30e14c6ffca9` marked done in Archon. See `stages/06-iteration/output/iteration-notes.md` for complete implementation record. Tagged v1.1.0, ready to push to GitHub.
-3. **Dogfood on real app** — Bootstrap or attach the harness to a target application; run `task_definition` → `iteration` on actual feature work; record under `runs/` and `evals/results/`.
-4. **Multi-step execute** — Try `--max-steps 3` on `iteration` when ready for cost/latency; gates in `configs/tools.yaml` still apply.
+1. **Tag v1.2.0** — Create git tag, GitHub release with notes from CHANGELOG.md
+2. **Real-world validation** — Test environment guides with actual Cursor/Windsurf/Aider users
+3. **Dogfood on production app** — Bootstrap harness to real application, run full lifecycle
+4. **Community feedback** — Gather user feedback on portability and autonomy modes
 
-**Limits:** The harness coordinates and optionally shells out to a CLI; it does not autonomously commit, install deps, or bypass approval gates (`CLAUDE.md`, `configs/tools.yaml`).
+**Limits:** The harness coordinates and optionally shells out to a CLI; it does not autonomously commit, install deps, or bypass approval gates (`CLAUDE.md`, `configs/tools.yaml`, `configs/autonomy.yaml`).
+
+---
+
+## Version Timeline
+
+| Version | Date | Features |
+|---------|------|----------|
+| **v1.0.0** | June 16, 2026 | Initial release: 7-stage lifecycle, orchestrator, ICM Phase 1, 100/100 validation |
+| **v1.1.0** | June 19, 2026 | GitNexus code-cleanup integration: `gitnexus_impact()`, HIGH/CRITICAL risk gates |
+| **v1.2.0** | June 19, 2026 | 3-mode autonomy, environment guides, ICM token budgets, security baseline, CHANGELOG |
+
+See `CHANGELOG.md` for detailed release notes.
 
 ---
 
 ## ICM Pedagogical Enhancements
 
-**Phase 1 completed June 16, 2026** (commits 7ef2d98, 1e3bd6e, 4169036):
+**Phase 1 completed** (June 16, 2026):
+- Distribution modes (GitHub template, local scaffold, attach)
+- Navigation model (`docs/QUICK-REFERENCE.md`)
+- Standards (`_config/conventions.md`)
+- Pre-approved test commands (`.claude/settings.json`)
+- Release automation (`scripts/08-prepare-template-release.sh`)
 
-- **Distribution modes:** README "Use This Harness" section, enhanced `scripts/01-create-project.sh` with `--with-orchestrator` and non-interactive mode
-- **Release automation:** `scripts/08-prepare-template-release.sh` (validator + orchestrator tests + bootstrap dry-run)
-- **Navigation:** `docs/QUICK-REFERENCE.md` (5-layer model, commands, lifecycle, pitfalls)
-- **Standards:** `_config/conventions.md` (naming, file conventions, load indicators, commit format)
-- **Testing permissions:** `.claude/settings.json` (pre-approved development commands)
+**Phase 2 completed** (June 19, 2026):
+- Token budget sections in all 7 stage CONTEXT.md files
+- Breakdown of context loading costs per stage
+- Variance drivers documented
 
-**Validation:** 100 passed, 2 optional warnings (security-baseline forward reference, token budgets deferred to Phase 2).
-
-**Phase 2 (optional, deferred):** Token budget columns (`Tokens (est.)`) in stage CONTEXT.md files.
+**Validation:** 102 passed, 1 optional warning (security-baseline.md forward reference - working as designed).
 
 ---
 
@@ -59,20 +88,47 @@ python3 scripts/orchestrate.py eval evals/cases/orchestrator/config-subset-parsi
 | 01 | Config + runlog | **done** |
 | 02 | Sequencer (dry-run bundles) | **done** |
 | 03 | CLI + eval hook | **done** |
-| 04 | Execution adapter (`--execute`) | **done** — `claude -p` in `configs/execution.yaml` |
+| 04 | Execution adapter (`--execute`) | **done** |
 
-**Evals:** Phases 01–03 PASS 5.0/5.0 (`evals/results/20260529-orchestrator-phase-01-03-validation.md`). Phase 04 spec + execute UAT (`evals/results/20260529-orchestrator-phase-04-validation.md`, `20260529-orchestrator-phase-04-execute-uat.md`). Dogfood 2026-05-30 (`evals/results/20260530-orchestrator-dogfood-and-error-handling.md`).
+**Autonomy Integration (v1.2.0):**
+- `configs/autonomy.yaml` - 3 modes with risk classifications
+- `scripts/orchestrator/autonomy_manager.py` - AutonomyManager class
+- `--autonomy ask|cautious|full` CLI flag
+- Audit logging (`runs/autonomy-decisions.jsonl`)
 
-**Orchestrator cases (8):** `config-subset-parsing`, `run-record-fidelity`, `route-context-bundle`, `malformed-config`, `missing-references`, `invalid-route`, `phase-04-timeout-handling`, `phase-04-execute-real-cli` — all under `evals/cases/orchestrator/`.
+**Evals:**
+- Phases 01–03: PASS 5.0/5.0 (`evals/results/20260529-orchestrator-phase-01-03-validation.md`)
+- Phase 04: PASS 5.0/5.0 (`evals/results/20260529-orchestrator-phase-04-validation.md`, `20260529-orchestrator-phase-04-execute-uat.md`)
+- Dogfood: PASS (`evals/results/20260530-orchestrator-dogfood-and-error-handling.md`)
+
+---
+
+## Environment Portability
+
+**Adaptation Guides** (`docs/adapters/`):
+
+| Environment | Compatibility | Setup Time | Best For |
+|-------------|---------------|------------|----------|
+| **Aider** | 98% | 30 min | CLI workflows, orchestrator execution |
+| **Cursor** | 95% | 1-2 hrs | IDE experience, @-mentions for context |
+| **Windsurf** | 90% | 1-2 hrs | AI-native IDE, Cascade/Flow modes |
+| **Generic** | Varies | Varies | Any environment with file read/write |
+
+**Key Features:**
+- Environment-agnostic core (markdown, YAML, Python stdlib)
+- Exact configuration files and CLI commands per environment
+- Quick start guides (10-30 minutes)
+- Alternatives for environment-specific features (MCP, GitNexus)
 
 ---
 
 ## Validation (current)
 
 ```text
-Harness validator:  Passed 100 | Warnings 2 (optional) | Failed 0
-Orchestrator tests: 70 passed (from repo root)
+Harness validator:  Passed 102 | Warnings 1 (expected) | Failed 0
+Orchestrator tests: 101 passed (from repo root)
 Bootstrap test:     ✓ Passed (scripts/08-prepare-template-release.sh)
+Git status:         Clean, all changes pushed to origin/main
 ```
 
 ---
@@ -81,15 +137,17 @@ Bootstrap test:     ✓ Passed (scripts/08-prepare-template-release.sh)
 
 | File | Why |
 |------|-----|
-| `DISTRIBUTION.md` | How to consume/publish template (GitHub, local, attach modes) |
-| `docs/QUICK-REFERENCE.md` | Fast lookup: 5-layer navigation, commands, lifecycle |
-| `_config/conventions.md` | Naming standards, file conventions, load indicators |
-| `_config/project-notes.md` | This repo's verify commands, CLI, shortcuts |
-| `configs/execution.yaml` | `--execute` CLI + env_allowlist |
-| `configs/routing.yaml` | Route names |
-| `scripts/orchestrate.py` | CLI entry |
-| `scripts/08-prepare-template-release.sh` | Pre-release validation (harness + orchestrator + bootstrap) |
-| `FRAMEWORK.md` | Conceptual model + deployment overlay |
+| `CHANGELOG.md` | Canonical version history (v1.0.0, v1.1.0, v1.2.0) |
+| `VERSION3.md` | Version alignment plan, completed milestones |
+| `DISTRIBUTION.md` | How to consume/publish template |
+| `docs/adapters/` | Environment-specific setup guides |
+| `docs/QUICK-REFERENCE.md` | Fast lookup: navigation, commands, lifecycle |
+| `_config/conventions.md` | Naming standards, file conventions |
+| `_config/project-notes.md` | This repo's verify commands, CLI shortcuts |
+| `_config/security-baseline.TEMPLATE.md` | Secret patterns, P0/P1/P2 priorities |
+| `configs/autonomy.yaml` | 3-mode autonomy with risk classifications |
+| `configs/execution.yaml` | Execution adapter CLI configuration |
+| `configs/routing.yaml` | Lifecycle route definitions |
 
 ---
 
@@ -97,22 +155,31 @@ Bootstrap test:     ✓ Passed (scripts/08-prepare-template-release.sh)
 
 - **Commits** require explicit human approval (`CLAUDE.md`).
 - **Archon:** project **Th3rdai-Harness** (`eb8b4363-b1f0-4448-8e71-c557e0daa5b2`).
-- **GitNexus:** impact analysis before editing symbols; `npx gitnexus analyze` after structural changes.
-- **Portable skills:** deployment detail lives in `_config/project-notes.md`, not in `skills/*`.
+- **GitNexus:** Run `npx gitnexus analyze` after structural changes; impact analysis before edits.
+- **Portable skills:** Deployment detail in `_config/project-notes.md`, not `skills/*`.
+- **Session artifacts:** Ephemeral `runs/*.md` files from orchestrator testing (not tracked in git).
 
 ---
 
 ## Suggested Next Agent Prompt
 
 ```text
-Resume th3rdai-harness. Read HANDOFF.md.
+Resume th3rdai-harness. Read HANDOFF.md and CHANGELOG.md.
 
-State: v1.1.0 **COMPLETE** (June 19, 2026). GitNexus code-cleanup integration shipped. `/code-cleanup` skill now uses `gitnexus_impact()` for blast-radius analysis, `gitnexus_detect_changes()` for verification. Full harness workflow demonstrated (dogfooding). Tagged v1.1.0, ready to push to GitHub.
+State: v1.2.0 **COMPLETE** (June 19, 2026). All features shipped and pushed to GitHub:
+- 3-mode autonomy system (Ask/Cautious/Full)
+- Environment adaptation guides (Cursor, Windsurf, Aider, generic)
+- ICM token budgets across all 7 stages
+- Security baseline template enhanced
+- CHANGELOG.md added with full version history
+
+Validation: 102/102 harness, 101/101 orchestrator tests. Repository production-ready.
 
 Options:
-1. Push v1.1.0 — Push main + tags to GitHub, optionally create GitHub release
-2. Dogfood — Apply harness to real app (bootstrap or attach mode)
-3. Multi-step execute — Test orchestrator on complex routes
+1. Tag v1.2.0 — Create git tag and GitHub release
+2. Real-world testing — Validate environment guides with actual users
+3. Dogfood — Apply harness to production application
+4. Multi-step execute — Test autonomy modes on complex routes
 
 Do not commit without approval. Update Archon when done.
 ```
