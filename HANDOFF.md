@@ -2,7 +2,7 @@
 
 ## Last Updated
 
-**June 19, 2026** — v1.0.0 **RELEASED** on GitHub. Template repository enabled, release published. Security hardened (0 npm vulnerabilities, comprehensive .gitignore, 0 secrets exposed). Documentation fix: `plans/INDEX.md` updated (native-orchestrator status corrected). v1.1.0 task created in Archon for GitNexus code-cleanup enhancements. Repository stable and production-ready.
+**June 19, 2026** — v1.1.0 **COMPLETE**. GitNexus code-cleanup integration shipped: `/code-cleanup` skill now uses explicit `gitnexus_impact()` and `gitnexus_detect_changes()` calls for precise blast-radius analysis. HIGH/CRITICAL risk triggers hard stop. Hybrid approach (GitNexus for code files, git grep for non-code). Complete harness workflow demonstrated (dogfooding): Task Definition → Planning → Evaluation (5.0/5.0) → Implementation → Release. Validation: 100/100 harness, 70/70 orchestrator tests. Tagged v1.1.0, ready to push. Repository stable and production-ready.
 
 ---
 
@@ -28,7 +28,7 @@ python3 scripts/orchestrate.py eval evals/cases/orchestrator/config-subset-parsi
 **Pick up in priority order:**
 
 1. ✅ **v1.0.0 Released** — Template repository enabled, GitHub release published (June 19, 2026). See `RELEASE-STATUS.md`.
-2. **v1.1.0 Planning** — Archon task created: "Enhance code-cleanup skill with GitNexus integration". See task `56c035fb-8701-493f-802a-30e14c6ffca9` in Archon project Th3rdai-Harness.
+2. ✅ **v1.1.0 Complete** — GitNexus code-cleanup integration shipped. Task `56c035fb-8701-493f-802a-30e14c6ffca9` marked done in Archon. See `stages/06-iteration/output/iteration-notes.md` for complete implementation record. Tagged v1.1.0, ready to push to GitHub.
 3. **Dogfood on real app** — Bootstrap or attach the harness to a target application; run `task_definition` → `iteration` on actual feature work; record under `runs/` and `evals/results/`.
 4. **Multi-step execute** — Try `--max-steps 3` on `iteration` when ready for cost/latency; gates in `configs/tools.yaml` still apply.
 
@@ -107,10 +107,10 @@ Bootstrap test:     ✓ Passed (scripts/08-prepare-template-release.sh)
 ```text
 Resume th3rdai-harness. Read HANDOFF.md.
 
-State: v1.0.0 **RELEASED** (June 19, 2026). Template repository enabled, GitHub release published. Security hardened (0 vulnerabilities, 0 secrets). Documentation fixed (plans/INDEX.md). v1.1.0 task created in Archon.
+State: v1.1.0 **COMPLETE** (June 19, 2026). GitNexus code-cleanup integration shipped. `/code-cleanup` skill now uses `gitnexus_impact()` for blast-radius analysis, `gitnexus_detect_changes()` for verification. Full harness workflow demonstrated (dogfooding). Tagged v1.1.0, ready to push to GitHub.
 
 Options:
-1. Plan v1.1.0 — Enhance code-cleanup skill with GitNexus integration (see Archon task 56c035fb)
+1. Push v1.1.0 — Push main + tags to GitHub, optionally create GitHub release
 2. Dogfood — Apply harness to real app (bootstrap or attach mode)
 3. Multi-step execute — Test orchestrator on complex routes
 
