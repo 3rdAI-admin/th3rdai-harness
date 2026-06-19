@@ -29,21 +29,24 @@ developer or agent can understand the codebase.
 
 ## Safety Contract (Never Break Functionality)
 - **Archive, don't delete.** Obsolete files move to `archive/` preserving their relative path.
-- **Reference-gate every move.** Before relocating any file, find everything that references it
-  (code imports, path strings, links, configs, scripts). If a move would break a reference,
-  update the reference in the same batch or do not move the file. Surface anything high-risk.
-- **Verify after each batch.** Run the test suite and `scripts/07-validate-harness.sh`; only
-  proceed if scope matches intent.
+- **Impact-gate every move.** Run `gitnexus_impact({target: "<symbolOrModule>", direction: "upstream"})`
+  before relocating any code file. Report blast radius. **HIGH or CRITICAL risk → stop and warn the user;
+  do not move.** For non-code files (docs, configs, assets), use `git grep -n "<filename>"` to find references.
+- **Moves use the call graph.** For code symbols, prefer `gitnexus_rename` / refactoring-aware moves so
+  imports update; never blind find-and-replace.
+- **Verify after each batch.** Run `gitnexus_detect_changes()` and the test suite; only proceed if scope
+  matches intent.
 - **No behavior edits.** This skill moves, consolidates, and documents — it does not refactor
   logic. Logic improvements are *noted*, not applied.
 
 ## Harness References
 - Procedure: `skills/code-cleanup/code-cleanup.md`
+- Impact analysis: `.claude/skills/gitnexus/gitnexus-impact-analysis/SKILL.md`
+- Refactoring (safe moves/renames): `.claude/skills/gitnexus/gitnexus-refactoring/SKILL.md`
 - Validation: `skills/validate/validate.md`, `scripts/07-validate-harness.sh`
 - Commit (optional, after approval): `skills/commit/` (`/gitcommit`)
 - Archive location: `archive/` (repo root)
 
 ## Next Step
 - Success: run `/validate` (or the project test suite) to confirm health, then commit on a branch.
-- If reference analysis flags a high-risk move (widely referenced, or referenced by code paths):
-  stop, report the blast radius, and hand back to the user for a decision.
+- If impact analysis flags HIGH/CRITICAL risk: stop, report blast radius, and hand back to the user for a decision.

@@ -278,9 +278,18 @@ The following were completed and are no longer pending:
 - Run-record examples added under `runs/examples/`.
 - Core skill files refined to reference the relevant agent and eval layer.
 
+## v1.1.0 Enhancements (June 2026)
+
+- **GitNexus Code-Cleanup Integration** — Enhanced `/code-cleanup` skill to use explicit
+  `gitnexus_impact()` and `gitnexus_detect_changes()` calls instead of generic reference-gating.
+  Aligns with CLAUDE.md GitNexus rules for precise blast-radius analysis before code moves.
+  HIGH/CRITICAL risk results trigger hard stop. Hybrid approach: GitNexus for code files (call-graph
+  analysis), git grep for non-code files (reference counting). See `skills/code-cleanup/`.
+
 ## Next Steps
 
-1. **Template Release** — Enable GitHub "Template repository" setting, tag `v1.0.0`, publish release (see `DISTRIBUTION.md`). **Release validation passed** ✓.
-2. **Dogfood** — Apply the harness to a real application or feature (bootstrap via `scripts/01-create-project.sh` or attach mode).
-3. **Operate** — Run multi-step `--execute` on lifecycle routes when cost/latency are acceptable.
-4. **Evolve** — Optional: ICM Phase 2 (token budget columns); generated JSON config mirrors; stronger execute/resume semantics (see `EFFORT.md` open questions).
+1. **v1.0.0 Released** — ✅ GitHub template enabled, release published (June 19, 2026). See `RELEASE-STATUS.md`.
+2. **v1.1.0 In Progress** — GitNexus code-cleanup integration (current feature branch).
+3. **Dogfood** — Apply the harness to a real application or feature (bootstrap via `scripts/01-create-project.sh` or attach mode).
+4. **Operate** — Run multi-step `--execute` on lifecycle routes when cost/latency are acceptable.
+5. **Evolve** — Optional: ICM Phase 2 (token budget columns); generated JSON config mirrors; stronger execute/resume semantics (see `EFFORT.md` open questions).

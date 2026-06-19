@@ -27,17 +27,21 @@ This procedure is intentionally conservative. It separates **discovery** (read-o
 ## Operating Rules (read before acting)
 1. **Archive, never delete.** Move obsolete files to `archive/<original/relative/path>` so they
    remain restorable. Never run `rm` on a tracked file as part of cleanup.
-2. **Reference-gate every move.** Before relocating any file, enumerate everything that
-   references it: code imports, hardcoded path strings, markdown/links, config keys, scripts,
-   CI. Use `git grep -n "<filename>"` (and an IDE find-references for code symbols). Report the
-   reference count and risk. **Referenced by code paths or widely linked → update those
-   references in the same batch, or stop and warn the user; do not move blind.**
-3. **Moves preserve history.** Use `git mv` so renames are tracked and history follows the file.
-   For code symbols, prefer IDE/refactor-aware moves so imports update; never blind find-and-replace.
+2. **Impact-gate every move.** For **code files** (*.py, *.js, *.ts, *.go, etc.), run
+   `gitnexus_impact({target: "<file_or_symbol>", direction: "upstream"})` before relocating.
+   Report blast radius (affected symbols, processes, risk level).
+   **If risk is HIGH or CRITICAL → stop and warn the user; do not move.**
+
+   For **non-code files** (*.md, *.yaml, *.txt, assets), use `git grep -n "<filename>"` to find
+   references. Report reference count and risk. **Referenced by code paths or widely linked →
+   update those references in the same batch, or stop and warn the user; do not move blind.**
+3. **Moves use the call graph.** For code symbols/modules, prefer `gitnexus_rename` or
+   refactoring-aware moves so imports/usages update automatically; never blind find-and-replace.
+   Use `git mv` for history preservation.
 4. **No logic edits.** This skill only moves, consolidates duplicates, and adds comments/docs.
    Any behavioral or performance improvement is *recorded in the final report*, not applied.
-5. **Verify in batches.** After each batch of moves, run the test suite and
-   `scripts/07-validate-harness.sh`. If scope diverges from intent, halt and reconcile.
+5. **Verify in batches.** After each batch of moves, run `gitnexus_detect_changes()` and the test
+   suite. If scope diverges from intent, halt and reconcile.
 6. **Work on a branch.** Confirm a non-default branch; never reorganize directly on `main`.
 
 ---
@@ -54,39 +58,47 @@ Build a complete picture before proposing anything.
   - **Misplaced files** — code/docs/tests/configs sitting in the wrong folder for the project's
     conventions (loose docs at repo root are the most common case).
   - **Obsolete files** — no inbound references and not an entrypoint/asset.
-- For each candidate, run `git grep -n "<basename>"` to find references. A file with zero
-  references and not an entrypoint/asset is an archive candidate; anything referenced stays
+- For each **code file** candidate, run `gitnexus_context({name: "<symbol>"})` and
+  `gitnexus_impact({target: "...", direction: "upstream"})` to confirm whether anything depends
+  on it. A file with zero upstream callers and not referenced by config/entrypoints is an archive
+  candidate; anything with callers stays.
+- For each **non-code** candidate, run `git grep -n "<basename>"` to find references. A file with
+  zero references and not an entrypoint/asset is an archive candidate; anything referenced stays
   unless its references move with it.
 - Do **not** move anything yet.
 
 ## Step 2 — Propose a Plan (review gate)
 Present a structured cleanup plan and get user confirmation before touching files. Group by action:
 
-- **Move** (to a better folder): `from → to`, with one-line rationale and reference/risk level.
+- **Move** (to a better folder): `from → to`, with one-line rationale and **risk level** (from
+  gitnexus_impact: LOW/MEDIUM/HIGH/CRITICAL, or reference count for non-code files).
 - **Consolidate** (duplicates/redundancies): which file survives, which is archived, why.
 - **Archive** (obsolete): `from → archive/from`, with evidence it's unreferenced.
 - **Document** (comments/READMEs to add so structure is self-explanatory).
-- **Risk callouts**: list every move that is referenced by code paths or widely linked, with the
-  reference list, so the user can judge.
+- **Risk callouts**: list every HIGH/CRITICAL risk move explicitly, with blast radius details
+  (affected symbols, processes, reference list), so the user can judge.
 
 Wait for approval (or scope adjustments) before execution. If the user granted standing autonomy,
-proceed but still surface high-risk moves before acting on those specific items.
+proceed but still surface HIGH/CRITICAL moves before acting on those specific items.
 
 ## Step 3 — Execute (gated, batched)
 Apply the approved plan in small, verifiable batches:
 
 1. Ensure `archive/` exists at repo root.
-2. For each item, re-confirm references if not just-checked, then move:
-   - Code symbols/modules: use IDE/refactor-aware moves so imports/usages update.
-   - Non-code (docs, assets, scripts): `git mv` to preserve history; mirror the path under
+2. For each item, re-confirm impact/references if not just-checked, then move:
+   - **Code symbols/modules:** Use `gitnexus_rename({symbol_name: "...", new_name: "..."})` or
+     refactoring-aware moves so imports/usages update automatically. Prefer call-graph-aware
+     tools over manual find-and-replace.
+   - **Non-code** (docs, assets, scripts): `git mv` to preserve history; mirror the path under
      `archive/` when archiving.
    - When a moved file is referenced (links, code path strings, configs), update every reference
      in the same batch and re-grep to confirm none remain.
 3. Add/update comments and folder `README.md`s so a developer or agent understands each area.
 4. Drop an `archive/RESTORE.md` manifest entry per archived file: original path, date, reason,
    and the one-line restore command (`git mv archive/<path> <path>`).
-5. After each batch: run the test suite and `scripts/07-validate-harness.sh`. Confirm only the
-   expected files/areas are affected. If anything unexpected breaks, revert that batch immediately.
+5. After each batch: run `gitnexus_detect_changes()`, the test suite, and
+   `scripts/07-validate-harness.sh`. Confirm only the expected files/areas are affected.
+   If anything unexpected breaks, revert that batch immediately.
 
 ## Step 4 — Verify (no functionality changed)
 - `git grep` for every moved file's old path returns no stale references (excluding generated
