@@ -1,0 +1,40 @@
+🚀 Announcing v1.2.0 of the AI Agent Development Harness
+
+After working with AI agents for the past year, I kept running into the same problems:
+• No standard methodology for designing agents
+• Ad-hoc evaluation processes
+• Unclear separation between agent, prompt, and model concerns
+• Vendor lock-in to specific environments
+
+So I built a solution.
+
+The AI Agent Development Harness is a plain-text, model-agnostic framework for designing, evaluating, and improving AI agents. Think of it as a structured methodology for agent development - like TDD for prompts.
+
+**What's New in v1.2.0:**
+
+✅ 3-Mode Autonomy System (Ask/Cautious/Full) with risk classification
+✅ Multi-environment support (Claude Code, Cursor, Windsurf, Aider)
+✅ ICM token budgets for all 7 lifecycle stages
+✅ Enhanced security baseline with secret detection patterns
+
+**Core Features:**
+
+📐 7-stage lifecycle framework (Task Definition → Release)
+🛡️ GitNexus impact analysis for safe refactoring
+🔧 Dependency-free orchestrator (Python stdlib only)
+📋 102/102 validation checks passing
+🎯 Template repository - clone and customize
+
+**Why Plain Text?**
+
+No vendor lock-in. Works with any AI coding environment. Markdown + YAML + Python stdlib. Version control friendly. Human-readable contracts.
+
+**Production-Ready:**
+
+Used to ship v1.0.0, v1.1.0, and v1.2.0 itself. Comprehensive validation, safety gates, and audit logging.
+
+GitHub: https://github.com/3rdAI-admin/th3rdai-harness
+
+Would love to hear your thoughts - what environment are you using for AI agent development?
+
+#ArtificialIntelligence #MachineLearning #LLM #PromptEngineering #SoftwareDevelopment #AIAgents #DevTools

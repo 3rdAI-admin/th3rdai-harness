@@ -1,0 +1,74 @@
+TWEET 1/7:
+🚀 Just released v1.2.0 of the AI Agent Development Harness - a plain-text, model-agnostic framework for designing, evaluating, and improving AI agents
+
+🧵 Here's what makes it different:
+
+---
+
+TWEET 2/7:
+✨ 3-Mode Autonomy System
+
+Control how much decision-making authority your agents have:
+• Ask: Manual approval for everything
+• Cautious: Auto-approve low-risk only
+• Full: Auto-approve low/medium risk
+
+All with audit logging and risk classification
+
+---
+
+TWEET 3/7:
+🔧 Multi-Environment Support
+
+Works with your favorite AI coding environment:
+• Claude Code (100% - reference)
+• Aider (98% - best orchestrator fit)
+• Cursor (95% - @-mentions)
+• Windsurf (90% - Cascade AI)
+
+No vendor lock-in. Plain markdown + YAML + Python stdlib.
+
+---
+
+TWEET 4/7:
+📐 7-Stage Lifecycle Framework
+
+Task Definition → Agent Design → Prompt Design → Tool Integration → Evaluation → Iteration → Release
+
+Each stage has explicit contracts, context bundles, and token budgets.
+
+Think ICM for agent development.
+
+---
+
+TWEET 5/7:
+🛡️ Safety First
+
+• GitNexus impact analysis before code changes
+• HIGH/CRITICAL risk gates that halt operations
+• Approval gates for destructive actions
+• Comprehensive .gitignore for secrets
+• 102/102 validation checks passing
+
+---
+
+TWEET 6/7:
+🎯 Template Repository
+
+Clone and customize, or use GitHub's "Use this template" button.
+
+Fully self-contained:
+• No external dependencies
+• Dependency-free orchestrator (Python stdlib)
+• Plain-text artifacts
+• Works offline
+
+---
+
+TWEET 7/7:
+📖 Full docs, tutorial, environment setup guides, and CHANGELOG at:
+https://github.com/3rdAI-admin/th3rdai-harness
+
+Feedback welcome! What environment are you using? What would you like to see next?
+
+#AI #AgentDevelopment #LLM #PromptEngineering #Claude #Cursor #Aider
