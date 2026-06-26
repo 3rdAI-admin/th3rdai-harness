@@ -48,8 +48,20 @@ class AutonomyManager:
         Raises:
             FileNotFoundError: If config file doesn't exist
             yaml.YAMLError: If YAML is malformed
+
+        A relative ``config_path`` is resolved against the current directory first
+        (back-compat) and, if not found there, against the harness root (the
+        package's location). This keeps the default ``configs/autonomy.yaml``
+        working no matter which directory the orchestrator or its tests run from,
+        instead of only when invoked from ``harness/``.
         """
         path = Path(config_path)
+        if not path.exists() and not path.is_absolute():
+            # harness root = parents of scripts/orchestrator/autonomy_manager.py
+            harness_root = Path(__file__).resolve().parents[2]
+            candidate = harness_root / config_path
+            if candidate.exists():
+                path = candidate
         if not path.exists():
             raise FileNotFoundError(
                 f"Autonomy config not found: {config_path}\n"
