@@ -57,3 +57,4 @@ Task Definition → Agent Design → Prompt Design → Tool Integration → Eval
 | `/run` | `skills/run/` | Start an approved runtime target |
 | `/tests/e2e-test.md` | `skills/tests/` | Run end-to-end or harness-case testing |
 | `/gitcommit` | `skills/commit/` | Prepare a reviewed commit (Stage 07) |
+| `/skill-script-audit` | `skills/skill-script-audit/` | Audit skills for scriptable steps; propose new skills from history |

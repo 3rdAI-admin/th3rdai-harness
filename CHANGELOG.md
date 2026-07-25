@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+- **`/skill-script-audit` skill** — read-only audit of skills for steps that should
+  become scripts, plus a history-grounded new-skill backlog (`skills/skill-script-audit/`)
+
 ## [1.2.0] - 2026-06-19
 
 ### Added
