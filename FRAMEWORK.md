@@ -94,6 +94,7 @@ Examples:
 - `/build`
 - `/validate`
 - `/security`
+- `/skill-script-audit`
 - `/code-cleanup`
 - `/tests/e2e-test.md`
 - `/gitcommit`
