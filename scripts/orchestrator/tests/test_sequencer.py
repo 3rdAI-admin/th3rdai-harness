@@ -12,7 +12,11 @@ _NOW = datetime(2026, 5, 28, 19, 0, 0, tzinfo=timezone.utc)
 class TestPlanRoute(unittest.TestCase):
     def test_all_routes_resolve(self):
         routes = config.load_routing()
-        self.assertEqual(len(routes), 7)
+        # Count is deliberately NOT pinned: this harness is vendored into projects
+        # that add their own routes (VIRA carries `clone` and `orchestrated_delivery`
+        # on top of the seven shipped here), and a hardcoded 7 made the test
+        # unpassable downstream. What matters is that every declared route resolves.
+        self.assertTrue(routes, "routing.yaml declares no routes")
         for name in routes:
             steps = sequencer.plan_route(name)
             self.assertTrue(steps, f"route {name} produced no steps")
