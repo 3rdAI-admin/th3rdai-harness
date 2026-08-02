@@ -74,6 +74,50 @@ class TestBuildContext(unittest.TestCase):
         self.assertIn("model_profile:nope", bundle.missing)
 
 
+class TestInputResolution(unittest.TestCase):
+    """Declared stage inputs must be actionable, not prose a child agent mistakes
+    for a filename ("Relevant rubric" was passed through verbatim)."""
+
+    def setUp(self):
+        self.root = config.repo_root()
+
+    def test_real_path_passes_through_unchanged(self):
+        self.assertEqual(
+            sequencer.resolve_input("configs/models.yaml", self.root),
+            "configs/models.yaml",
+        )
+
+    def test_path_shaped_but_absent_is_flagged(self):
+        out = sequencer.resolve_input("configs/does-not-exist.yaml", self.root)
+        self.assertIn("declared but not found", out)
+
+    def test_descriptive_label_gains_a_location(self):
+        out = sequencer.resolve_input("Relevant rubric", self.root)
+        self.assertIn("not a path", out)
+        self.assertIn("evals/rubrics/", out)
+
+    def test_eval_case_label_points_at_cases(self):
+        self.assertIn("evals/cases/", sequencer.resolve_input("Relevant eval case", self.root))
+
+    def test_agent_contract_label_points_at_agents(self):
+        self.assertIn("agents/", sequencer.resolve_input("Relevant agent contract", self.root))
+
+    def test_unknown_label_says_it_comes_from_the_request(self):
+        out = sequencer.resolve_input("Something nobody mapped", self.root)
+        self.assertIn("supplied by the request", out)
+
+    def test_blank_label_is_left_alone(self):
+        self.assertEqual(sequencer.resolve_input("   ", self.root), "")
+
+    def test_bundle_inputs_are_resolved_end_to_end(self):
+        step = sequencer.plan_route("evaluation")[0]
+        bundle = sequencer.build_context(step)
+        prose = [i for i in bundle.inputs if i.lower().startswith("relevant")]
+        self.assertTrue(prose, "expected at least one descriptive input in this stage")
+        for value in prose:
+            self.assertIn("[", value, f"unresolved descriptive input passed through: {value!r}")
+
+
 class TestDryRun(unittest.TestCase):
     def test_records_are_schema_valid_and_round_trip(self):
         with tempfile.TemporaryDirectory() as d:

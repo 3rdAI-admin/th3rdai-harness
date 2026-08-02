@@ -55,6 +55,7 @@ def _build_adapter(args):
             command,
             timeout=float(cli.get("timeout_seconds", 120)),
             env_allowlist=allowlist,
+            timeout_overrides=cli.get("timeout_overrides", {}) or {},
         )
     raise adapter_mod.AdapterError(f"unknown adapter '{choice}'")
 

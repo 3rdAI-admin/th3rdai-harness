@@ -95,6 +95,20 @@ class TestScrubbedEnv(unittest.TestCase):
         env = CliAdapter._scrubbed_env()
         self.assertEqual(set(env.keys()), set(CliAdapter._BASE_ENV_KEYS))
 
+    def test_timeout_for_falls_back_to_the_flat_default(self):
+        a = CliAdapter(["true"], timeout=300.0)
+        self.assertEqual(a.timeout_for("planner"), 300.0)
+        self.assertEqual(a.timeout_for(None), 300.0)
+
+    def test_timeout_for_uses_the_per_agent_override(self):
+        a = CliAdapter(["true"], timeout=300.0, timeout_overrides={"evaluator": 900})
+        self.assertEqual(a.timeout_for("evaluator"), 900.0)
+        self.assertEqual(a.timeout_for("planner"), 300.0)
+
+    def test_unparseable_override_falls_back_rather_than_raising(self):
+        a = CliAdapter(["true"], timeout=300.0, timeout_overrides={"evaluator": "soon"})
+        self.assertEqual(a.timeout_for("evaluator"), 300.0)
+
     def test_env_allowlist_merges_when_set(self):
         os.environ["ORCHESTRATOR_TEST_ALLOW"] = "present"
         try:
