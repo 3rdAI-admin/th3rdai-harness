@@ -144,6 +144,61 @@ def _stage_io(md_text: str):
     return inputs, outputs
 
 
+# --- input resolution -------------------------------------------------------
+# Stage contracts describe some inputs by role rather than by path ("Relevant
+# rubric", "Evaluation findings"). Passed through verbatim, a child agent reads
+# them as filenames and looks for a file that was never going to exist. Resolve
+# what is resolvable; for the rest, say where to look.
+
+_INPUT_HINTS = (
+    ("rubric", "evals/rubrics/"),
+    ("eval case", "evals/cases/"),
+    ("evaluation case", "evals/cases/"),
+    ("test case", "evals/cases/"),
+    ("agent contract", "agents/"),
+    ("contract", "agents/"),
+    ("prompt", "prompts/"),
+    ("skill", "skills/"),
+    ("changelog", "prompts/"),
+    ("config", "configs/"),
+    ("model profile", "configs/models.yaml"),
+    ("evaluation findings", "output/evaluation-findings.md"),
+    ("review findings", "output/"),
+    ("results", "evals/results/"),
+    ("plan", "plans/"),
+    ("artifact", "(the artifact under revision — named by the request)"),
+)
+
+
+def _looks_like_path(value: str) -> bool:
+    return "/" in value or value.endswith((".md", ".yaml", ".yml", ".json", ".sh", ".py"))
+
+
+def _hint_for(label: str) -> Optional[str]:
+    low = label.lower()
+    for needle, location in _INPUT_HINTS:
+        if needle in low:
+            return location
+    return None
+
+
+def resolve_input(label: str, root) -> str:
+    """Return a declared stage input as something a child agent can act on.
+
+    A real repo-relative path is returned unchanged. A path-shaped value that
+    does not exist is flagged rather than silently passed on. A descriptive
+    label ("Relevant rubric") is annotated with where that artifact lives, so
+    the receiving agent knows to select one instead of opening a literal file.
+    """
+    value = (label or "").strip()
+    if not value:
+        return value
+    if _looks_like_path(value):
+        return value if (root / value).exists() else f"{value} [declared but not found]"
+    hint = _hint_for(value)
+    return f"{value} [not a path — locate under: {hint}]" if hint else f"{value} [not a path — supplied by the request]"
+
+
 # --- prompt resolution ------------------------------------------------------
 
 def resolve_prompt(agent_name: str) -> Optional[str]:
@@ -237,6 +292,7 @@ def build_context(step: Step) -> ContextBundle:
     if stage_contract:
         if (root / stage_contract).exists():
             inputs, outputs = _stage_io((root / stage_contract).read_text(encoding="utf-8"))
+            inputs = [resolve_input(i, root) for i in inputs]
         else:
             missing.append(stage_contract)
 

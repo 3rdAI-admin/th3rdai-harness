@@ -15,3 +15,12 @@ execution:
       - ANTHROPIC_API_KEY
       - CURSOR_API_KEY
     timeout_seconds: 300
+    # Per-agent budgets. A flat 300s is fine for a planner step but too tight for
+    # an evaluator or builder that reads a rubric, scores a case, and writes a
+    # result — those steps were being recorded as failures for being slow, not
+    # for being wrong. Unlisted agents fall back to timeout_seconds above.
+    timeout_overrides:
+      evaluator: 900
+      reviewer: 900
+      builder: 900
+      researcher: 600

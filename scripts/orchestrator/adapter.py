@@ -128,11 +128,25 @@ class CliAdapter:
 
     def __init__(self, command, timeout: float = 120.0,
                  cwd: Optional[str] = None,
-                 env_allowlist: Optional[List[str]] = None):
+                 env_allowlist: Optional[List[str]] = None,
+                 timeout_overrides: Optional[dict] = None):
         self.command = list(command) if command else []
         self.timeout = timeout
         self.cwd = cwd
         self.env_allowlist = list(env_allowlist) if env_allowlist else []
+        # Per-agent timeouts: a builder or evaluator step legitimately runs far
+        # longer than a planner one, and a single flat budget makes the slow
+        # agents look like failures. Keyed by agent name from configs.
+        self.timeout_overrides = dict(timeout_overrides or {})
+
+    def timeout_for(self, agent: Optional[str]) -> float:
+        """Timeout budget for ``agent``, falling back to the flat default."""
+        if agent and agent in self.timeout_overrides:
+            try:
+                return float(self.timeout_overrides[agent])
+            except (TypeError, ValueError):
+                return self.timeout
+        return self.timeout
 
     @classmethod
     def _scrubbed_env(cls, extra_keys: Optional[List[str]] = None) -> dict:
@@ -162,6 +176,7 @@ class CliAdapter:
 
         program = self.command[0]
         tool_actions = [f"invoked CLI: {program}"]
+        budget = self.timeout_for(step.agent)
 
         try:
             proc = subprocess.run(
@@ -169,7 +184,7 @@ class CliAdapter:
                 input=bundle.render(),
                 capture_output=True,
                 text=True,
-                timeout=self.timeout,
+                timeout=budget,
                 cwd=self.cwd,
                 env=self._scrubbed_env(self.env_allowlist),
             )
@@ -179,7 +194,10 @@ class CliAdapter:
                 outputs=[],
                 tool_actions=tool_actions,
                 exit_code=None,
-                notes=f"timeout after {self.timeout}s",
+                notes=(
+                    f"timeout after {budget}s (agent '{step.agent}'; raise "
+                    f"execution.cli.timeout_overrides.{step.agent} in configs/execution.yaml)"
+                ),
             )
 
         stdout_file.write_text(proc.stdout or "", encoding="utf-8")
