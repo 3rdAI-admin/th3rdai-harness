@@ -5,5 +5,10 @@
   "description": "Plain-text, model-agnostic AI agent development harness",
   "dependencies": {
     "gitnexus": "^1.6.5"
+  },
+  "overrides": {
+    "sharp": "^0.35.3",
+    "adm-zip": "^0.6.0",
+    "protobufjs": "^7.6.5"
   }
 }
