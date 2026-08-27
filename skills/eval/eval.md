@@ -115,9 +115,15 @@ Next:
 - Needs revision -> /revise <artifact> "<finding>" then re-run /eval
 ```
 
-## Optional eval scaffolding
+## Eval scaffolding (record step)
 
-Some deployments include a CLI that pairs a case with its rubric and writes **PENDING** result/run stubs (Evaluator still scores manually). If `scripts/orchestrate.py` exists, see `_config/project-notes.md` for the eval subcommand; otherwise use `/eval` only.
+When `scripts/orchestrate.py` is present (harness installed with the orchestrator), scaffold the record step with:
+
+```bash
+python3 scripts/orchestrate.py eval evals/cases/<area>/<case>.md [--rubric evals/rubrics/<rubric>.md]
+```
+
+It pairs the case with its rubric (resolved from the case's `## Rubric` reference unless `--rubric` overrides it) and writes a **PENDING** result stub to `evals/results/` plus a run record to `runs/` — the Evaluator still scores manually and completes the stub. If `scripts/orchestrate.py` is absent, record the result by hand per step 5.
 
 ## Safety and Tooling Notes
 

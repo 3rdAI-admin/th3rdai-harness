@@ -174,15 +174,22 @@ echo "Skill reference checks"
 # default_skill, routing, model profiles, registry) is fail-checked above.
 # Skipped automatically: placeholders (the char class stops at < > * ), "..." paths,
 # and runtime-generated stage outputs (*/output/*).
+# Nested install: when harness/ lives under an app repo, skill docs often cite
+# app-root `scripts/*` (e.g. VIRA's check.sh). Resolve those against the parent.
+PARENT="$(cd "$ROOT/.." && pwd)"
 skill_refs=$(grep -rhoE '`(agents|skills|prompts|configs|evals|stages|runs|telemetry|models|scripts|shared|_config|plans)/[A-Za-z0-9_./-]+\.(md|sh|ya?ml|py)`' "$ROOT/skills" 2>/dev/null | tr -d '`' | grep -v '\.\.\.' | grep -v '/output/' | sort -u || true)
 if [ -n "$skill_refs" ]; then
   skill_ref_missing=0
   while IFS= read -r ref; do
     [ -z "$ref" ] && continue
-    if [ ! -f "$ROOT/$ref" ]; then
-      warn "skill files reference '$ref' (not found — example/forward path or typo?)"
-      skill_ref_missing=1
+    if [ -f "$ROOT/$ref" ]; then
+      continue
     fi
+    if [[ "$ref" == scripts/* ]] && [ -f "$PARENT/$ref" ]; then
+      continue
+    fi
+    warn "skill files reference '$ref' (not found — example/forward path or typo?)"
+    skill_ref_missing=1
   done <<< "$skill_refs"
   [ "$skill_ref_missing" -eq 0 ] && ok "all concrete file paths referenced in skills/ resolve"
 fi
