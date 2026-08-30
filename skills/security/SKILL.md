@@ -50,6 +50,7 @@ A security review report with:
 - Eval case: `evals/cases/code-review/security-bug-review.md`
 - Optional baseline overlay: `_config/security-baseline.md` (per-project; see template)
 - Deployment overlay (optional): `_config/project-notes.md`
+- Skill validation: `bash scripts/validate-security-skill.sh` — verifies this skill's files, cross-references, and portability (no project-specific paths); run it after editing the skill
 - Stage: `stages/07-release/`
 
 ## Next Step

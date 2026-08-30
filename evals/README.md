@@ -28,6 +28,7 @@ Use this folder for repeatable rubrics, test cases, and results.
 | `rubrics/agent-output-quality.md` | General agent output |
 | `rubrics/tool-safety.md` | Tool-use safety and approval gating |
 | `rubrics/orchestrator-output-quality.md` | Native-orchestrator artifacts (config parses, context bundles, run records) |
+| `rubrics/autonomy-behavior.md` | Autonomy-mode decisions (risk classification, approval gating, audit logging) |
 
 ## Registered Cases
 
@@ -47,5 +48,6 @@ Use this folder for repeatable rubrics, test cases, and results.
 | `cases/orchestrator/invalid-route.md` | `orchestrator-output-quality` |
 | `cases/orchestrator/phase-04-timeout-handling.md` | `orchestrator-output-quality` |
 | `cases/orchestrator/phase-04-execute-real-cli.md` | `orchestrator-output-quality` |
+| `cases/autonomy/basic-autonomy-modes.md` | `autonomy-behavior` |
 
 Every case declares its rubric in a `Use \`evals/rubrics/....md\`` line; `scripts/07-validate-harness.sh` enforces that each reference resolves.
