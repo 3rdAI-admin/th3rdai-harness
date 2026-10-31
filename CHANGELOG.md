@@ -8,6 +8,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 ### Added
+- **Temporary-worktree isolation for builds** — `scripts/worktree.sh`, a portable
+  (bash 3.2, sourceable + CLI) helper that isolates code/multi-file changes in a
+  throwaway git worktree on a feature branch so concurrent agents don't collide and
+  `main` stays clean. Cleanup removes only the directory; the branch ref and its
+  commits persist for review. Degrades to in-place work in non-git projects. Wired
+  into `agents/builder.agent.md` (Workspace Isolation), `skills/build/build.md`
+  (Step 3.5 + cleanup), `CONTRIBUTING.md`, and `GLOSSARY.md`.
 - **`/skill-script-audit` skill** — read-only audit of skills for steps that should
   become scripts, plus a history-grounded new-skill backlog (`skills/skill-script-audit/`)
 

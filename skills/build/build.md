@@ -71,6 +71,26 @@ Before writing files:
 - Confirm imports, dependencies, generated files, and tool permissions.
 - Do not install dependencies, delete files, or mutate git state without explicit approval.
 
+## Step 3.5: Isolate in a Temporary Worktree
+
+Before writing any files, isolate the work in a temporary git worktree on a feature
+branch so concurrent agents cannot collide in one working tree and the shared `main`
+tree stays clean (see `agents/builder.agent.md` → Workspace Isolation).
+
+```bash
+source scripts/worktree.sh
+WT="$(wt_create <short-slug>)"   # stdout is the worktree path; notices go to stderr
+cd "$WT"
+```
+
+- Do all of Step 4 and Step 5 inside `$WT`.
+- `wt_create` falls back to the current directory (and says so on stderr) when the
+  project is not a git repository — then continue in place.
+- For a single trivial, self-contained edit you may skip isolation; say so explicitly
+  in the Step 6 summary.
+- Only operate inside the worktree you just created; never write another agent's
+  worktree or branch.
+
 ## Step 4: Implement
 
 For each task:
@@ -140,10 +160,22 @@ Validation results:
 Risks and follow-up:
 - <risk or none>
 
+Worktree:
+- <path> on branch <harness/wt-...> — ready for human review/merge, or
+- worked in place (non-git project / trivial edit)
+
 Next steps:
 1. /validate
 2. Run relevant evals
 3. Move to stages/07-release/ when ready
+```
+
+After the branch is merged (or the build is abandoned), remove the temporary
+worktree — the branch ref and its commits persist; only the directory is deleted:
+
+```bash
+source scripts/worktree.sh
+wt_cleanup "$WT"
 ```
 
 ## Error Handling

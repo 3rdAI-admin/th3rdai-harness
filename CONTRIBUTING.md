@@ -21,9 +21,26 @@ A typical change:
 1. `/research` — gather grounded context.
 2. `/plan` — produce an implementation-ready plan.
 3. `/plan-reviewer` — review the plan.
-4. `/build` — implement within approved scope.
+4. `/build` — implement within approved scope (in a temporary worktree — see below).
 5. `/validate` and `/eval` — confirm structure and behavior.
 6. `/gitcommit` — prepare a reviewed commit (Stage 07).
+
+## Workspace Isolation
+
+Implement code and multi-file changes in a **temporary git worktree on a feature
+branch**, never directly in the shared checkout. This keeps concurrent contributors
+(and agents) from colliding in one working tree and keeps `main` clean.
+
+```bash
+source scripts/worktree.sh
+WT="$(wt_create my-change)"   # stdout: the worktree path
+cd "$WT"                      # implement + validate here
+# ...open a PR from the branch; a human merges to main...
+wt_cleanup "$WT"             # after merge: removes the dir, keeps the branch ref
+```
+
+`wt_create` degrades to working in place in non-git projects. Only operate inside a
+worktree you created; never write another contributor's worktree or branch.
 
 ## Conventions
 
