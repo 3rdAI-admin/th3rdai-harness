@@ -78,6 +78,26 @@ When executing orchestrator routes:
 - Validate after implementation.
 - Report skipped validation honestly.
 
+## Workspace Isolation
+
+Code and multi-file changes are made in a **temporary git worktree on a feature
+branch**, never directly in the live or shared checkout. This keeps concurrent agents
+from colliding in one working tree, keeps the shared `main` tree clean, and lets a
+failed or abandoned build be discarded by deleting a directory.
+
+- Before implementing, create the worktree with `scripts/worktree.sh`
+  (`wt_create <slug>` — its stdout is the worktree path) and work inside it.
+- A human reviews and merges the feature branch to shared `main`; the Builder never
+  commits to, force-pushes, or writes the live checkout of a shared repo.
+- Only touch a worktree you created. Do not run git or write files in another agent's
+  worktree or branch (coordinate via the project's handoff doc instead).
+- After the work is merged or abandoned, remove the worktree with
+  `wt_cleanup <path>` — the branch ref and its commits persist for review; only the
+  temporary directory is deleted.
+- **Graceful degradation:** `wt_create` falls back to working in place (and says so)
+  when the project is not a git repository. A single trivial, self-contained edit
+  (e.g. one doc typo) may also proceed in place — state that choice explicitly.
+
 ## Success Criteria
 
 - The implementation matches the approved plan.
