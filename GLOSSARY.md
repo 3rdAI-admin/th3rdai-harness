@@ -15,6 +15,7 @@ Quick-reference definitions for the harness. See `FRAMEWORK.md` for the conceptu
 | **Stage** | A lifecycle phase with an input/output contract. | `stages/NN-*/CONTEXT.md` |
 | **Config** | Machine-readable agent, model, routing, and tool policies. | `configs/*.yaml` |
 | **Worktree isolation** | Making code/multi-file changes in a temporary git worktree on a feature branch instead of the live checkout, so concurrent agents don't collide and `main` stays clean. Answers *where does the Builder write?* Applied automatically by the orchestrator for configured agents (`execution.isolation`), and manually via `scripts/worktree.sh` otherwise; an isolated step's contained risk is scored one level lower. Stale worktree dirs are reclaimed by `scripts/worktree.sh gc` (branch refs persist). Degrades to in-place when the project is not a git repo. | `scripts/worktree.sh`, `configs/execution.yaml`, `agents/builder.agent.md` |
+| **Route batch** | Several independent lifecycle routes run concurrently, each isolated in its own worktree, via `orchestrate.py route-batch`. Answers *how do we run multiple tasks at once without collisions?* Non-interactive (refused in `ask` autonomy mode); each route records to its own `runs/<route:tag>/` subdirectory. | `scripts/orchestrator/parallel.py` |
 
 ## Skill File Convention
 

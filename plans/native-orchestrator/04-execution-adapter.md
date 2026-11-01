@@ -44,7 +44,11 @@ feature (harness tooling — execution layer)
 - Out of scope:
   - Bundling provider HTTP SDKs or any pip dependency. (A `urllib`-based HTTP
     adapter is a documented *future* extension, not built here.)
-  - Parallel/concurrent step execution.
+  - Parallel/concurrent step execution *within a single route* (routes are
+    ordered handoff chains, so intra-route steps stay sequential). **Note:**
+    concurrent execution of *independent routes* — each isolated in its own git
+    worktree — was later delivered via `scripts/orchestrator/parallel.py` and the
+    `orchestrate.py route-batch` subcommand; it reuses this adapter unchanged.
   - Autonomous git commits or pushes.
   - Self-modification of agent contracts, configs, or this orchestrator's own
     code without explicit approval.

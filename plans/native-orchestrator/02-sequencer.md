@@ -11,7 +11,7 @@ feature (harness tooling)
 ## Scope
 
 - In scope: resolve a lifecycle route into ordered steps; for each step gather the agent contract, default skill procedure, prompt version, model profile, and declared inputs into a context bundle; dry-run output + run record per step.
-- Out of scope: calling an LLM/provider, making decisions, parallel execution.
+- Out of scope: calling an LLM/provider, making decisions, parallel execution *of the steps within one route*. (Concurrent execution of independent *routes*, each worktree-isolated, is provided separately by `scripts/orchestrator/parallel.py` / `route-batch` — the sequencer itself stays single-route.)
 
 ## Harness Context
 
