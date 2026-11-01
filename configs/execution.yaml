@@ -24,3 +24,16 @@ execution:
       reviewer: 900
       builder: 900
       researcher: 600
+  # Workspace isolation for --execute runs. When enabled, a step whose agent is
+  # listed in isolate_agents runs in a throwaway git worktree on a feature branch
+  # (via scripts/worktree.sh) instead of the shared checkout, so concurrent agents
+  # don't collide and main stays clean. The worktree path is passed to the adapter
+  # as its working directory. Degrades to in-place work in non-git projects or if
+  # worktree creation fails — never aborts the route. Branch refs persist for human
+  # review; stale worktree dirs are reclaimed by `scripts/worktree.sh gc`.
+  # Omit this block (or run with --no-isolation) for legacy in-place behavior.
+  isolation:
+    enabled: true
+    isolate_agents:
+      - builder
+    base: null   # optional HARNESS_WT_BASE override; null = sibling <repo>-worktrees/
