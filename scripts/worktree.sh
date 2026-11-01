@@ -18,6 +18,10 @@
 #     scripts/worktree.sh create <slug>     # prints the worktree path
 #     scripts/worktree.sh cleanup <path>    # removes that worktree
 #     scripts/worktree.sh list              # git worktree list
+#     scripts/worktree.sh gc [--days N] [--dry-run]
+#                                           # remove stale harness worktree dirs
+#                                           # (older than N days, default 7);
+#                                           # branch refs are ALWAYS preserved.
 #
 # PORTABILITY / GRACEFUL DEGRADATION
 #   - bash 3.2 (stock macOS) compatible; no associative arrays, no mapfile.
@@ -31,6 +35,7 @@
 # ENV
 #   HARNESS_WT_BASE   where worktree directories are created
 #                     (default: a sibling "<repo>-worktrees/" next to the repo).
+#   HARNESS_WT_GC_DAYS  default staleness threshold for `gc` (default: 7).
 
 # Guard against double-sourcing (idempotent function defs are fine, but skip the
 # strict-mode toggle so sourcing never changes the caller's shell options).
@@ -141,8 +146,87 @@ wt_cleanup() {
 
 wt_list() { git worktree list; }
 
+# _wt_dir_age_days <path> — whole days since the directory was last modified.
+# Portable across GNU and BSD/macOS stat; empty (treated as not-stale) if unknown.
+_wt_dir_age_days() {
+  local path mtime now
+  path="$1"
+  [ -d "$path" ] || { printf ''; return; }
+  # BSD/macOS: stat -f %m ; GNU: stat -c %Y. Try both, quietly.
+  mtime="$(stat -f %m "$path" 2>/dev/null || stat -c %Y "$path" 2>/dev/null || printf '')"
+  [ -n "$mtime" ] || { printf ''; return; }
+  now="$(date +%s)"
+  printf '%s' "$(( (now - mtime) / 86400 ))"
+}
+
+# wt_gc [--days N] [--dry-run] — remove STALE harness worktree directories whose
+# dir mtime is older than N days (default $HARNESS_WT_GC_DAYS or 7). Only touches
+# git-managed worktrees under the harness base dir with the `wt-` name prefix, so a
+# stray sibling directory is never deleted. Branch refs ALWAYS persist (gc deletes
+# directories, never branches) and the primary checkout is skipped via wt_cleanup's
+# guard. --dry-run lists what would be removed without removing anything. Returns 0.
+wt_gc() {
+  local days dry root base primary p age removed scanned
+  days="${HARNESS_WT_GC_DAYS:-7}"
+  dry=0
+  while [ $# -gt 0 ]; do
+    case "$1" in
+      --days) days="${2:-$days}"; shift 2 || shift ;;
+      --days=*) days="${1#--days=}"; shift ;;
+      --dry-run|-n) dry=1; shift ;;
+      *) _wt_err "worktree.sh: wt_gc: unknown arg '$1' (--days N|--dry-run)"; return 2 ;;
+    esac
+  done
+  case "$days" in ''|*[!0-9]*) _wt_err "worktree.sh: wt_gc: --days needs an integer"; return 2 ;; esac
+
+  root="$(_wt_repo_root || true)"
+  if [ -z "$root" ]; then
+    _wt_err "worktree.sh: wt_gc: not a git repository — nothing to collect."
+    return 0
+  fi
+  base="$(_wt_abspath "${HARNESS_WT_BASE:-$(dirname "$root")/$(basename "$root")-worktrees}")"
+  primary="$(git worktree list --porcelain 2>/dev/null | sed -n 's/^worktree //p' | head -1)"
+  primary="$(_wt_abspath "${primary:-$root}")"
+
+  removed=0
+  scanned=0
+  # Iterate git-managed worktrees; only consider ones physically under the base dir.
+  while IFS= read -r p; do
+    [ -n "$p" ] || continue
+    p="$(_wt_abspath "$p")"
+    # Skip the primary checkout outright.
+    [ "$p" = "$primary" ] && continue
+    # Only harness worktrees: under the base dir AND named wt-*.
+    case "$p" in
+      "$base"/wt-*) ;;
+      *) continue ;;
+    esac
+    scanned=$((scanned + 1))
+    age="$(_wt_dir_age_days "$p")"
+    # Unknown age → leave it alone (never lose work on a stat failure).
+    [ -n "$age" ] || { _wt_err "worktree.sh: wt_gc: skip $p (age unknown)"; continue; }
+    if [ "$age" -ge "$days" ]; then
+      if [ "$dry" -eq 1 ]; then
+        _wt_err "worktree.sh: wt_gc: [dry-run] would remove $p (${age}d old)"
+      else
+        _wt_err "worktree.sh: wt_gc: removing $p (${age}d old; branch ref preserved)"
+        wt_cleanup "$p" >/dev/null 2>&1 && removed=$((removed + 1))
+      fi
+    fi
+  done <<EOF
+$(git worktree list --porcelain 2>/dev/null | sed -n 's/^worktree //p')
+EOF
+
+  if [ "$dry" -eq 1 ]; then
+    _wt_err "worktree.sh: wt_gc: dry-run complete (scanned $scanned harness worktree(s) under $base; threshold ${days}d)."
+  else
+    _wt_err "worktree.sh: wt_gc: removed $removed of $scanned harness worktree(s) (threshold ${days}d; branch refs kept)."
+  fi
+  return 0
+}
+
 wt_help() {
-  sed -n '2,40p' "${BASH_SOURCE[0]:-$0}" | sed 's/^# \{0,1\}//'
+  sed -n '2,45p' "${BASH_SOURCE[0]:-$0}" | sed 's/^# \{0,1\}//'
 }
 
 # --- CLI dispatch (only when executed, not when sourced) -----------------------
@@ -157,7 +241,8 @@ if [ -n "${BASH_VERSION:-}" ] && [ "${BASH_SOURCE[0]}" = "$0" ]; then
     create)  wt_create "$@" ;;
     cleanup) wt_cleanup "$@" ;;
     list)    wt_list ;;
+    gc)      wt_gc "$@" ;;
     help|-h|--help) wt_help ;;
-    *) _wt_err "worktree.sh: unknown command '$cmd' (create|cleanup|list|help)"; exit 2 ;;
+    *) _wt_err "worktree.sh: unknown command '$cmd' (create|cleanup|list|gc|help)"; exit 2 ;;
   esac
 fi
