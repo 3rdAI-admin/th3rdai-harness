@@ -90,6 +90,10 @@ cd "$WT"
   in the Step 6 summary.
 - Only operate inside the worktree you just created; never write another agent's
   worktree or branch.
+- When this build runs under the orchestrator (`orchestrate.py route --execute` with
+  `execution.isolation` enabled), the worktree is created and assigned for you — the
+  step already runs inside it, so skip the manual `source`/`cd` above. The manual form
+  remains for direct agent/human use outside the orchestrator.
 
 ## Step 4: Implement
 
@@ -176,6 +180,14 @@ worktree — the branch ref and its commits persist; only the directory is delet
 ```bash
 source scripts/worktree.sh
 wt_cleanup "$WT"
+```
+
+To reclaim worktree directories left behind by abandoned or forgotten builds (branch
+refs are always preserved), run the garbage collector periodically:
+
+```bash
+scripts/worktree.sh gc --dry-run   # list stale worktree dirs (older than 7 days)
+scripts/worktree.sh gc             # remove them; branches persist for review
 ```
 
 ## Error Handling

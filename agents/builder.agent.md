@@ -97,6 +97,12 @@ failed or abandoned build be discarded by deleting a directory.
 - **Graceful degradation:** `wt_create` falls back to working in place (and says so)
   when the project is not a git repository. A single trivial, self-contained edit
   (e.g. one doc typo) may also proceed in place — state that choice explicitly.
+- **Under the orchestrator:** when a route is run with `orchestrate.py route
+  --execute` and `execution.isolation` is enabled (default), the orchestrator creates
+  and assigns the worktree for Builder steps automatically — the step's subprocess
+  runs inside it, and an isolated step's contained risk is scored one level lower. You
+  still review and merge the branch; `scripts/worktree.sh gc` reclaims stale worktree
+  directories (branch refs always persist).
 
 ## Success Criteria
 

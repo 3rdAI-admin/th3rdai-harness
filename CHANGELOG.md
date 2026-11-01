@@ -8,6 +8,23 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 ### Added
+- **Orchestrator-driven worktree isolation** — the Native Orchestrator now creates
+  and assigns a temporary worktree for configured agents (default: `builder`) when a
+  route is run with `orchestrate.py route --execute`, so the step's subprocess runs in
+  an isolated feature branch instead of the shared checkout. Previously isolation was
+  convention-only (agents were *told* to run `scripts/worktree.sh`) and the orchestrator
+  ran every step in the repo root. Configured via a new `execution.isolation` block in
+  `configs/execution.yaml`; `--no-isolation` forces legacy in-place behavior. Absent
+  config ⇒ unchanged behavior. Wired through `CliAdapter`'s existing (dormant) `cwd`.
+- **Worktree-aware risk model** — an isolated step's contained blast radius (work lands
+  on a throwaway branch, never shared `main`) downgrades its autonomy risk one level
+  (`risk_modifiers.isolated_write` in `configs/autonomy.yaml`;
+  `AutonomyManager.apply_isolation_modifier`). Never downgrades protected-path writes or
+  `always_block` operations. The `isolated` flag and worktree path are recorded in the
+  `runs/autonomy-decisions.jsonl` audit trail.
+- **`scripts/worktree.sh gc`** — reclaims stale harness worktree directories (older than
+  N days, default 7; `--dry-run` to preview). Deletes only directories; branch refs and
+  their commits always persist. Skips the primary checkout and any non-harness directory.
 - **Temporary-worktree isolation for builds** — `scripts/worktree.sh`, a portable
   (bash 3.2, sourceable + CLI) helper that isolates code/multi-file changes in a
   throwaway git worktree on a feature branch so concurrent agents don't collide and
