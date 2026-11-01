@@ -14,7 +14,7 @@ Quick-reference definitions for the harness. See `FRAMEWORK.md` for the conceptu
 | **Run** | A recorded execution of an agent, skill, prompt, or eval. Answers *what happened, with which inputs and outputs?* | `runs/`, schema in `telemetry/run-log-schema.md` |
 | **Stage** | A lifecycle phase with an input/output contract. | `stages/NN-*/CONTEXT.md` |
 | **Config** | Machine-readable agent, model, routing, and tool policies. | `configs/*.yaml` |
-| **Worktree isolation** | Making code/multi-file changes in a temporary git worktree on a feature branch instead of the live checkout, so concurrent agents don't collide and `main` stays clean. Answers *where does the Builder write?* Degrades to in-place when the project is not a git repo. | `scripts/worktree.sh`, `agents/builder.agent.md` |
+| **Worktree isolation** | Making code/multi-file changes in a temporary git worktree on a feature branch instead of the live checkout, so concurrent agents don't collide and `main` stays clean. Answers *where does the Builder write?* Applied automatically by the orchestrator for configured agents (`execution.isolation`), and manually via `scripts/worktree.sh` otherwise; an isolated step's contained risk is scored one level lower. Stale worktree dirs are reclaimed by `scripts/worktree.sh gc` (branch refs persist). Degrades to in-place when the project is not a git repo. | `scripts/worktree.sh`, `configs/execution.yaml`, `agents/builder.agent.md` |
 
 ## Skill File Convention
 

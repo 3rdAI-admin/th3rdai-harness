@@ -72,7 +72,8 @@ class Adapter(typing.Protocol):
     name: str
 
     def run(self, bundle, runs_dir: str = "runs",
-            label: Optional[str] = None) -> StepResult:
+            label: Optional[str] = None,
+            cwd: Optional[str] = None) -> StepResult:
         ...
 
 
@@ -104,12 +105,21 @@ class NoopAdapter:
     name = "noop"
 
     def run(self, bundle, runs_dir: str = "runs",
-            label: Optional[str] = None) -> StepResult:
+            label: Optional[str] = None,
+            cwd: Optional[str] = None) -> StepResult:
+        # cwd is accepted for signature parity with CliAdapter (the driver may
+        # pass a per-step worktree path); a dry run invokes nothing, so it is
+        # recorded for traceability but otherwise unused.
+        note = "dry run; no model invoked"
+        actions = ["assembled context bundle (dry run; no model invoked)"]
+        if cwd:
+            note = f"dry run; no model invoked (would run in {cwd})"
+            actions.append(f"isolated worktree cwd: {cwd}")
         return StepResult(
             status="skipped",
             outputs=list(getattr(bundle, "outputs", []) or []),
-            tool_actions=["assembled context bundle (dry run; no model invoked)"],
-            notes="dry run; no model invoked",
+            tool_actions=actions,
+            notes=note,
         )
 
 
@@ -163,7 +173,8 @@ class CliAdapter:
         return env
 
     def run(self, bundle, runs_dir: str = "runs",
-            label: Optional[str] = None) -> StepResult:
+            label: Optional[str] = None,
+            cwd: Optional[str] = None) -> StepResult:
         if not self.command:
             raise AdapterError("no CLI command configured")
 
@@ -178,6 +189,12 @@ class CliAdapter:
         tool_actions = [f"invoked CLI: {program}"]
         budget = self.timeout_for(step.agent)
 
+        # Per-call cwd (e.g. an isolated worktree the driver created for this
+        # step) overrides the adapter's own cwd without mutating shared state.
+        run_cwd = cwd or self.cwd
+        if run_cwd:
+            tool_actions.append(f"cwd: {run_cwd}")
+
         try:
             proc = subprocess.run(
                 self.command,
@@ -185,7 +202,7 @@ class CliAdapter:
                 capture_output=True,
                 text=True,
                 timeout=budget,
-                cwd=self.cwd,
+                cwd=run_cwd,
                 env=self._scrubbed_env(self.env_allowlist),
             )
         except subprocess.TimeoutExpired:

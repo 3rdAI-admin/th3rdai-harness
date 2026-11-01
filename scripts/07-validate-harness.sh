@@ -129,6 +129,31 @@ if [ -n "$prompt_refs" ]; then
   done <<< "$prompt_refs"
 fi
 
+# Worktree isolation wiring: if configs/execution.yaml declares isolate_agents,
+# each named agent must have a contract (an isolated step routes to that agent),
+# and the worktree helper it relies on must exist. Isolation is optional, so the
+# check only runs when the config opts in.
+if [ -f "$ROOT/configs/execution.yaml" ] && \
+   grep -qE '^[[:space:]]+isolate_agents:' "$ROOT/configs/execution.yaml"; then
+  check_file "scripts/worktree.sh"
+  # Pull the list items under isolate_agents (indented "- name" lines following it).
+  iso_agents=$(awk '
+    /^[[:space:]]+isolate_agents:/ {grab=1; next}
+    grab && /^[[:space:]]+-[[:space:]]+[a-z_]+/ {gsub(/[[:space:]-]/,""); print; next}
+    grab && /^[[:space:]]*[a-z_]+:/ {grab=0}
+  ' "$ROOT/configs/execution.yaml" 2>/dev/null | sort -u || true)
+  if [ -n "$iso_agents" ]; then
+    while IFS= read -r agent; do
+      [ -z "$agent" ] && continue
+      if [ -f "$ROOT/agents/$agent.agent.md" ]; then
+        ok "execution.yaml isolate_agents '$agent' has a contract"
+      else
+        fail "execution.yaml isolate_agents '$agent' but agents/$agent.agent.md is missing"
+      fi
+    done <<< "$iso_agents"
+  fi
+fi
+
 echo ""
 echo "Stage contract coherence"
 

@@ -22,6 +22,7 @@ shells out to a configured CLI. Stdlib only; absolute imports.
 """
 from __future__ import annotations
 
+import subprocess
 from datetime import datetime, timezone
 from pathlib import Path
 from typing import Optional
@@ -78,7 +79,74 @@ def _blockers(adapter, bundle):
     return gated, protected
 
 
-def _classify_step_risk(step, bundle, adapter, autonomy_manager) -> str:
+def _isolation_enabled(isolation: Optional[dict], agent: str) -> bool:
+    """True when ``isolation`` config asks for this agent's steps to run isolated.
+
+    Backward compatible: a missing/empty config (the default) means no isolation,
+    so existing runs and tests are unaffected. Shape (from configs/execution.yaml)::
+
+        isolation:
+          enabled: true
+          isolate_agents: [builder]
+    """
+    if not isolation or not isolation.get("enabled", False):
+        return False
+    agents = isolation.get("isolate_agents") or []
+    return agent in agents
+
+
+def _worktree_for_step(step, isolation: Optional[dict], out=print) -> Optional[str]:
+    """Create an isolated worktree for ``step`` and return its path, or ``None``.
+
+    Returns ``None`` (run in place) when isolation is not requested for this
+    agent, or when worktree creation degrades gracefully — mirroring
+    ``scripts/worktree.sh``'s own contract: a non-git project or a base-dir
+    failure is not fatal, the step just proceeds in the shared checkout. Only an
+    unexpected error is swallowed-and-logged; it never aborts the route.
+    """
+    if not _isolation_enabled(isolation, step.agent):
+        return None
+
+    script = config.repo_root() / "scripts" / "worktree.sh"
+    if not script.exists():
+        out(f"  (isolation requested but {script} missing; running in place)")
+        return None
+
+    slug = f"{step.route}-{step.agent}"
+    env = None
+    base = isolation.get("base") if isolation else None
+    if base:
+        import os
+        env = dict(os.environ)
+        env["HARNESS_WT_BASE"] = str(base)
+
+    try:
+        proc = subprocess.run(
+            ["bash", str(script), "create", slug],
+            capture_output=True, text=True,
+            cwd=str(config.repo_root()),
+            env=env,
+            timeout=60,
+        )
+    except (OSError, subprocess.SubprocessError) as exc:  # pragma: no cover - defensive
+        out(f"  (worktree create failed: {exc}; running in place)")
+        return None
+
+    path = (proc.stdout or "").strip().splitlines()
+    path = path[-1].strip() if path else ""
+    # wt_create echoes the repo root itself on graceful degradation (non-git /
+    # base failure). Treat "path == repo root" as "no isolation", not a worktree.
+    if not path or Path(path).resolve() == config.repo_root().resolve():
+        out("  (worktree isolation degraded to in-place)")
+        return None
+    if proc.returncode != 0:
+        out(f"  (worktree create returned {proc.returncode}; running in place)")
+        return None
+    return path
+
+
+def _classify_step_risk(step, bundle, adapter, autonomy_manager,
+                        isolated: bool = False) -> str:
     """
     Classify step risk using AutonomyManager heuristics.
 
@@ -87,6 +155,8 @@ def _classify_step_risk(step, bundle, adapter, autonomy_manager) -> str:
         bundle: Context bundle
         adapter: Execution adapter
         autonomy_manager: AutonomyManager instance
+        isolated: True when this step runs in a throwaway worktree, so its
+            write/commit blast radius is contained to a branch, not shared main.
 
     Returns:
         Risk level (LOW|MEDIUM|HIGH|CRITICAL)
@@ -94,7 +164,9 @@ def _classify_step_risk(step, bundle, adapter, autonomy_manager) -> str:
     if not autonomy_manager:
         return "MEDIUM"  # Safe default when autonomy unavailable
 
-    # Check for protected writes (self-modification = HIGH risk)
+    # Check for protected writes (self-modification = HIGH risk).
+    # Isolation does NOT soften this: writing agents/configs/orchestrator is a
+    # self-modification concern regardless of which checkout it lands in.
     if gates.protected_writes(bundle.outputs):
         return "HIGH"
 
@@ -106,13 +178,22 @@ def _classify_step_risk(step, bundle, adapter, autonomy_manager) -> str:
 
     # Use heuristic classification based on operation description
     operation_desc = f"{step.agent} @ {step.stage}"
-    return autonomy_manager.classify_operation_heuristic(operation_desc)
+    risk = autonomy_manager.classify_operation_heuristic(operation_desc)
+
+    # Worktree isolation contains the blast radius (work lands on a throwaway
+    # branch, never shared main), so an ordinary isolated step is one level
+    # safer. always_block ops are handled inside apply_isolation_modifier and
+    # never downgraded.
+    if isolated:
+        risk = autonomy_manager.apply_isolation_modifier(risk, operation_desc)
+    return risk
 
 
 def execute_route(route_name: str, adapter, runs_dir: str = "runs",
                   max_steps: Optional[int] = None, assume_yes: bool = False,
                   autonomy_mode: Optional[str] = None,
-                  prompt_fn=input, out=print, now: Optional[datetime] = None) -> list:
+                  prompt_fn=input, out=print, now: Optional[datetime] = None,
+                  isolation: Optional[dict] = None) -> list:
     """Run a route through ``adapter``, gating and recording each step.
 
     Args:
@@ -125,6 +206,12 @@ def execute_route(route_name: str, adapter, runs_dir: str = "runs",
         prompt_fn: Function for user prompts (default: input)
         out: Output function (default: print)
         now: Timestamp override for testing
+        isolation: Worktree-isolation config (from configs/execution.yaml's
+            ``isolation`` block) or None. When ``enabled`` and a step's agent is
+            in ``isolate_agents``, the step runs in a fresh git worktree whose
+            path is passed to the adapter as ``cwd``. Absent/None ⇒ in-place
+            (unchanged legacy behavior); worktree creation degrades to in-place
+            rather than aborting the route.
 
     Returns:
         List of ``(step, StepResult, RunRecord, path)`` for steps that ran.
@@ -149,8 +236,19 @@ def execute_route(route_name: str, adapter, runs_dir: str = "runs",
         bundle = sequencer.build_context(step)
         gated, protected = _blockers(adapter, bundle)
 
-        # Classify risk for autonomy gates
-        risk_level = _classify_step_risk(step, bundle, adapter, autonomy_manager)
+        # Isolate write-heavy steps in a throwaway worktree before gating, so the
+        # (contained) risk is what the operator is actually asked to approve.
+        # Degrades to in-place (worktree_path=None) in non-git projects or on a
+        # creation hiccup — never aborts the route.
+        worktree_path = _worktree_for_step(step, isolation, out=out)
+        isolated = worktree_path is not None
+        if isolated:
+            out(f"  ⟳ Step {step.order} ({step.agent}) isolated in worktree: {worktree_path}")
+
+        # Classify risk for autonomy gates (isolation contains blast radius)
+        risk_level = _classify_step_risk(
+            step, bundle, adapter, autonomy_manager, isolated=isolated
+        )
 
         # Build context for audit log
         context = {
@@ -159,7 +257,9 @@ def execute_route(route_name: str, adapter, runs_dir: str = "runs",
             "stage": step.stage,
             "outputs": list(bundle.outputs),
             "gated": list(gated) if gated else [],
-            "protected": list(protected) if protected else []
+            "protected": list(protected) if protected else [],
+            "isolated": isolated,
+            "worktree": worktree_path,
         }
 
         # Check autonomy gates if AutonomyManager available
@@ -232,10 +332,11 @@ def execute_route(route_name: str, adapter, runs_dir: str = "runs",
                     out(f"stopped before step {step.order} ({step.agent}) by user")
                     break
 
-        # Execute the step
+        # Execute the step (in its worktree when isolated; cwd=None = in place)
         result = adapter.run(
             bundle, runs_dir=runs_dir,
             label=f"{step.route}-{step.order:02d}-{step.agent}",
+            cwd=worktree_path,
         )
         record = _execute_record(step, bundle, result, now)
         path = runlog.write(record, dir=runs_dir)

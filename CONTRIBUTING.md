@@ -42,6 +42,12 @@ wt_cleanup "$WT"             # after merge: removes the dir, keeps the branch re
 `wt_create` degrades to working in place in non-git projects. Only operate inside a
 worktree you created; never write another contributor's worktree or branch.
 
+When a route is run through the orchestrator (`orchestrate.py route --execute`), the
+`execution.isolation` block in `configs/execution.yaml` makes this automatic for the
+listed agents (default: `builder`) — pass `--no-isolation` to force in-place work.
+Reclaim stale worktree directories with `scripts/worktree.sh gc` (use `--dry-run`
+first); it deletes only directories, never branch refs.
+
 ## Conventions
 
 - **Agents** live in `agents/<name>.agent.md`. Keep role, permissions, inputs, outputs, and handoffs explicit.

@@ -276,5 +276,62 @@ class TestAutonomyManager(unittest.TestCase):
             Path(log_path).unlink(missing_ok=True)
 
 
+class TestIsolationModifier(unittest.TestCase):
+    """apply_isolation_modifier: worktree isolation downgrades contained risk."""
+
+    def test_downgrades_one_level(self):
+        """Each level drops exactly one step toward LOW (default downgrade_levels=1)."""
+        m = AutonomyManager(mode_override="cautious")
+        self.assertEqual(m.apply_isolation_modifier("CRITICAL"), "HIGH")
+        self.assertEqual(m.apply_isolation_modifier("HIGH"), "MEDIUM")
+        self.assertEqual(m.apply_isolation_modifier("MEDIUM"), "LOW")
+
+    def test_floored_at_low(self):
+        """LOW cannot be downgraded further."""
+        m = AutonomyManager(mode_override="cautious")
+        self.assertEqual(m.apply_isolation_modifier("LOW"), "LOW")
+
+    def test_never_downgrades_always_block_operations(self):
+        """Isolation does not make a hard-blocked op safe."""
+        m = AutonomyManager(mode_override="full")
+        # force_push_to_main is in configs/autonomy.yaml safety.always_block.
+        self.assertTrue(m.is_always_blocked("force_push_to_main"))
+        self.assertEqual(
+            m.apply_isolation_modifier("CRITICAL", "force_push_to_main"),
+            "CRITICAL",
+        )
+
+    def test_ordinary_operation_is_downgraded(self):
+        """A non-blocked operation name still downgrades normally."""
+        m = AutonomyManager(mode_override="cautious")
+        self.assertEqual(
+            m.apply_isolation_modifier("MEDIUM", "builder @ stages/06-iteration"),
+            "LOW",
+        )
+
+    def test_unknown_risk_level_passes_through(self):
+        """A risk string outside the ladder is returned unchanged."""
+        m = AutonomyManager(mode_override="cautious")
+        self.assertEqual(m.apply_isolation_modifier("WAT"), "WAT")
+
+    def test_respects_configured_downgrade_levels(self):
+        """downgrade_levels from config controls how many steps are shifted."""
+        m = AutonomyManager(mode_override="cautious")
+        # Simulate a config that downgrades two levels.
+        m.config.setdefault("risk_modifiers", {})["isolated_write"] = {
+            "downgrade_levels": 2
+        }
+        self.assertEqual(m.apply_isolation_modifier("CRITICAL"), "MEDIUM")
+        self.assertEqual(m.apply_isolation_modifier("HIGH"), "LOW")
+
+    def test_zero_or_negative_levels_is_a_noop(self):
+        """downgrade_levels <= 0 leaves the risk unchanged."""
+        m = AutonomyManager(mode_override="cautious")
+        m.config.setdefault("risk_modifiers", {})["isolated_write"] = {
+            "downgrade_levels": 0
+        }
+        self.assertEqual(m.apply_isolation_modifier("HIGH"), "HIGH")
+
+
 if __name__ == '__main__':
     unittest.main()

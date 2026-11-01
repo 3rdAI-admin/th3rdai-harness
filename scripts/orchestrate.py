@@ -70,10 +70,12 @@ def _cmd_route(args) -> int:
         return 0
 
     adapter = _build_adapter(args)
+    isolation = None if args.no_isolation else _load_execution_cfg().get("isolation")
     results = driver.execute_route(
         args.name, adapter, runs_dir=args.runs_dir,
         max_steps=args.max_steps, assume_yes=args.yes,
         autonomy_mode=args.autonomy, prompt_fn=_safe_prompt,
+        isolation=isolation,
     )
     for step, result, _record, path in results:
         print(f"  step {step.order} {step.agent}: {result.status} -> {path}")
@@ -133,6 +135,11 @@ def build_parser() -> argparse.ArgumentParser:
         help="autonomy mode (ask=approve all, cautious=auto LOW/MEDIUM, full=auto all); overrides configs/autonomy.yaml",
     )
     route.add_argument("--runs-dir", default="runs", help="directory for run records (default: runs)")
+    route.add_argument(
+        "--no-isolation", action="store_true",
+        help="force in-place execution, ignoring execution.yaml isolation config "
+             "(by default, configured builder steps run in a temporary worktree)",
+    )
     route.set_defaults(func=_cmd_route)
 
     ev = sub.add_parser(
