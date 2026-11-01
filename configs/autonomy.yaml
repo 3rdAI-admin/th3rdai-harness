@@ -127,6 +127,13 @@ risk_modifiers:
   security_context: +2  # Increase risk by two levels
   multiple_systems_affected: +1
   irreversible_operation: +2
+  # Worktree isolation DECREASES risk: when a step runs in a throwaway git
+  # worktree on a feature branch (not shared main), its write/commit blast radius
+  # is contained — an abandoned build is discarded by deleting a directory. The
+  # orchestrator downgrades such steps by downgrade_levels (see apply_isolation_
+  # modifier in autonomy_manager.py). Never applies to always_block operations.
+  isolated_write:
+    downgrade_levels: 1
 
 # Audit Log Configuration
 audit:

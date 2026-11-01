@@ -381,6 +381,50 @@ class AutonomyManager:
         always_block = self.config.get("safety", {}).get("always_block", [])
         return operation in always_block
 
+    # Risk ladder, safest-first. Used to shift a level up or down by N steps.
+    _RISK_LADDER = ("LOW", "MEDIUM", "HIGH", "CRITICAL")
+
+    def apply_isolation_modifier(self, risk_level: str,
+                                 operation: str = "") -> str:
+        """
+        Downgrade ``risk_level`` for a step that runs in an isolated worktree.
+
+        Worktree isolation contains a step's blast radius: writes and commits
+        land on a throwaway feature branch, never shared ``main``, and an
+        abandoned build is discarded by deleting a directory. So an ordinary
+        isolated operation is genuinely one level safer. This mirrors the
+        ``risk_modifiers.isolated_write`` rationale in ``configs/autonomy.yaml``.
+
+        Hard guardrails are preserved: an operation in the ``always_block`` list
+        is never downgraded (isolation does not make ``force_push_to_main`` safe),
+        and the downgrade never goes below ``LOW``. The number of levels shifted
+        is read from ``risk_modifiers.isolated_write.downgrade_levels`` (default 1).
+
+        Args:
+            risk_level: Current risk (LOW|MEDIUM|HIGH|CRITICAL)
+            operation: Operation name, checked against the always-block list
+
+        Returns:
+            The possibly-downgraded risk level.
+        """
+        if operation and self.is_always_blocked(operation):
+            return risk_level
+        if risk_level not in self._RISK_LADDER:
+            return risk_level
+
+        modifiers = self.config.get("risk_modifiers", {}) or {}
+        iso = modifiers.get("isolated_write", {}) or {}
+        try:
+            steps = int(iso.get("downgrade_levels", 1))
+        except (TypeError, ValueError):
+            steps = 1
+        if steps <= 0:
+            return risk_level
+
+        idx = self._RISK_LADDER.index(risk_level)
+        new_idx = max(0, idx - steps)
+        return self._RISK_LADDER[new_idx]
+
 
 # Convenience function for CLI usage
 def create_autonomy_manager(autonomy_mode: Optional[str] = None) -> AutonomyManager:
