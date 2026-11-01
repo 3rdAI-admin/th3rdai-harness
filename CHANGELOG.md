@@ -8,6 +8,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 ### Added
+- **Parallel independent routes** — `orchestrate.py route-batch ROUTE[:TAG] ...`
+  runs several lifecycle routes concurrently, each isolated in its own git
+  worktree (building on the orchestrator worktree isolation below), so two tasks
+  make code changes at once without colliding and `main` stays clean. New
+  `scripts/orchestrator/parallel.py` (stdlib `ThreadPoolExecutor`). Each route
+  writes run records to its own `runs/<route:tag>/` subdirectory; one route's
+  failure never sinks the batch. Refused in `ask` autonomy mode (per-step prompts
+  can't interleave across threads) — use `full --yes` or `cautious`. Lifts the
+  "parallel execution out of scope" note in the native-orchestrator plans.
 - **Orchestrator-driven worktree isolation** — the Native Orchestrator now creates
   and assigns a temporary worktree for configured agents (default: `builder`) when a
   route is run with `orchestrate.py route --execute`, so the step's subprocess runs in
