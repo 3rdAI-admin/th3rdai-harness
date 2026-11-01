@@ -21,6 +21,7 @@ sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 
 from scripts.orchestrator import adapter as adapter_mod  # noqa: E402
 from scripts.orchestrator import config, driver, evalhook, sequencer  # noqa: E402
+from scripts.orchestrator import parallel as parallel_mod  # noqa: E402
 
 
 def _safe_prompt(message: str) -> str:
@@ -83,6 +84,34 @@ def _cmd_route(args) -> int:
     return 0
 
 
+def _cmd_route_batch(args) -> int:
+    """Run several independent routes concurrently, each in its own worktree."""
+    isolation = None if args.no_isolation else _load_execution_cfg().get("isolation")
+    try:
+        outcomes = parallel_mod.run_routes(
+            args.entries,
+            adapter_factory=lambda: _build_adapter(args),
+            runs_dir=args.runs_dir,
+            max_workers=args.max_workers,
+            assume_yes=args.yes,
+            autonomy_mode=args.autonomy,
+            isolation=isolation,
+        )
+    except parallel_mod.ParallelError as exc:
+        print(f"route-batch: {exc}", file=sys.stderr)
+        return 2
+
+    completed, errored, steps = parallel_mod.summarize(outcomes)
+    print("")
+    for o in outcomes:
+        mark = "✓" if o.status == "completed" else "✗"
+        detail = f"{o.step_count} step(s)" if o.status == "completed" else (o.error or "error")
+        print(f"  {mark} {o.entry.label}: {detail}")
+    print(f"route-batch: {completed} completed, {errored} errored, {steps} step(s) total")
+    # Non-zero exit when any route errored, so CI/callers can detect failure.
+    return 0 if errored == 0 else 1
+
+
 def _cmd_eval(args) -> int:
     out = evalhook.run_eval(
         args.case, rubric=args.rubric,
@@ -141,6 +170,46 @@ def build_parser() -> argparse.ArgumentParser:
              "(by default, configured builder steps run in a temporary worktree)",
     )
     route.set_defaults(func=_cmd_route)
+
+    rb = sub.add_parser(
+        "route-batch",
+        help="Run several independent routes concurrently, each in its own worktree.",
+    )
+    rb.add_argument(
+        "entries", nargs="+", metavar="ROUTE[:TAG]",
+        help="routes to run in parallel; tag distinguishes same-route tasks "
+             "(e.g. iteration:a iteration:b release)",
+    )
+    rb.add_argument(
+        "--execute", action="store_true",
+        help="opt-in: run each route through an adapter (parallel batches are "
+             "non-interactive; see --autonomy). Without it, uses the default adapter.",
+    )
+    rb.add_argument(
+        "--adapter", choices=["cli", "noop"], default=None,
+        help="adapter for each route (default: execution.yaml default_adapter, else noop)",
+    )
+    rb.add_argument(
+        "--max-workers", type=int, default=2,
+        help="max routes running at once (default: 2)",
+    )
+    rb.add_argument(
+        "--yes", action="store_true",
+        help="skip the per-step checkpoint in each route; gates still apply",
+    )
+    rb.add_argument(
+        "--autonomy", choices=["ask", "cautious", "full"], default=None,
+        help="autonomy mode; 'ask' is refused for batches (prompts can't interleave). "
+             "Use 'full' (with --yes) or 'cautious'.",
+    )
+    rb.add_argument("--runs-dir", default="runs",
+                    help="base dir for run records; each route writes a subdirectory")
+    rb.add_argument(
+        "--no-isolation", action="store_true",
+        help="force in-place execution for every route (NOT recommended for a "
+             "parallel batch — worktrees are what keep concurrent routes from colliding)",
+    )
+    rb.set_defaults(func=_cmd_route_batch)
 
     ev = sub.add_parser(
         "eval", help="Pair an eval case with its rubric and scaffold a PENDING result."
