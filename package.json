@@ -7,8 +7,22 @@
     "gitnexus": "^1.6.5"
   },
   "overrides": {
-    "sharp": "^0.35.3",
-    "adm-zip": "^0.6.0",
-    "protobufjs": "^7.6.5"
+    "sharp": "^0.35.4",
+    "adm-zip": "^0.6.1",
+    "protobufjs": "^7.6.5",
+    "proxy-addr": "^2.0.8",
+    "fast-uri": "^3.1.9",
+    "@modelcontextprotocol/sdk": "^1.32.0",
+    "brace-expansion": "^5.0.10",
+    "js-yaml": "^4.3.2",
+    "body-parser": "^2.4.0",
+    "hono": "^4.13.11",
+    "ip-address": "^10.7.4",
+    "qs": "^6.16.0",
+    "fast-copy": "^4.1.0",
+    "zod": "^4.6.6",
+    "@hono/node-server": "^2.1.2",
+    "glob": "^14.0.1",
+    "minimatch": "^11.0.1"
   }
 }
