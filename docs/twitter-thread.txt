@@ -37,7 +37,7 @@ Task Definition → Agent Design → Prompt Design → Tool Integration → Eval
 
 Each stage has explicit contracts, context bundles, and token budgets.
 
-Think ICM for agent development.
+Think ICM (Jake Van Clief) for agent development.
 
 ---
 
