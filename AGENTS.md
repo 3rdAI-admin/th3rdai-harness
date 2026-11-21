@@ -3,7 +3,7 @@
 
 This project is indexed by GitNexus as **th3rdai-harness** (3350 symbols, 4016 relationships, 36 execution flows). Use the GitNexus MCP tools to understand code, assess impact, and navigate safely.
 
-> If any GitNexus tool warns the index is stale, run `npx gitnexus analyze` in terminal first.
+> If any GitNexus tool warns the index is stale, run `npx gitnexus analyze --skip-skills --skip-agents-md` in terminal first (the flags keep a re-index from overwriting the in-repo GitNexus skills and this block).
 
 ## Always Do
 
